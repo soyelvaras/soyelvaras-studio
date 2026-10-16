@@ -272,9 +272,9 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0c0f}
 .spark{position:absolute;color:YEL;line-height:1;font-style:normal;text-shadow:0 0 18px rgba(201,161,91,.55)}
 /* dude: tracked caps + heavy serif */
 .dude .s{color:#F2EFE9;font:600 33px Montserrat;text-shadow:0 2px 12px rgba(0,0,0,.65);white-space:nowrap;line-height:1.2}
-.dude .s.spread{display:flex;justify-content:space-between;width:652px;margin:0 auto}
+.dude .s.spread{display:flex;justify-content:space-between;gap:.6em;width:max-content;min-width:652px;margin:0 auto}
 .dude .s{padding-left:.32em}
-.dude .s .w{letter-spacing:.32em;margin:0 .14em;transform-origin:50% 50%}
+.dude .s .w{letter-spacing:.32em;margin:0 .42em;transform-origin:50% 50%}
 .dude .s.spread{padding-left:0}
 .dude .s.spread .w{margin:0 -.32em 0 0}
 .dude .e{color:#F2ECDF;font-family:'DM Serif Display';font-weight:400;line-height:1.1;letter-spacing:-.02em;
