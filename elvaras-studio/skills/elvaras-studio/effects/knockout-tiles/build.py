@@ -83,6 +83,9 @@ SPOTS = {}           # hand placement, e.g. {'left': (230, 540), 'right': (860, 
                      # of that wall spot, px. Only the spots you name are fixed; the rest stay measured
 PILES = {}           # same for the receipt piles: {'left': (x, y), 'right': (x, y)} = centre of the pile
 SIZE = 1.0           # overall size of tiles and receipts (0.8 to 1.15). prep.py shrinks a piece that has no room
+ZOOM = 1.06          # gentle push-in on the whole picture (wall pieces and speaker together) while the tiles are up.
+                     # 1.0 = off. Back to 1:1 before the slot ends, so both edges stay the plain clip
+ZOOM_KICK = 0.015    # extra little kick each time a tile lands (0 = none)
 VOICE = True         # False = silent slot (no clip audio in the render)
 SOUNDS = 'auto'      # 'auto' = a pop per landing, a short whoosh per knock, one low hit on the total. Or a list of
                      # (name, frame, volume) with the stock names; [] = none. Played at 0.75x, under the voice
@@ -669,6 +672,7 @@ def css():
 html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 #root{{position:relative;width:1080px;height:1920px;overflow:hidden;background:#000;color:{s['paper_ink']}}}
 .full{{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}}
+#stage{{position:absolute;inset:0}}
 #bgv{{z-index:1}}
 #wallfx{{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:3}}
 #fgwrap{{position:absolute;inset:0;z-index:5}}
@@ -746,6 +750,26 @@ def main():
         build_receipts(P, lay, S)
     t_in, t_out = F(S['f_in']), F(S['f_out'])
     late = max(P.busy.values())
+    zoom = []
+    if ZOOM > 1.0001:       # the whole stack moves as one camera: clip, wall pieces and cutout
+        z, kick, L = ZOOM, ZOOM_KICK, [F(f) for f in S['land']]
+        end = (nfr - 3) / FPS
+        back = max(L[-1] + .45, F(S['knock'][-1]) - .05)
+        dur_back = min(.6, end - back)
+        if dur_back < .2:
+            back, dur_back = end - .3, .3
+        zoom.append(f"tl.fromTo('#stage',{{scale:1}},{{scale:{z},duration:{max(.1, L[0] - t_in):.3f},ease:'power2.out',immediateRender:false}},{t_in:.3f});")
+        for i, t in enumerate(L):
+            nxt = L[i + 1] if i + 1 < len(L) else back
+            up = min(.1, (nxt - t) / 3)
+            down = min(.3, nxt - t - up - .01)
+            if kick > 0 and down > .05:
+                zoom.append(f"tl.fromTo('#stage',{{scale:{z}}},{{scale:{z + kick:.4f},duration:{up:.3f},ease:'power2.out',immediateRender:false}},{t:.3f});")
+                zoom.append(f"tl.fromTo('#stage',{{scale:{z + kick:.4f}}},{{scale:{z},duration:{down:.3f},ease:'power2.inOut',immediateRender:false}},{t + up:.3f});")
+        zoom.append(f"tl.fromTo('#stage',{{scale:{z}}},{{scale:1,duration:{dur_back:.3f},ease:'power2.inOut',immediateRender:false}},{back:.3f});")
+        hx = lay['head']['cx']
+        hy = (lay['head']['top'] + lay['head']['bottom']) / 2
+        zoom.insert(0, f"gsap.set('#stage',{{transformOrigin:'{hx:.0f}px {hy:.0f}px',scale:1}});")
     if late > t_out + 1e-6:
         sys.exit(f'internal: a move runs to {late:.3f}s, past F_OUT ({t_out:.3f}s)')
     # the wall layer and the cutout layer only exist between F_IN and F_OUT: outside, the frame is the untouched clip
@@ -768,11 +792,13 @@ def main():
 <div id="root" data-composition-id="main" data-start="0" data-duration="{dur:.3f}" data-width="1080" data-height="1920">
   {voice}
 {nl.join(audio(S, lay, dur))}
+  <div id="stage">
   <video id="bgv" class="full" src="assets/aroll.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{dur:.3f}" data-track-index="0"></video>
   <div id="wallfx">
 {nl.join(P.html)}
   </div>
   <div id="fgwrap"><video id="fg" class="full" src="assets/subject.webm" muted playsinline data-start="0" data-media-start="0" data-duration="{dur:.3f}" data-track-index="1"></video></div>
+  </div>
 {SAFE_GUIDE if os.environ.get('SAFE') == '1' else ''}
 </div>
 <script>
@@ -780,6 +806,7 @@ const tl = gsap.timeline({{ paused: true }});
 function E(id) {{ const el = document.getElementById(id); if (!el) throw new Error('missing #' + id); return el; }}
 {nl.join(P.sets)}
 {nl.join(P.tw)}
+{nl.join(zoom)}
 tl.set({{}}, {{}}, {dur:.3f});
 window.__timelines = window.__timelines || {{}};
 window.__timelines["main"] = tl;
@@ -789,7 +816,8 @@ window.__timelines["main"] = tl;
 '''
     open('index.html', 'w').write(page)
     name = os.path.basename(HERE)
-    print(f'wrote index.html  {nfr} frames ({dur:.3f}s)  effect on f{S["f_in"]} to f{S["f_out"]}  (plain clip before and after)')
+    print(f'wrote index.html  {nfr} frames ({dur:.3f}s)  effect on f{S["f_in"]} to f{S["f_out"]}  (plain clip before and after)'
+          + (f'  zoom x{ZOOM} (+{ZOOM_KICK} per tile)' if ZOOM > 1.0001 else ''))
     for k, (t, g) in enumerate(zip(TILES, lay['tiles'])):
         print(f'  tile {k + 1} "{t["text"]}"  lands f{S["land"][k]}  knocked f{S["knock"][k]}  {g["spot"]:5s} {t.get("exit") or EXIT[g["spot"]]:7s} size {g["scale"]:.2f}')
     for i, f in enumerate(S['rec']):
