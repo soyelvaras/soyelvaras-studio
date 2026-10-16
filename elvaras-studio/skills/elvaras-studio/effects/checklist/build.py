@@ -487,7 +487,7 @@ def checklist():
         <div class="tint"></div>
         <div id="hl"></div>
         <div class="eyebrow" id="eyebrow"><i></i><span>{'<br>'.join(html_mod.escape(l.upper()) for l in TITLE_LINES)}</span></div>
-        <div id="pill"><div id="cntb"><div id="cnt">{''.join(f'<span>{i}</span>' for i in range(n + 1))}</div></div><span>of {n}</span></div>
+        <div id="pill"><div id="cntb"><div id="cnt">{''.join(f'<span>{i}</span>' for i in range(n + 1))}</div></div><span>de {n}</span></div>
         <div class="segs">{''.join(f'<div class="seg" id="seg{k}"><div class="segf" id="segf{k}"></div></div>' for k in range(n))}</div>
         {''.join(row_html)}
         <div id="sheen"></div>
