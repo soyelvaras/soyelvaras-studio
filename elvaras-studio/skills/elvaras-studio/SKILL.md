@@ -40,8 +40,10 @@ se comparte, publica ni entrega a otra persona, y su repositorio de GitHub es pr
 - Clientes: "edita esto para <cliente>" usa `brands/clientes/<cliente>/brand.json` (copia `_plantilla`). Cada
   cliente tiene además sus propios archivos de estilo: guárdalos como `ST/clients/<cliente>/my-style.{md,json}`.
 - Formatos: el render principal es 9:16 para Instagram. Cuando pida la versión web, renderiza también en 16:9.
-- Los clips de muestra de `captions/previews`, `picker/previews` y `effects/*/example` son de relleno hasta que él
-  grabe los suyos. Nunca los presentes como trabajo suyo.
+- Los 19 clips de `captions/previews` (y sus fotos en `picker/previews/posters/captions`) ya son de él: una sola
+  escena de 1016(3), todo el texto abajo, armada en `~/reel-edits/subtitulos-base`. Los de `picker/previews/effects`,
+  `picker/previews/styles` y `effects/*/example` siguen siendo de relleno hasta que él grabe los suyos. Nunca los
+  presentes como trabajo suyo.
 - Lo que ya se aprendió con sus tomas (detalle en la memoria del proyecto): usa lentes, y la medición de la cabeza
   se corta en la nariz (la barbilla real queda unos 150 px más abajo); su silla oscura se mezcla con su polerón en
   los recortes; en los acercamientos usa `cy` cerca de 0.52; la palabra que pide comentar es "EDIT".
