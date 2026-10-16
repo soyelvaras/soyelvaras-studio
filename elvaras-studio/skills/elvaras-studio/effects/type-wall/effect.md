@@ -1,59 +1,95 @@
-# type-wall
+# type-wall (Muro de Palabras)
 
-**What it does:** the room behind the speaker turns into a dark wall of giant words. Rows of one repeated word march sideways in alternating directions, solid and outlined rows taking turns, and every row hard-swaps to the next word on the frame the speaker says it. The row right above the speaker's head says every word as the speaker says it; on the word that matters the whole wall snaps to it, punches in, and that row turns yellow. The speaker stays in front of the wall the whole time.
+**Qué hace:** el cuarto detrás de la persona se convierte en un muro oscuro de palabras gigantes. Filas de una palabra
+repetida desfilan hacia los lados en direcciones alternadas, filas sólidas y de contorno se turnan, y cada fila cambia
+de golpe a la palabra siguiente en el cuadro en que la persona la dice. La fila justo sobre la cabeza dice cada palabra
+cuando la persona la dice; en la palabra que importa todo el muro salta a ella, se acerca, y esa fila pasa a dorado. La
+persona queda delante del muro todo el tiempo.
 
-**Job:** emphasis, anywhere in a video: a hook line, the one sentence a section hangs on, a punchline, a call to action. Best on a short line (2 to 4 seconds) with one word that matters.
+**Función:** énfasis, en cualquier parte de un video: una frase gancho, la oración de la que cuelga una sección, un
+remate, un llamado a la acción. Mejor en una frase corta (2 a 4 segundos) con una palabra que importa.
 
-**Trigger phrases:** "put giant words behind me that change as I talk", "type wall on this line", "turn the wall behind me into words".
+**Frases que lo activan:** "pon palabras gigantes detrás de mí que cambien mientras hablo", "muro de palabras en esta
+frase", "convierte la pared detrás de mí en palabras".
 
-**Footage it needs:** a still camera (tripod, or a phone leaning on something), the speaker from the chest or wider, with clear room above the speaker's head: the speaker's head top at y 250 or lower in the 1080x1920 frame. A clean person cutout (the slot maker cuts the speaker out with the good matting model). 1 to 2 seconds of footage after the last word so the wall can be read.
-**Where it fails (say so and offer another effect):**
-- Tight selfie with no wall: head near the top of the frame, shoulders edge to edge. The words have nowhere to show. `prep.py` warns ("no room above the speaker's head", "open wall under 40%").
-- Moving or handheld camera: the wall is locked, so the speaker wobbles on it like a sticker, and a `KEEP` shape comes unstuck from the furniture. `prep.py` warns over 8 px of drift. (One slow settle with `KEEP = []` is fine: the demo clip has one.)
-- A face in a painting, poster or screen behind the speaker can end up in the cutout and float on the wall. `prep.py` reports a second shape; look at those frames.
-- Long words: at the default size a word over about 7 letters is wider than the frame. Split it or skip it.
+**Toma que necesita:** una cámara quieta (trípode, o un celular apoyado en algo), la persona del pecho hacia arriba o
+más abierta, con espacio libre sobre la cabeza: lo alto de la cabeza en y 250 o más abajo en el cuadro de 1080x1920. Un
+recorte limpio de la persona (el creador del espacio recorta a la persona con el modelo de recorte bueno). 1 a 2
+segundos de toma después de la última palabra para que el muro se alcance a leer.
+**Dónde falla (dilo y ofrece otro efecto):**
+- Selfie justa sin pared: cabeza cerca del borde superior, hombros de borde a borde. Las palabras no tienen dónde
+  mostrarse. `prep.py` avisa ("no room above the speaker's head", "open wall under 40%").
+- Cámara en movimiento o en mano: el muro está fijo, así que la persona tambalea encima como un sticker, y una forma
+  `KEEP` se despega del mueble. `prep.py` avisa sobre 8 px de deriva. (Un solo asentamiento lento con `KEEP = []` está
+  bien: el clip de demo tiene uno.)
+- Una cara en un cuadro, póster o pantalla detrás de la persona puede terminar en el recorte y flotar en el muro.
+  `prep.py` informa una segunda forma; mira esos cuadros. Un recorte que mezcla la ropa oscura con una silla oscura deja
+  la silla flotando sobre el muro.
+- Palabras largas: al tamaño por defecto una palabra de más de unas 7 letras es más ancha que el cuadro. Pártela o
+  sáltala (en español conviene elegir palabras cortas).
 
-**Slot inputs:** `assets/aroll.mp4`, cutout `assets/subject.webm` (required), `clip.json`, `words.json`. No `aroll_hi`. Python: the skill's Python for `prep.py` (numpy, scipy, Pillow); `build.py` and `onsets.py` run on plain python3. Ships its own font and one sound in `assets_fx/`.
+**Entradas del espacio:** `assets/aroll.mp4`, recorte `assets/subject.webm` (obligatorio), `clip.json`, `words.json`.
+Sin `aroll_hi`. Python: el Python de la skill para `prep.py` (numpy, scipy, Pillow); `build.py` y `onsets.py` corren en
+python3 simple. Trae su propia tipografía y un sonido en `assets_fx/`.
 
-## CLIP block (top of build.py)
-| field | what it is | how to get it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo obtenerlo |
 |---|---|---|
-| `PHRASES` | what the wall says: 1 to 3 UPPER CASE words per phrase, each `(frame, 'WORD')`; `'hit': True` on the phrase that matters | words from `words.json`, frames from `python3 onsets.py` (column "swap"). The first word rides in with the wall |
-| `IN_FRAME`, `OUT_FRAME` | frame the wall arrives (hard cut from the room, rows whip in) and frame the room is back | `IN_FRAME` = frame of the first wall word (0 = up from the start); `OUT_FRAME = None` = stays to the end of the slot |
-| `KEEP` | shapes of the real picture kept in front of the wall (the sofa, desk or counter the speaker sits at) | `[]` = wall fills the frame. Otherwise read corner points off `work/measure.jpg` (labels are full-size px), a few px inside the furniture edge |
-| `FS` | letter size in px | 205; go to 150 to 180 when there is little room above the speaker or a word is too wide |
-| `ACCENT_Y`, `HEAD_GAP` | where the yellow row's letters end | `None` = measured, 14 px above the highest point of the speaker's head |
-| `XC` | `{row: x}` to move where a row's word is centred on a swap | `{}` = measured (the widest gap the speaker leaves in that row); row numbers are printed by `build.py` |
-| `GROUND`, `INK`, `ACCENT` | wall colours, letter colour, yellow row colour (6-digit hex) | defaults are the approved look; keep the wall dark |
-| `VOL_IN`, `VOL_HIT`, `VOL_SWAP` | entry whoosh, low hit on the hit word, soft whoosh on a new phrase | 0 turns one off |
+| `PHRASES` | lo que dice el muro: 1 a 3 palabras EN MAYÚSCULAS por frase, cada una `(cuadro, 'PALABRA')`; `'hit': True` en la frase que importa | palabras de `words.json`, cuadros de `python3 onsets.py` (columna "swap"). La primera palabra entra con el muro |
+| `IN_FRAME`, `OUT_FRAME` | cuadro en que llega el muro (corte seco desde el cuarto, las filas entran de golpe) y cuadro en que vuelve el cuarto | `IN_FRAME` = cuadro de la primera palabra del muro (0 = arriba desde el inicio); `OUT_FRAME = None` = se queda hasta el final del espacio |
+| `KEEP` | formas de la imagen real que quedan delante del muro (el sillón, escritorio o mesón donde se sienta la persona) | `[]` = el muro llena el cuadro. Si no, lee los puntos de las esquinas en `work/measure.jpg` (las etiquetas son px a tamaño completo), unos px dentro del borde del mueble |
+| `FS` | tamaño de letra en px | 205; baja a 150 a 180 cuando hay poco espacio sobre la persona o una palabra es muy ancha |
+| `ACCENT_Y`, `HEAD_GAP` | dónde terminan las letras de la fila dorada | `None` = medido, 14 px sobre el punto más alto de la cabeza |
+| `XC` | `{fila: x}` para mover dónde se centra la palabra de una fila en un cambio | `{}` = medido (el hueco más ancho que deja la persona en esa fila); `build.py` imprime los números de fila |
+| `GROUND`, `INK`, `ACCENT` | colores del muro, color de letra, color de la fila de acento (hex de 6 dígitos) | por defecto bosque, crema y dorado; mantén el muro oscuro |
+| `VOL_IN`, `VOL_HIT`, `VOL_SWAP` | whoosh de entrada, golpe grave en la palabra que importa, whoosh suave en una frase nueva | 0 apaga uno |
 
-A 1 word phrase fills every row. A 2 or 3 word phrase builds down the wall: all rows say word 1, then every 2nd (or 3rd) row turns to word 2, then word 3, so the finished wall reads the phrase top to bottom.
-**Switches:** `SAFE=1` draws the safe zone, the head-top line (blue) and the `KEEP` outline (green). `SFX=0` drops the sounds. `CAPTIONS=0` changes nothing: the wall is the caption, so the main video should not caption these frames.
+Una frase de 1 palabra llena todas las filas. Una frase de 2 o 3 palabras se arma hacia abajo: todas las filas dicen la
+palabra 1, luego una de cada 2 (o 3) filas pasa a la palabra 2, luego la palabra 3, así el muro terminado lee la frase
+de arriba abajo.
+**Interruptores:** `SAFE=1` dibuja la zona segura, la línea de lo alto de la cabeza (azul) y el contorno `KEEP` (verde).
+`SFX=0` saca los sonidos. `CAPTIONS=0` no cambia nada: el muro es el subtítulo, así que el video principal no debe
+poner subtítulos en estos cuadros.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # measure the speaker, then LOOK at work/measure.jpg (yellow line on top of the speaker's head, blue tint = everywhere the speaker goes)
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py -v      # 3. word frames from the audio; read the per-frame loudness strip for every wall word
-# edit: the CLIP block in build.py: PHRASES always, KEEP when the speaker sits on or behind something.
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # build with the guide on, lint, look at snapshots (one per swap, one at the end); read its row table and any "!!" lines
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # mide a la persona, luego MIRA work/measure.jpg (línea amarilla sobre lo alto de la cabeza, tinte azul = todo lo que ocupa la persona)
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py -v      # 3. cuadros de palabra desde el audio; lee la tira de volumen por cuadro para cada palabra del muro
+# editar: el bloque CLIP en build.py: PHRASES siempre, KEEP cuando la persona está sentada sobre o detrás de algo.
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # arma con la guía puesta, lint, mira instantáneas (una por cambio, una al final); lee su tabla de filas y cualquier línea "!!"
 PY "SK/scripts/fx_run.py" "<slot>" hf lint
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <times in seconds, comma separated>
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <tiempos en segundos, separados por coma>
 PY "SK/scripts/fx_run.py" "<slot>" build.py      # render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-In the main video: build with `SFX=0` if it has its own sound design, lay the render over the a-roll for exactly these frames, and do not caption them.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+En el video principal: arma con `SFX=0` si tiene su propio diseño de sonido, pon el render sobre la toma exactamente en
+estos cuadros, y no les pongas subtítulos.
 
-## What to look at in the final frames
-- Each swap is on screen on its word's frame (the yellow row first, the rest within a few frames), never before the speaker says it.
-- The speaker's whole outline is clean on every frame: no halo of the old room, no missing fingers, nothing extra floating (picture frames, lamps).
-- The yellow row sits clear above the speaker's head and its word reads whole at the swap. The speaker's face is never covered (the words are behind the speaker by construction).
-- With `KEEP`: no sliver of the old wall above the furniture, and the edge does not swim.
-- The end state holds long enough to read, and the frame count equals `clip.json` `frames`.
+## Qué mirar en los cuadros finales
+- Cada cambio aparece en pantalla en el cuadro de su palabra (la fila dorada primero, el resto en unos pocos cuadros),
+  nunca antes de que la persona lo diga.
+- Toda la silueta de la persona queda limpia en cada cuadro: sin halo del cuarto anterior, sin dedos faltantes, nada
+  extra flotando (cuadros, lámparas).
+- La fila dorada queda libre sobre la cabeza y su palabra se lee completa en el cambio. La cara nunca queda tapada (las
+  palabras están detrás de la persona por construcción).
+- Con `KEEP`: ninguna astilla de la pared vieja sobre el mueble, y el borde no nada.
+- El estado final se mantiene lo suficiente para leerse, y la cantidad de cuadros es igual a `frames` de `clip.json`.
 
-## Traps
-- Everything behind the speaker is replaced. If the speaker sits on a sofa or at a desk and `KEEP` is empty, the speaker floats on the wall. Draw the furniture top edge as a `KEEP` shape, 3 to 5 px inside the furniture, closed along the bottom of the frame. `KEEP` and the row above the speaker's head assume the speaker and the camera stay put: if the speaker stands up or leans far, cut the slot shorter.
-- Whisper word starts drift by a few frames, and `onsets.py` is only a first guess (on the test clip it put "out" on the vowel of the word before). Settle every wall word on the `-v` strip. A frame late is fine, a frame early looks like a mistake.
-- Fast speech: a row that has not finished spreading when the next word is due skips the earlier word. That is by design; the yellow row never skips.
-- The top two rows sit in the top 220 px where app buttons live. That is fine for the marching rows; `build.py` warns if the yellow row itself starts above 220.
-- Bright daylight footage on the dark wall looks cut out on purpose. That is the look. Do not add grain or go black and white to hide it. With the wall up, the kept room is graded like the speaker (about 10% darker) so the seams match.
+## Trampas
+- Todo lo que está detrás de la persona se reemplaza. Si la persona está en un sillón o escritorio y `KEEP` está vacío,
+  la persona flota en el muro. Dibuja el borde superior del mueble como forma `KEEP`, 3 a 5 px dentro del mueble, cerrada
+  a lo largo del borde inferior del cuadro. `KEEP` y la fila sobre la cabeza suponen que la persona y la cámara se
+  quedan quietas: si la persona se levanta o se inclina mucho, acorta el espacio.
+- Los inicios de palabra de Whisper se corren unos cuadros, y `onsets.py` es solo una primera estimación (en el clip de
+  prueba puso "out" en la vocal de la palabra anterior). Ajusta cada palabra del muro en la tira `-v`. Un cuadro tarde
+  está bien, un cuadro antes se ve como un error.
+- Habla rápida: una fila que no terminó de esparcirse cuando toca la palabra siguiente salta la palabra anterior. Es a
+  propósito; la fila dorada nunca salta.
+- Las dos filas superiores van en los 220 px superiores donde viven los botones de la app. Eso está bien para las filas
+  que desfilan; `build.py` avisa si la fila dorada en sí empieza sobre 220.
+- Imágenes de luz de día brillante sobre el muro oscuro se ven recortadas a propósito. Ese es el look. No agregues grano
+  ni pases a blanco y negro para esconderlo. Con el muro arriba, el cuarto que se conserva recibe el mismo color que la
+  persona (cerca de 10% más oscuro) para que las uniones calcen.

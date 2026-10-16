@@ -1,65 +1,92 @@
-# frame-break
+# frame-break (Rompe Cuadro)
 
-**What it does:** the whole video shrinks into a floating card that looks like a phone post, over a blurred copy of the room. The speaker's head rises over the card's top edge and reaching hands pass its sides, then the card grows back to full frame.
-**Job:** hook (also a CTA beat: "follow", "comment WORD"). Set `F_IN` and `F_OUT`: the frames before the shrink and from `F_OUT` on are untouched a-roll. With `F_OUT = None` the card stays and the effect is meant to END ON A CUT (last shot of a reel, or the reel cuts away on the slot's last frame).
-**Trigger phrases:** "shrink the video into a card and let me break out of it", "make me pop out of the frame", "frame break".
+**Qué hace:** todo el video se achica en una tarjeta flotante que parece una publicación en el celular, sobre una copia
+desenfocada del cuarto. La cabeza de la persona sobresale por el borde superior de la tarjeta y las manos pasan por sus
+lados, luego la tarjeta vuelve a crecer a cuadro completo.
+**Función:** gancho (también un momento de llamado: "sígueme", "comenta PALABRA"). Pon `F_IN` y `F_OUT`: los cuadros
+antes de achicarse y desde `F_OUT` en adelante son la toma sin tocar. Con `F_OUT = None` la tarjeta se queda y el
+efecto debe TERMINAR EN UN CORTE (la última toma de un reel, o el reel corta en el último cuadro del espacio).
+**Frases que lo activan:** "achica el video en una tarjeta y déjame salir", "haz que salga del cuadro", "rompe cuadro".
 
-## Nothing is shown that the user did not give
-The card carries icons only: no like, comment or share counts, ever. No name row, no line of text, no Follow button unless the user gives their own handle (`NAME`) and wording. Never make up a handle, a count or a comment author.
+## No se muestra nada que el usuario no haya dado
+La tarjeta lleva solo íconos: nunca conteos de me gusta, comentarios ni compartidos. Sin fila de nombre, sin línea de
+texto, sin botón Seguir salvo que el usuario dé su propio usuario (`NAME`) y el texto. Nunca inventes un usuario, un
+conteo ni el autor de un comentario.
 
-## Footage it needs
-- **Shot:** medium or wide, ONE continuous shot, 3 to 6 s, head in the upper half with some room above it. Best with a hand gesture that reaches sideways at chest height or higher.
-- **Camera:** still, drifting or moving all work (picture and cutout move together; nothing is tracked).
-- **Wall:** none needed.
-- **Cutout:** layered (`assets/subject.webm` is drawn over the card) and measured (head, body outline, hands).
-- **What breaks it:** a tight close-up (the head fills the frame, so the card ends up under the chin and little rises out of it); a head touching the top of the frame (nothing to stand above the edge); a cutout that loses hair or fast fingers (the lost part stays inside the card and the edge of the pop-out flickers); two people; a hood or long hair over the shoulders (no neck to find: set `HEAD`). Hands that never leave the body: still works, as a head pop-out only, and `prep.py` prints that.
+## Toma que necesita
+- **Plano:** medio o abierto, UNA toma continua, 3 a 6 s, cabeza en la mitad superior con algo de espacio sobre ella.
+  Mejor con un gesto de la mano que se estira hacia el lado a la altura del pecho o más arriba.
+- **Cámara:** quieta, con deriva o en movimiento funcionan (imagen y recorte se mueven juntos; no se sigue nada).
+- **Pared:** no hace falta.
+- **Recorte:** como capa (`assets/subject.webm` se dibuja sobre la tarjeta) y medido (cabeza, silueta del cuerpo,
+  manos).
+- **Qué lo rompe:** un plano muy cercano (la cabeza llena el cuadro, así que la tarjeta queda bajo la barbilla y poco
+  sobresale); una cabeza que toca el borde superior (nada que asome sobre el borde); un recorte que pierde pelo o dedos
+  rápidos (la parte perdida se queda dentro de la tarjeta y el borde de lo que sale parpadea); dos personas; una
+  capucha o pelo largo sobre los hombros (no hay cuello que encontrar: pon `HEAD`). Manos que nunca salen del cuerpo:
+  igual funciona, solo como cabeza que sale, y `prep.py` lo imprime.
 
-**Slot inputs:** cutout yes, `aroll_hi` no. Python: numpy and Pillow for `prep.py` and `onsets.py`; `build.py` needs nothing.
+**Entradas del espacio:** recorte sí, `aroll_hi` no. Python: numpy y Pillow para `prep.py` y `onsets.py`; `build.py`
+no necesita nada.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `F_IN` | frame the card has landed | `onsets.py`, "onset" of the word; 23 or later (the shrink takes 21 frames) |
-| `F_OUT` | frame the picture is full frame again, or `None` | onset of a later word, 45+ after `F_IN`, 2+ before the last frame |
-| `HEAD_OUT` | how much head stands above the card edge, in head heights | `'auto'` = 0.3 (medium shot) to 1.0 (wide shot); 1.5 = head and shoulders |
-| `CARD` | card rectangle in a-roll px, or `None` = measured | read off `work/check.jpg` (1/3 size) only if the cyan box is wrong |
-| `SCALE` | card size on screen | `'auto'` fills the safe zone; a number only shrinks it |
-| `HEAD` | `(top_y, chin_y)` by hand | only when the green box is not on the head |
-| `SIDE_POP` | hands may pass the card's sides | `False` = only what is above the top edge comes out |
-| `ICONS` | like / comment / share icons on the card | no counts either way |
-| `NAME`, `CARD_LINE` | the user's handle and one short line | ask the user; `''` = not drawn |
-| `FOLLOW_AT` | frame of "follow": the Follow button is tapped | needs `NAME`; `None` = off |
-| `COMMENT` | `('WORD', frame)`: keyword pops out of the comment icon | the word the speaker says, its onset; `None` = off |
-| `LIKE_AT` | frame the heart fills | `None` = off |
-| `TILT`, `GRADE`, `SOUNDS` | card tilt (0 = flat), css filter (`''` = off, default), sounds on/off | defaults |
+| `F_IN` | cuadro en que la tarjeta ya llegó | `onsets.py`, "onset" de la palabra; 23 o más (achicarse toma 21 cuadros) |
+| `F_OUT` | cuadro en que la imagen vuelve a cuadro completo, o `None` | inicio de una palabra posterior, 45+ después de `F_IN`, 2+ antes del último cuadro |
+| `HEAD_OUT` | cuánta cabeza sobresale del borde de la tarjeta, en alturas de cabeza | `'auto'` = 0,3 (plano medio) a 1,0 (plano abierto); 1,5 = cabeza y hombros |
+| `CARD` | rectángulo de la tarjeta en px de la toma, o `None` = medido | léelo en `work/check.jpg` (a 1/3 del tamaño) solo si la caja cian está mal |
+| `SCALE` | tamaño de la tarjeta en pantalla | `'auto'` llena la zona segura; un número solo la achica |
+| `HEAD` | `(top_y, chin_y)` a mano | solo cuando la caja verde no está sobre la cabeza |
+| `SIDE_POP` | las manos pueden pasar por los lados de la tarjeta | `False` = solo sale lo que está sobre el borde superior |
+| `ICONS` | íconos de me gusta / comentario / compartir en la tarjeta | sin conteos en ningún caso |
+| `NAME`, `CARD_LINE` | el usuario de la persona y una línea corta | pregúntale; `''` = no se dibuja |
+| `FOLLOW_AT` | cuadro de "sígueme": se toca el botón Seguir | necesita `NAME`; `None` = apagado |
+| `COMMENT` | `('PALABRA', cuadro)`: la palabra sale del ícono de comentario | la palabra que dice la persona, su inicio; `None` = apagado |
+| `LIKE_AT` | cuadro en que se llena el corazón | `None` = apagado |
+| `TILT`, `GRADE`, `SOUNDS` | inclinación de la tarjeta (0 = plana), filtro css (`''` = apagado, por defecto), sonidos sí/no | por defecto |
 
-**Switches:** `SAFE=1` draws the safe-zone guide (snapshots only). `CAPTIONS=0` drops the text on the card (`CARD_LINE` and the `COMMENT` word). `SFX=0` drops the sounds.
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `CAPTIONS=0` saca el texto de la
+tarjeta (`CARD_LINE` y la palabra de `COMMENT`). `SFX=0` saca los sonidos.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. word onsets as frames -> F_IN, F_OUT (and FOLLOW_AT ...)
-# edit: the CLIP block in build.py
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. measure + bake (about 1 min). LOOK at work/check.jpg:. cyan card under the head, green box on the head, pink = what comes out. Wrong? change HEAD_OUT / CARD / HEAD,. try with prep.py and the argument "measure" (5 s), then run prep.py once more without it
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 3. page with the safe guide
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 0.0,1.5,2.0,3.0,4.0      # use your own times
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. inicios de palabra como cuadros -> F_IN, F_OUT (y FOLLOW_AT ...)
+# editar: el bloque CLIP en build.py
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. medir + hornear (cerca de 1 min). MIRA work/check.jpg: tarjeta cian bajo la cabeza, caja verde en la cabeza, rosado = lo que sale. ¿Mal? cambia HEAD_OUT / CARD / HEAD, prueba con prep.py y el argumento "measure" (5 s), luego ejecuta prep.py una vez más sin él
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 3. página con la guía de seguridad
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 0.0,1.5,2.0,3.0,4.0      # usa tus propios tiempos
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # 5. plain frames at both ends vs the a-roll + work/final_sheet.jpg
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # 5. cuadros simples en ambos extremos contra la toma + work/final_sheet.jpg
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
 
-## What to look at in the final frames
-- Frame 0, the frame before the shrink, and (with `F_OUT`) the frame of `F_OUT` and the last frame: plain picture, same as the a-roll, no rim, no dark edge.
-- The frame of `F_IN`: card landed and sharp, icons arriving. The face is never covered by an icon, the name row or the comment word.
-- Head at full size: the part above the card edge has a clean outline against the dark room and does not slide against the part inside the card. Hands: fingers that pass the side edge are whole, not cut by a straight line.
-- With `SAFE=1`: card, icons and text inside the safe zone (top 220, nothing below 1470, sides 35, right 100 from y 1155). `build.py` prints the card's screen box.
-- The render has exactly the `frames` of `clip.json` and the speaker's audio (ffprobe it).
+## Qué mirar en los cuadros finales
+- El cuadro 0, el cuadro antes de achicarse, y (con `F_OUT`) el cuadro de `F_OUT` y el último cuadro: imagen simple,
+  igual a la toma, sin borde, sin orilla oscura.
+- El cuadro de `F_IN`: tarjeta llegada y nítida, íconos llegando. La cara nunca queda tapada por un ícono, la fila del
+  nombre o la palabra del comentario.
+- Cabeza a tamaño completo: la parte sobre el borde de la tarjeta tiene una silueta limpia contra el cuarto oscuro y no
+  se desliza respecto de la parte dentro de la tarjeta. Manos: los dedos que pasan por el borde lateral están
+  completos, no cortados por una línea recta.
+- Con `SAFE=1`: tarjeta, íconos y texto dentro de la zona segura (arriba 220, nada bajo 1470, lados 35, derecha 100
+  desde y 1155). `build.py` imprime la caja de la tarjeta en pantalla.
+- El render tiene exactamente los `frames` de `clip.json` y el audio de la persona (revísalo con ffprobe).
 
-## Traps
-- Changing `F_IN` or `F_OUT` changes which frames are measured: `build.py` refuses to run until `prep.py` has run again.
-- The cutout is only kept down to a line under the shoulders (yellow lines on the check sheet). Below it, everything outside the card is hidden on purpose, so a hand gesturing at belly height is clipped by the card like the rest of the picture.
-- Shoulders wider than the card fade out softly just outside its sides. If that reads as a ghost, give a wider `CARD` or set `SIDE_POP = False`.
-- A hand raised above the head makes the card smaller on screen (everything that rises out has to fit under the top 220 px). Pick the span of the slot so a stray high wave is not in it.
-- `GRADE` stays on for the whole slot, including the plain frames at both ends. Leave it off unless the reel is graded the same way.
-- Sounds are the stock template ones at 0.75x volume: a whoosh in, a whoosh back, a soft click on the follow tap, a pop on the comment word.
+## Trampas
+- Cambiar `F_IN` o `F_OUT` cambia qué cuadros se miden: `build.py` se niega a correr hasta que `prep.py` corra de nuevo.
+- El recorte se conserva solo hasta una línea bajo los hombros (líneas amarillas en la hoja de revisión). Debajo, todo
+  lo que está fuera de la tarjeta se oculta a propósito, así que una mano que gesticula a la altura del estómago queda
+  cortada por la tarjeta como el resto de la imagen.
+- Hombros más anchos que la tarjeta se desvanecen suavemente justo fuera de sus lados. Si se lee como un fantasma, da
+  un `CARD` más ancho o pon `SIDE_POP = False`.
+- Una mano levantada sobre la cabeza achica la tarjeta en pantalla (todo lo que sale tiene que caber bajo los 220 px
+  superiores). Elige el tramo del espacio para que no tenga un movimiento alto suelto.
+- `GRADE` queda puesto en todo el espacio, incluidos los cuadros simples de ambos extremos. Déjalo apagado salvo que el
+  reel tenga el mismo color.
+- Los sonidos son los de la plantilla a 0,75x de volumen: un whoosh al entrar, un whoosh al volver, un clic suave en el
+  toque de seguir, un pop en la palabra del comentario.

@@ -1,63 +1,99 @@
-# timeline-burn
+# timeline-burn (Línea en Llamas)
 
-**What it does:** a video-editing timeline assembles in front of the speaker (lower third, under the chin), a cursor makes two slow edits, the timeline overheats, catches fire on a spoken word, burns right to left and crumbles into embers. Then the plain picture is back.
-**Job:** hook (also a punchline mid-video: "you do not need X any more", "X is done").
-**Trigger phrases:** "put an editing timeline on screen and burn it when I say X", "burn the timeline on X", "timeline burn".
+**Qué hace:** una línea de tiempo de edición de video se arma delante de la persona (tercio inferior, bajo la barbilla),
+un cursor hace dos ediciones lentas, la línea de tiempo se recalienta, se prende fuego en una palabra dicha, se quema de
+derecha a izquierda y se deshace en brasas. Luego vuelve la imagen simple.
+**Función:** gancho (también un remate a mitad de video: "ya no necesitas X", "X se acabó").
+**Frases que lo activan:** "pon una línea de tiempo de edición y quémala cuando digo X", "quema la línea de tiempo en
+X", "línea en llamas".
 
-## Footage it needs
-- **Shot:** wide or medium. On the 1080x1920 slot the chin has to be above about y 980 for the timeline plus a caption line, above about y 1100 for the timeline alone. Close fails: with the face that low there is no room under it inside the safe zone and `build.py` stops with "No room for the timeline".
-- **Camera:** still, drifting or moving. Nothing is tracked: the timeline is a screen overlay and does not stick to the room.
-- **Wall:** none.
-- **Cutout:** only measured (the head box is read from `assets/subject.webm` so nothing is ever drawn on the face). Not layered: the timeline is in front of the speaker and hands that drop that low go behind it. Type `FACE` and the slot can be made with `--no-cutout`. `aroll_hi` is not used.
-- **Breaks it:** a slot with fewer than 30 frames before the burn word or fewer than 30 after it; a face that sinks below y 1100 during the slot; a hand at the face, a hood, long hair or a raised knee (the head box becomes a guess: `build.py` says so, type `FACE`); a bright busy picture with `DIM = 0` (the fire reads best on a dark or dimmed shot).
-- **Edges:** frame 0 and the last frame are the untouched clip. The effect starts on `F_IN` and everything, dim included, is gone 28 frames after the burn. It cannot end on the fire: the slot has to run 30 frames past the burn word.
-- Python: numpy, scipy, Pillow. No extra packages, no model of its own, no shipped media.
+## Toma que necesita
+- **Plano:** abierto o medio. En el espacio de 1080x1920 la barbilla tiene que estar sobre y 980 aprox. para la línea de
+  tiempo más una línea de subtítulos, sobre y 1100 aprox. para la línea de tiempo sola. Cercano falla: con la cara tan
+  baja no hay espacio bajo ella dentro de la zona segura y `build.py` se detiene con "No room for the timeline".
+- **Cámara:** quieta, con deriva o en movimiento. No se sigue nada: la línea de tiempo es una capa de pantalla y no se
+  pega al cuarto.
+- **Pared:** ninguna.
+- **Recorte:** solo se mide (la caja de la cabeza se lee de `assets/subject.webm` para que nunca se dibuje nada sobre la
+  cara). No va como capa: la línea de tiempo está delante de la persona y las manos que bajan tanto pasan por detrás.
+  Escribe `FACE` y el espacio se puede crear con `--no-cutout` (útil si el recorte mezcla la ropa con la silla).
+  `aroll_hi` no se usa.
+- **Lo rompe:** un espacio con menos de 30 cuadros antes de la palabra del fuego o menos de 30 después; una cara que baja
+  de y 1100 durante el espacio; una mano en la cara, una capucha, pelo largo o una rodilla levantada (la caja de la
+  cabeza se vuelve una suposición: `build.py` lo dice, escribe `FACE`); una imagen clara y recargada con `DIM = 0` (el
+  fuego se lee mejor en una toma oscura u oscurecida).
+- **Bordes:** el cuadro 0 y el último son el clip sin tocar. El efecto empieza en `F_IN` y todo, atenuación incluida, se
+  fue 28 cuadros después del fuego. No puede terminar en el fuego: el espacio tiene que seguir 30 cuadros después de la
+  palabra del fuego.
+- Python: numpy, scipy, Pillow. Sin paquetes extra, sin modelo propio, sin material incluido.
 
-## Words, captions and the reel's style
-- The words it draws (track labels, timecodes, optional clip names) **are the effect itself**, not speech. It draws no spoken words, so there is no caption switch to turn off: the reel's captions **keep running** through the slot.
-- The timeline sits where chest captions go. `build.py` prints `fx_add.py --caption-y N`: the reel's captions move to the line above the timeline for the slot. When there is no room for that line it says so: add the slot with `--captions hide` instead (the one case where the captions pause).
-- **`STYLE` block** (top of `build.py`, above the CLIP block): `FONT`, `WEIGHT`, `CASE`, `TEXT`, `LABEL_PX`, `NAME_PX`, `ACCENT`, `PANEL`, `PANEL_EDGE`, `PALETTE`. When the reel has a caption or overall style, set typeface, case, weight and colours here BEFORE the first build (`ACCENT` = the reel's accent colour). The fire stays fire coloured. Placement is `PANEL_W` / `PANEL_X` / `PANEL_Y` in the CLIP block.
+## Palabras, subtítulos y el estilo del reel
+- Las palabras que dibuja (nombres de pistas, códigos de tiempo, nombres de clips opcionales) **son el efecto**, no
+  habla. No dibuja palabras dichas, así que no hay interruptor de subtítulos que apagar: los subtítulos del reel
+  **siguen corriendo** durante el espacio.
+- La línea de tiempo va donde van los subtítulos del pecho. `build.py` imprime `fx_add.py --caption-y N`: los subtítulos
+  del reel suben a la línea sobre la línea de tiempo durante el espacio. Cuando no hay espacio para esa línea lo dice:
+  agrega el espacio con `--captions hide` en su lugar (el único caso en que los subtítulos se pausan).
+- **Bloque `STYLE`** (inicio de `build.py`, sobre el bloque CLIP): `FONT`, `WEIGHT`, `CASE`, `TEXT`, `LABEL_PX`,
+  `NAME_PX`, `ACCENT`, `PANEL`, `PANEL_EDGE`, `PALETTE`. Cuando el reel tiene un estilo de subtítulos o completo, pon
+  aquí tipografía, mayúsculas, grosor y colores ANTES del primer armado (`ACCENT` = el color de acento del reel,
+  dorado). El fuego sigue color fuego. La ubicación es `PANEL_W` / `PANEL_X` / `PANEL_Y` en el bloque CLIP.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `BURN_AT` | the spoken word it catches fire on (`'word'`, `'word#2'` = second time), or a frame | `build.py words`. Required: the build stops until it is set |
-| `F_IN` | frame the timeline assembles | `None` = 72 frames before the burn. 30 at least; under 69 the cursor edits are left out |
-| `TRACKS` | one dict per track, top to bottom (2 to 6): `label`, `kind` (`'video'`, `'title'`, `'audio'`), `color`, `clips`, `names` | `clips` = a count (laid out from `SEED`) or `(start, end[, 'name'])` from 0 to 1 |
-| `TRACKS[..]['names']` | optional words on the clips | the speaker's own words, short; `[]` = none. Small by nature: they are dressing, not captions |
-| `RULER` | timecodes over the tracks | `'auto'`, your own list of up to 8, or `None` for ticks only |
-| `EDIT` | the cursor that trims one clip and drags another | `False` = no cursor |
-| `DIM` | how much the picture darkens while the timeline is up | 0 = off, 0.4 default, 0.6 dark. Eases in and is back before the slot ends. 0 when the reel's look is already dark |
-| `PANEL_W`, `PANEL_X`, `PANEL_Y` | width, centre x, top y of the timeline | 848 / 540 / `None` (measured: as low as the safe zone allows) |
-| `CAPTION_ROOM` | px kept between chin and timeline for the reel's caption line | 130; 0 = none kept |
-| `FACE` | `(x0, y0, x1, y1)` head box over the whole effect | `None` = measured; read it off `work/layout.jpg` when the red box is wrong |
-| `SEED`, `VOICE`, `SOUNDS` | layout / cracks / embers; the speaker's audio; sound list | defaults |
+| `BURN_AT` | la palabra dicha en que se prende fuego (`'palabra'`, `'palabra#2'` = la segunda vez), o un cuadro | `build.py words`. Obligatorio: el armado se detiene hasta que se pone |
+| `F_IN` | cuadro en que se arma la línea de tiempo | `None` = 72 cuadros antes del fuego. 30 como mínimo; bajo 69 se omiten las ediciones del cursor |
+| `TRACKS` | un diccionario por pista, de arriba abajo (2 a 6): `label`, `kind` (`'video'`, `'title'`, `'audio'`), `color`, `clips`, `names` | `clips` = una cantidad (repartida desde `SEED`) o `(inicio, fin[, 'nombre'])` de 0 a 1 |
+| `TRACKS[..]['names']` | palabras opcionales en los clips | palabras propias de la persona, cortas; `[]` = ninguna. Son pequeñas por naturaleza: decoración, no subtítulos |
+| `RULER` | códigos de tiempo sobre las pistas | `'auto'`, tu propia lista de hasta 8, o `None` para solo rayitas |
+| `EDIT` | el cursor que recorta un clip y arrastra otro | `False` = sin cursor |
+| `DIM` | cuánto se oscurece la imagen mientras la línea de tiempo está arriba | 0 = apagado, 0,4 por defecto, 0,6 oscuro. Entra suave y vuelve antes de que termine el espacio. 0 cuando el look del reel ya es oscuro |
+| `PANEL_W`, `PANEL_X`, `PANEL_Y` | ancho, x central, y superior de la línea de tiempo | 848 / 540 / `None` (medido: lo más abajo que permite la zona segura) |
+| `CAPTION_ROOM` | px que se dejan entre la barbilla y la línea de tiempo para la línea de subtítulos del reel | 130; 0 = no se deja |
+| `FACE` | `(x0, y0, x1, y1)` caja de la cabeza durante todo el efecto | `None` = medida; léela en `work/layout.jpg` cuando la caja roja está mal (con lentes, revisa la barbilla) |
+| `SEED`, `VOICE`, `SOUNDS` | composición / grietas / brasas; el audio de la persona; lista de sonidos | por defecto |
 
-**Switches:** `SAFE=1` safe-zone guide (snapshots only), `SFX=0` no sounds, `DIM=0` no dimming. `CAPTIONS=0` changes nothing (no caption words to drop). There is no grade of its own.
+**Interruptores:** `SAFE=1` guía de zona segura (solo instantáneas), `SFX=0` sin sonidos, `DIM=0` sin oscurecer.
+`CAPTIONS=0` no cambia nada (no hay palabras de subtítulo que sacar). No tiene color propio.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" build.py words      # 1. every word with its frame -> BURN_AT in the CLIP block; reel style -> the STYLE block
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 2. measures the face, places the timeline, page with the guide. Read the !! lines, LOOK at work/layout.jpg
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors (a "file too large" warning is normal)
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <times build.py printed>
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # 3. guide off
+PY "SK/scripts/fx_run.py" "<slot>" build.py words      # 1. cada palabra con su cuadro -> BURN_AT en el bloque CLIP; el estilo del reel -> el bloque STYLE
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 2. mide la cara, ubica la línea de tiempo, página con la guía. Lee las líneas !!, MIRA work/layout.jpg
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores (un aviso de "file too large" es normal)
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <tiempos que imprimió build.py>
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # 3. guía apagada
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # 4. frame count, plain edges, burn frame, face, safe zone, sheet, stills, phone copy
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # 4. cantidad de cuadros, bordes simples, cuadro del fuego, cara, zona segura, hoja, cuadros, copia para celular
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-A 5 s slot takes about 5 minutes after the cutout.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Un espacio de 5 s toma unos 5 minutos después del recorte.
 
-## What to look at (work/check/sheet.jpg)
-- First and last frame, the frame before `F_IN` and the frame 28 after the burn: the plain clip (`check.py` prints the difference).
-- The flash is on the burn frame and the frame before it has none. Say the line out loud against the phone copy: the fire starts on the word.
-- The timeline and every ember stay under the chin and inside the safe zone (red line = y 1470; nothing right of x 980 below y 1155).
-- In the reel: one snapshot inside the slot. The reel's captions sit on the line above the timeline, in the reel's style, nothing doubled.
+## Qué mirar (work/check/sheet.jpg)
+- Primer y último cuadro, el cuadro antes de `F_IN` y el cuadro 28 después del fuego: el clip simple (`check.py`
+  imprime la diferencia).
+- El destello está en el cuadro del fuego y el cuadro anterior no tiene ninguno. Di la frase en voz alta contra la copia
+  para celular: el fuego empieza en la palabra.
+- La línea de tiempo y cada brasa quedan bajo la barbilla y dentro de la zona segura (línea roja = y 1470; nada a la
+  derecha de x 980 bajo y 1155).
+- En el reel: una instantánea dentro del espacio. Los subtítulos del reel van en la línea sobre la línea de tiempo, en
+  el estilo del reel, nada repetido.
 
-## Traps
-- The word's frame: `build.py words` snaps each word to where the voice comes up out of a dip, and prints the transcript's guess beside it. In fast speech the two can differ by 5 frames. Confirm with `PY build.py level <from> <to>` (bars per frame) and type the frame into `BURN_AT` when the word is wrong. One frame early is better than one late.
-- Under 72 frames before the burn the heat-up is squeezed, under 69 the cursor edits go. The full gag needs 2.4 s: start the slot early enough.
-- Long labels are drawn small (the label column is 70 px): 4 characters or fewer. A name that does not fit its clip is left off and reported.
-- Generic on purpose: no app name, logo or real interface. On-screen words are the speaker's own: no invented numbers, names or handles, no em dashes.
-- Sounds: stock `whoosh-short`, `click`, `impact-bass-1` only, at 0.75x template volume. `SOUNDS = []` when the reel has its own hit on that word.
-- After changing `BURN_AT`, `F_IN`, `TRACKS` or `FACE`, run `build.py` again and read the printed `--caption-y`: it moves with the layout.
+## Trampas
+- El cuadro de la palabra: `build.py words` ajusta cada palabra a donde la voz sube desde una caída, e imprime al lado la
+  estimación de la transcripción. En habla rápida los dos pueden diferir en 5 cuadros. Confírmalo con
+  `PY build.py level <desde> <hasta>` (barras por cuadro) y escribe el cuadro en `BURN_AT` cuando la palabra está mal.
+  Un cuadro antes es mejor que uno tarde.
+- Con menos de 72 cuadros antes del fuego el calentamiento se aprieta, con menos de 69 se van las ediciones del cursor.
+  El chiste completo necesita 2,4 s: empieza el espacio con suficiente anticipación.
+- Las etiquetas largas se dibujan pequeñas (la columna de etiquetas mide 70 px): 4 caracteres o menos. Un nombre que no
+  cabe en su clip se omite y se informa.
+- Genérico a propósito: sin nombre de app, logo ni interfaz real. Las palabras en pantalla son de la persona: sin
+  números, nombres ni usuarios inventados, sin guiones largos.
+- Sonidos: solo `whoosh-short`, `click`, `impact-bass-1` de stock, a 0,75x del volumen de la plantilla. `SOUNDS = []`
+  cuando el reel tiene su propio golpe en esa palabra.
+- Después de cambiar `BURN_AT`, `F_IN`, `TRACKS` o `FACE`, ejecuta `build.py` de nuevo y lee el `--caption-y` impreso:
+  se mueve con la composición.

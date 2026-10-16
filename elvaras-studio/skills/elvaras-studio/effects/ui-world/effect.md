@@ -1,65 +1,100 @@
-# ui-world
+# ui-world (Mundo App)
 
-**What it does:** an app screen drops in over the top of the frame and the speaker stands in front of it: the speaker's cutout sits over the screen, the join runs across the speaker's mid-chest, the real room shows in the band below, and the screen plays along with the speaker's words (things land in a message box, a line types and sends, a reply and a step card tick, a result card pops in beside the speaker's head).
-**Job:** explain ("all you do is X, then Y"). Works anywhere in a video: as an opener, mid-video on a how-it-works line, or on the payoff. Set `F_OUT` and the screen lifts away again inside the take.
-**Trigger phrases:** "put me in front of the app screen", "put me in front of the Claude screen", "show the chat behind me while I explain it", "UI world".
+**Qué hace:** una pantalla de app cae sobre la parte superior del cuadro y la persona queda delante de ella: el recorte
+de la persona va sobre la pantalla, la unión cruza a la mitad del pecho, el cuarto real se ve en la franja de abajo, y
+la pantalla acompaña las palabras de la persona (cosas que caen en una caja de mensaje, una línea que se escribe y se
+envía, una respuesta y una tarjeta de pasos que se marcan, una tarjeta de resultado que aparece al lado de la cabeza).
+**Función:** explicar ("solo haces X, después Y"). Funciona en cualquier parte de un video: como apertura, a mitad de
+video en una frase de cómo funciona, o en el remate. Pon `F_OUT` y la pantalla se levanta de nuevo dentro de la toma.
+**Frases que lo activan:** "ponme delante de la pantalla de la app", "ponme delante de la pantalla de Claude", "muestra
+el chat detrás de mí mientras lo explico", "mundo app".
 
-## Footage it needs, and where it fails
-- ONE continuous shot, 3 to 6 s, the speaker facing camera, head and shoulders in frame. Wide and medium shots both work: a small head is punched in up to 1.25x and the whole shot slides down so the speaker's head sits under the screen.
-- Best when the speaker's head is 150 to 320 px tall in the 1080x1920 slot. Leave 1.5 s after the last thing lands.
-- **Fails on:** a tight selfie (head over ~360 px tall: the screen is left with a strip and there is no room band for captions); a speaker who moves a lot up and down or walks (the screen is laid out for the speaker's highest position, nothing is tracked); hands raised above the head (they cut into the message box); a shot that cuts; two people in frame (only the biggest outline is measured); a head already near the bottom of the frame.
-- **Cutout quality decides this effect.** A light screen shows every flaw of the speaker's outline. Clothes the same colour as the chair or sofa behind the speaker are the classic miss (shoulder eaten, or a piece of chair kept). Look at the shoulder line before you render.
+## Toma que necesita, y dónde falla
+- UNA toma continua, 3 a 6 s, la persona de frente a cámara, cabeza y hombros en cuadro. Planos abiertos y medios
+  funcionan: una cabeza pequeña se acerca hasta 1,25x y toda la toma baja para que la cabeza quede bajo la pantalla.
+- Mejor cuando la cabeza de la persona mide 150 a 320 px de alto en el espacio de 1080x1920. Deja 1,5 s después de lo
+  último que aparece.
+- **Falla en:** una selfie justa (cabeza de más de ~360 px de alto: a la pantalla le queda una franja y no hay franja del
+  cuarto para los subtítulos); una persona que se mueve mucho arriba y abajo o camina (la pantalla se compone para la
+  posición más alta de la persona, no se sigue nada); manos levantadas sobre la cabeza (cortan la caja de mensaje); una
+  toma que corta; dos personas en cuadro (solo se mide la silueta más grande); una cabeza que ya está cerca del borde
+  inferior del cuadro.
+- **La calidad del recorte decide este efecto.** Una pantalla clara muestra cada falla de la silueta. Ropa del mismo
+  color que la silla o el sillón detrás es la falla clásica (hombro comido, o un pedazo de silla conservado). Mira la
+  línea de los hombros antes de renderizar. En las tomas de Cristobal en la silla gamer pasa esto: usa las tomas del
+  sillón azul.
 
-**Slot inputs:** cutout yes (`assets/subject.webm`), `aroll_hi` no. Python: numpy, scipy, Pillow (the skill's Python has them). No extra packages, no model of its own.
+**Entradas del espacio:** recorte sí (`assets/subject.webm`), `aroll_hi` no. Python: numpy, scipy, Pillow (el Python de
+la skill los tiene). Sin paquetes extra, sin modelo propio.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `SCREEN` | `'chat'` (packaged chat-style screen with your text) or the path of your own picture / screen recording | your own app or page only; portrait, 1080 px wide or more; put it in `assets/` |
-| `APP_NAME`, `APP_MARK` | chat: name in the header, optional small logo file | your own; `None` = no logo |
-| `GREETING`, `PLACEHOLDER` | chat: line on the empty screen, grey text in the box | `None` = none |
-| `ATTACH` | `(frame, [1 to 5 labels or picture paths])` things that fly into the box | frame of the word ("drop") from `onsets.py` |
-| `TYPE`, `SEND` | `(frame, text)` typed into the box; frame it sends | text max ~30 characters |
-| `REPLY` | `(frame, text)` the answer, streams in word by word | needs `SEND`; max ~34 characters |
-| `STEPS` | `(title, [(frame, row), ...])` 1 to 4 rows that appear and tick | needs `SEND`; rows max ~30 characters |
-| `RESULT` | `(frame, title, picture or None, badge)` card beside the speaker's head | the payoff word; a 9:16 picture works best |
-| `LABELS` | `(frame, TEXT, where)` yellow highlighter tags | where = `'attach'`, `'text'` or `(x, y)` off a `SAFE=1` snapshot |
-| `F_IN`, `F_OUT` | frame the screen drops in; frame it lifts away | `F_OUT = None` stays to the end |
-| `EDGE` | y of the screen's bottom edge (the speaker's chest line) | `None` = measured; set by eye if the pink line in `work/measure.jpg` is off |
-| `HEAD_Y`, `ZOOM` | y the top of the speaker's head is moved down to; punch-in | 860 and `None` (measured). Lower `HEAD_Y` number = more room band, less screen |
-| `RESULT_SIDE` | `'L'` / `'R'` side for the result card | `None` = the side with more room above the speaker's shoulder |
-| `ACCENT`, `HILITE` | button / progress colour; tag colour | your brand colour; butter yellow |
-| `CAPTION_FIX`, `CAP_Y` | fix misheard caption words (`''` drops one); caption line y | read the words printed by `onsets.py` |
-| `SCREEN_ZOOM`, `SCREEN_X`, `SCREEN_Y`, `SCREEN_SCROLL` | media: size, position, slow scroll of your picture | start at 1, 0, 0, 0 and nudge on a snapshot |
-| `SHADOW`, `FIX_EDGE`, `VOICE`, `SOUNDS` | the speaker's shadow on the screen, cleaned cutout, the speaker's audio, sound list | defaults |
+| `SCREEN` | `'chat'` (pantalla de chat incluida con tu texto) o la ruta de tu propia imagen / grabación de pantalla | solo tu propia app o página; vertical, 1080 px de ancho o más; ponla en `assets/` |
+| `APP_NAME`, `APP_MARK` | chat: nombre en el encabezado, archivo de logo pequeño opcional | lo tuyo; `None` = sin logo |
+| `GREETING`, `PLACEHOLDER` | chat: línea en la pantalla vacía, texto gris en la caja | `None` = ninguno. En español ("¿Qué hacemos hoy?", "Escribe aquí...") |
+| `ATTACH` | `(cuadro, [1 a 5 etiquetas o rutas de imágenes])` cosas que vuelan a la caja | cuadro de la palabra ("suelto") desde `onsets.py` |
+| `TYPE`, `SEND` | `(cuadro, texto)` escrito en la caja; cuadro en que se envía | texto de máximo ~30 caracteres |
+| `REPLY` | `(cuadro, texto)` la respuesta, aparece palabra por palabra | necesita `SEND`; máximo ~34 caracteres |
+| `STEPS` | `(título, [(cuadro, fila), ...])` 1 a 4 filas que aparecen y se marcan | necesita `SEND`; filas de máximo ~30 caracteres |
+| `RESULT` | `(cuadro, título, imagen o None, insignia)` tarjeta al lado de la cabeza | la palabra de remate; una imagen 9:16 funciona mejor |
+| `LABELS` | `(cuadro, TEXTO, dónde)` etiquetas de destacador | dónde = `'attach'`, `'text'` o `(x, y)` desde una instantánea con `SAFE=1` |
+| `F_IN`, `F_OUT` | cuadro en que cae la pantalla; cuadro en que se levanta | `F_OUT = None` se queda hasta el final |
+| `EDGE` | y del borde inferior de la pantalla (la línea del pecho) | `None` = medido; ponlo a ojo si la línea rosada de `work/measure.jpg` está corrida |
+| `HEAD_Y`, `ZOOM` | y hasta donde se baja lo alto de la cabeza; acercamiento | 860 y `None` (medido). Un número `HEAD_Y` más bajo = más franja del cuarto, menos pantalla |
+| `RESULT_SIDE` | `'L'` / `'R'` lado de la tarjeta de resultado | `None` = el lado con más espacio sobre el hombro |
+| `ACCENT`, `HILITE` | color del botón / progreso; color de las etiquetas | tu color de marca; dorado |
+| `CAPTION_FIX`, `CAP_Y` | corrige palabras de subtítulo mal escuchadas (`''` saca una); y de la línea de subtítulos | lee las palabras que imprime `onsets.py` |
+| `SCREEN_ZOOM`, `SCREEN_X`, `SCREEN_Y`, `SCREEN_SCROLL` | material: tamaño, posición, desplazamiento lento de tu imagen | empieza en 1, 0, 0, 0 y ajusta en una instantánea |
+| `SHADOW`, `FIX_EDGE`, `VOICE`, `SOUNDS` | la sombra de la persona sobre la pantalla, recorte limpiado, el audio de la persona, lista de sonidos | por defecto |
 
-Any chat part set to `None` is left out. In media mode the chat fields are ignored; `LABELS` with `(x, y)` and captions still work.
-**Switches:** `SAFE=1` draws the safe-zone guide (snapshots only). `CAPTIONS=0` drops the caption words in the room band (the main reel captions it instead). `SFX=0` drops the effect's sounds.
+Cualquier parte del chat puesta en `None` se omite. En modo material los campos del chat se ignoran; `LABELS` con
+`(x, y)` y los subtítulos igual funcionan.
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `CAPTIONS=0` saca las palabras de
+subtítulo de la franja del cuarto (el reel principal las pone en su lugar). `SFX=0` saca los sonidos del efecto.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. word onsets as frames -> fill the CLIP block in build.py
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. measure the speaker + bake the clean cutout (1 to 2 min). LOOK at work/measure.jpg: cyan = head top, yellow = neck, pink = chest line. Pink off the speaker's chest -> set EDGE
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. page with the safe guide; read the WARNING lines it prints
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 0.2,1.0,2.0,3.0,4.0      # (pick the times so one lands just after each of your frames: frame / 30)
-PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. inicios de palabra como cuadros -> llena el bloque CLIP en build.py
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. mide a la persona + hornea el recorte limpio (1 a 2 min). MIRA work/measure.jpg: cian = lo alto de la cabeza, amarillo = cuello, rosado = línea del pecho. Rosado fuera del pecho -> pon EDGE
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. página con la guía de seguridad; lee las líneas WARNING que imprime
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 0.2,1.0,2.0,3.0,4.0      # (elige los tiempos para que uno caiga justo después de cada uno de tus cuadros: cuadro / 30)
+PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
 
-## What to look at in the final frames
-- The speaker's outline against the screen at full size: both shoulders complete, no piece of chair or wall kept, no dark or light fringe around hair, cap and hands.
-- The join: the screen edge crosses the speaker's chest, and there is no seam or colour step on the speaker's body just below it.
-- Each thing lands on its word (pull the word frame and the one before): attachments in the box, the send click, the result card.
-- Nothing on the screen hidden behind the speaker's head that has to be read; the result card clear of the speaker's face; the speaker's face never covered (everything on the screen is behind the speaker).
-- Safe zone: header under y 220, tags and cards inside the sides, captions above y 1470. First and last frame: with `F_IN` > 0 or `F_OUT` set they must be untouched a-roll. Frame count equals `frames` in `clip.json` (ffprobe it).
+## Qué mirar en los cuadros finales
+- La silueta de la persona contra la pantalla a tamaño completo: ambos hombros completos, ningún pedazo de silla o pared
+  conservado, sin borde oscuro o claro alrededor del pelo, el gorro y las manos.
+- La unión: el borde de la pantalla cruza el pecho, y no hay costura ni salto de color en el cuerpo justo debajo.
+- Cada cosa cae en su palabra (saca el cuadro de la palabra y el anterior): adjuntos en la caja, el clic de enviar, la
+  tarjeta de resultado.
+- Nada en la pantalla que haya que leer queda escondido detrás de la cabeza; la tarjeta de resultado libre de la cara; la
+  cara nunca tapada (todo en la pantalla está detrás de la persona).
+- Zona segura: encabezado bajo y 220, etiquetas y tarjetas dentro de los lados, subtítulos sobre y 1470. Primer y último
+  cuadro: con `F_IN` > 0 o `F_OUT` puesto tienen que ser la toma sin tocar. La cantidad de cuadros es igual a `frames`
+  de `clip.json` (revísalo con ffprobe).
 
-## Traps
-- The slot's cutout comes from `_shared/rvm_cut.py`. If a shoulder is eaten or furniture is kept, a better matte beats any tweak here: remake the cutout and pass it with `fx_new.py --cutout-from`, then run `prep.py` again. A lower `EDGE` number (join higher on the speaker's chest) hides a bad shoulder line.
-- `prep.py` measures the neck from the speaker's outline. A hand by the face, a hood or long hair gives a wrong neck: it prints a warning, set `EDGE` yourself. After changing only `EDGE`, `HEAD_Y` or `ZOOM` there is no need to run prep again.
-- The reframe moves and scales the plate and the cutout together, down only. `ZOOM` over 1.25 goes soft on a 1080 slot.
-- The screen needs about 12 frames to arrive: start the slot (or set `F_IN`) at least 12 frames before the first thing lands, and drop `GREETING` when the first thing lands inside the first second.
-- Whisper word starts are 1 to 3 frames off: use the onset column. Captions use `words.json` as is: fix names in `CAPTION_FIX`. A slot that starts mid-sentence can lose its first word in `words.json`.
-- `build.py` stops with a clear message when text does not fit (too many rows, no room for the box). Widths of typed text are estimated, so check a tag placed with `'text'` on a snapshot.
-- A screen recording must cover the whole slot and is played from its start at `F_IN`. Do not show a screen, post or page that is not yours. The demo in `example/` was built by hand (other fonts and accent): see `example/clip.md`.
+## Trampas
+- El recorte del espacio viene de `_shared/rvm_cut.py`. Si un hombro queda comido o se conserva un mueble, un recorte
+  mejor le gana a cualquier ajuste aquí: rehaz el recorte y pásalo con `fx_new.py --cutout-from`, luego ejecuta
+  `prep.py` de nuevo. Un número `EDGE` más bajo (unión más arriba en el pecho) esconde una mala línea de hombros.
+- `prep.py` mide el cuello desde la silueta. Una mano junto a la cara, una capucha o pelo largo dan un cuello
+  equivocado: imprime un aviso, pon `EDGE` tú mismo. Después de cambiar solo `EDGE`, `HEAD_Y` o `ZOOM` no hace falta
+  correr prep de nuevo.
+- El reencuadre mueve y escala la imagen y el recorte juntos, solo hacia abajo. `ZOOM` sobre 1,25 queda blando en un
+  espacio de 1080.
+- La pantalla necesita unos 12 cuadros para llegar: empieza el espacio (o pon `F_IN`) al menos 12 cuadros antes de que
+  caiga lo primero, y saca `GREETING` cuando lo primero cae dentro del primer segundo.
+- Los inicios de palabra de Whisper están 1 a 3 cuadros corridos: usa la columna de inicios. Los subtítulos usan
+  `words.json` tal cual: corrige nombres en `CAPTION_FIX`. Un espacio que empieza a mitad de oración puede perder su
+  primera palabra en `words.json`.
+- `build.py` se detiene con un mensaje claro cuando un texto no cabe (demasiadas filas, sin espacio para la caja). Los
+  anchos del texto tipeado se estiman, así que revisa en una instantánea una etiqueta puesta con `'text'`.
+- Una grabación de pantalla tiene que cubrir todo el espacio y se reproduce desde su inicio en `F_IN`. No muestres una
+  pantalla, publicación o página que no sea tuya. La demo en `example/` se hizo a mano (otras tipografías y acento): ver
+  `example/clip.md`.

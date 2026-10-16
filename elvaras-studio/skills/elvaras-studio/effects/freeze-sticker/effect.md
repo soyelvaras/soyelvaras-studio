@@ -1,65 +1,91 @@
-# sticker (Freeze Sticker)
+# sticker (Sticker Congelado)
 
-**What it does:** on one word the picture freezes and the speaker becomes a die-cut sticker (white border around their outline, soft shadow, slight tilt) slapped onto a colour page, with handwritten notes written on around it. The voice runs on under the freeze.
-**Job:** CTA (also a punchline beat). The frames before `F_FREEZE` are untouched a-roll. **Default `F_OUT = None`: the slot ENDS ON THE STICKER, so the reel ends or cuts there.** With an `F_OUT` frame the sticker is flung off and the plain live picture is back from exactly that frame (a hard cut).
-**Trigger phrases:** "turn me into a sticker on this line", "freeze me into a sticker", "freeze sticker".
+**Qué hace:** en una palabra la imagen se congela y la persona se convierte en un sticker recortado (borde blanco
+alrededor de su silueta, sombra suave, leve inclinación) pegado sobre una página de color, con notas a mano escritas
+alrededor. La voz sigue bajo el congelado.
+**Función:** llamado a la acción (también un momento de remate). Los cuadros antes de `F_FREEZE` son la toma sin tocar.
+**Por defecto `F_OUT = None`: el espacio TERMINA EN EL STICKER, así que el reel termina o corta ahí.** Con un cuadro en
+`F_OUT` el sticker sale volando y la imagen en vivo vuelve exactamente desde ese cuadro (un corte seco).
+**Frases que lo activan:** "conviérteme en un sticker en esta frase", "congélame en un sticker", "sticker congelado".
 
-## Nothing is shown that the user did not give
-The notes are the user's OWN words: ask for them (one or two, 2 to 5 words each). The defaults are placeholders. Never write a number, a result, a handle or a comment keyword the speaker does not say in this clip. No notes from the user = run it with `NOTES = []` (sticker only).
+## No se muestra nada que el usuario no haya dado
+Las notas son las PROPIAS palabras del usuario: pídeselas (una o dos, de 2 a 5 palabras cada una). Los valores por
+defecto son de relleno. Nunca escribas un número, un resultado, un usuario o una palabra para comentar que la persona
+no dice en este clip. Sin notas del usuario = ejecútalo con `NOTES = []` (solo el sticker).
 
-## Footage it needs
-- **Shot:** medium or wide is best (head and chest with air around them). A close-up works, with a large sticker and room for one or two short notes.
-- **Camera:** still, drifting or moving all work (one frame is frozen; nothing is tracked).
-- **Wall:** none needed.
-- **Cutout:** layered and measured: the sticker IS the cutout of the freeze frame (`assets/subject.webm`), and its outline places everything.
-- **What breaks it:** a freeze frame with motion blur, closed eyes or a hand across the face (pick another frame); a cutout that lost hair, fingers or a sleeve on that frame (dented border: `bake.py` prints "ragged"); a speaker cut by BOTH sides of the frame (the sticker cannot be smaller than the screen, notes get little room); a head cut by the top of the frame (flat top); two people (only the larger one is kept); a tight close-up where the head is over 760 px tall on screen (no room for notes).
+## Toma que necesita
+- **Plano:** medio o abierto es lo mejor (cabeza y pecho con aire alrededor). Un plano cercano funciona, con un sticker
+  grande y espacio para una o dos notas cortas.
+- **Cámara:** quieta, con deriva o en movimiento funcionan (se congela un cuadro; no se sigue nada).
+- **Pared:** no hace falta.
+- **Recorte:** como capa y medido: el sticker ES el recorte del cuadro congelado (`assets/subject.webm`), y su silueta
+  ubica todo.
+- **Qué lo rompe:** un cuadro congelado con desenfoque de movimiento, ojos cerrados o una mano cruzando la cara (elige
+  otro cuadro); un recorte que perdió pelo, dedos o una manga en ese cuadro (borde abollado: `bake.py` imprime
+  "ragged"); una persona cortada por AMBOS lados del cuadro (el sticker no puede ser más chico que la pantalla, las
+  notas tienen poco espacio); una cabeza cortada por el borde superior (parte de arriba plana); dos personas (solo se
+  conserva la más grande); un plano muy cercano donde la cabeza mide más de 760 px de alto en pantalla (sin espacio
+  para notas). Una silla oscura que el recorte mezcla con la ropa queda dentro del sticker.
 
-**Slot inputs:** cutout yes, `aroll_hi` no. Python: numpy, scipy and Pillow for `bake.py`, numpy and Pillow for `onsets.py` and `check.py`; `build.py` needs nothing.
+**Entradas del espacio:** recorte sí, `aroll_hi` no. Python: numpy, scipy y Pillow para `bake.py`, numpy y Pillow para
+`onsets.py` y `check.py`; `build.py` no necesita nada.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `F_FREEZE` | frame the picture freezes | `onsets.py`, "onset" of the word; then LOOK at `work/frames.jpg` and move it 1 to 3 frames to the best still |
-| `F_OUT` | `None` (default, ends on the sticker) or the frame the live picture is back | onset of a later word, 24+ after `F_FREEZE`, 2+ before the last frame |
-| `NOTES` | list of `(text, frame, side)` | the user's words; frame = onset of the word the note lands on, `None` = right after the freeze; side `'auto'`, `'top'`, `'left'`, `'right'`; `*stars*` around a word = accent colour and underline |
-| `STAMP` | one short word in a boxed stamp above the first note | the user's word; `''` = off |
-| `ARROW`, `TICKS` | arrow from the first note to the body, three small lines by the head | on by default; the arrow is left out when it has no clear path |
-| `BACKDROP`, `PAGE` | `'page'` = colour page in `PAGE`; `'footage'` = the frozen picture blurred and dimmed | a colour that sets the speaker off; never orange, never a grey |
-| `INK`, `ACCENT` | handwriting colour, colour of starred words | white and butter yellow |
-| `SIZE`, `PLACE`, `TILT` | sticker scale, nudge in px, degrees | `'auto'`; change only after looking at `work/check.jpg` |
-| `BORDER`, `CHOKE` | border px on screen; px shaved off the cutout edge | 20 and 2; `CHOKE` 3 or 4 if a rim of the room shows |
-| `CUT_Y` | straight die-cut across the body at this a-roll y: the sticker floats whole | `None` = the body runs off the bottom of the screen |
-| `HEAD` | `(top_y, chin_y)` in a-roll px | only when the green box on `work/check.jpg` is not on the head |
-| `GRADE`, `SOUNDS` | css filter on the live frames (`''` = off, default), sounds on/off | defaults |
+| `F_FREEZE` | cuadro en que se congela la imagen | `onsets.py`, "onset" de la palabra; luego MIRA `work/frames.jpg` y muévelo 1 a 3 cuadros al mejor cuadro |
+| `F_OUT` | `None` (por defecto, termina en el sticker) o el cuadro en que vuelve la imagen en vivo | inicio de una palabra posterior, 24+ después de `F_FREEZE`, 2+ antes del último cuadro |
+| `NOTES` | lista de `(texto, cuadro, lado)` | las palabras del usuario; cuadro = inicio de la palabra en que aparece la nota, `None` = justo después del congelado; lado `'auto'`, `'top'`, `'left'`, `'right'`; `*estrellas*` alrededor de una palabra = color de acento y subrayado |
+| `STAMP` | una palabra corta en un sello enmarcado sobre la primera nota | la palabra del usuario; `''` = apagado |
+| `ARROW`, `TICKS` | flecha de la primera nota al cuerpo, tres rayitas junto a la cabeza | encendidos por defecto; la flecha se omite cuando no tiene un camino libre |
+| `BACKDROP`, `PAGE` | `'page'` = página de color en `PAGE`; `'footage'` = la imagen congelada desenfocada y atenuada | un color que haga resaltar a la persona (bosque o crema de marca); nunca naranjo, nunca gris |
+| `INK`, `ACCENT` | color de la letra a mano, color de las palabras con estrellas | crema y dorado |
+| `SIZE`, `PLACE`, `TILT` | escala del sticker, ajuste en px, grados | `'auto'`; cámbialo solo después de mirar `work/check.jpg` |
+| `BORDER`, `CHOKE` | px del borde en pantalla; px que se rebajan del borde del recorte | 20 y 2; `CHOKE` 3 o 4 si se ve un borde del cuarto |
+| `CUT_Y` | corte recto a través del cuerpo en esta y de la toma: el sticker flota completo | `None` = el cuerpo sigue hacia abajo fuera de la pantalla |
+| `HEAD` | `(top_y, chin_y)` en px de la toma | solo cuando la caja verde de `work/check.jpg` no está sobre la cabeza |
+| `GRADE`, `SOUNDS` | filtro css en los cuadros en vivo (`''` = apagado, por defecto), sonidos sí/no | por defecto |
 
-**Switches:** `SAFE=1` draws the safe-zone guide (snapshots only). `CAPTIONS=0` drops the notes, stamp, arrow and ticks (sticker only). `SFX=0` drops the sounds.
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `CAPTIONS=0` saca las notas, el sello,
+la flecha y las rayitas (solo el sticker). `SFX=0` saca los sonidos.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. word onsets as frames
-# edit: put the word's onset in F_FREEZE (and note frames, F_OUT) in the CLIP block of build.py
-PY "SK/scripts/fx_run.py" "<slot>" bake.py frames      # 2. LOOK at work/frames.jpg: eyes open, no motion blur, a good expression. This one still is the whole effect: move F_FREEZE if not
-PY "SK/scripts/fx_run.py" "<slot>" bake.py      # 3. bakes the sticker and lays out the notes (5 s). Read its warnings, LOOK at work/check.jpg: border whole, green box on the head, notes clear of the sticker
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # page with the safe guide
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.0,1.4,1.5,1.8,2.4      # your own times: just before the freeze, the freeze, landed, each note written
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. inicios de palabra como cuadros
+# editar: pon el inicio de la palabra en F_FREEZE (y los cuadros de las notas, F_OUT) en el bloque CLIP de build.py
+PY "SK/scripts/fx_run.py" "<slot>" bake.py frames      # 2. MIRA work/frames.jpg: ojos abiertos, sin desenfoque de movimiento, buena expresión. Este cuadro es todo el efecto: mueve F_FREEZE si no
+PY "SK/scripts/fx_run.py" "<slot>" bake.py      # 3. hornea el sticker y ubica las notas (5 s). Lee sus avisos, MIRA work/check.jpg: borde completo, caja verde en la cabeza, notas fuera del sticker
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # página con la guía de seguridad
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.0,1.4,1.5,1.8,2.4      # tus propios tiempos: justo antes del congelado, el congelado, ya pegado, cada nota escrita
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
 PY "SK/scripts/fx_run.py" "<slot>" check.py
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
 
-## What to look at in the final frames
-- Frame 0 and the frame before `F_FREEZE`: plain picture. With `F_OUT`: that frame and the last one too (`check.py` prints it).
-- `work/final_edge.jpg` at full size: the white border runs unbroken around hair, ears and fingers, no rim of the room inside it, no dent where the cutout lost something.
-- Notes: readable, written on their words, never on the sticker, never on each other, inside the safe zone (top 220, nothing below 1470, sides 35, right 100 from y 1155). The body may run below 1470, text may not.
-- No straight cut edge of the body visible at the bottom or sides of the screen while the sticker rests.
-- The render has exactly the `frames` of `clip.json` and the speaker's audio (ffprobe it).
+## Qué mirar en los cuadros finales
+- El cuadro 0 y el cuadro antes de `F_FREEZE`: imagen simple. Con `F_OUT`: ese cuadro y el último también (`check.py`
+  lo imprime).
+- `work/final_edge.jpg` a tamaño completo: el borde blanco corre sin cortes alrededor del pelo, las orejas y los dedos,
+  sin borde del cuarto adentro, sin abolladura donde el recorte perdió algo.
+- Notas: legibles, escritas en su palabra, nunca sobre el sticker, nunca una sobre otra, dentro de la zona segura
+  (arriba 220, nada bajo 1470, lados 35, derecha 100 desde y 1155). El cuerpo puede pasar bajo 1470, el texto no.
+- Ningún borde recto de corte del cuerpo visible abajo o a los lados de la pantalla mientras el sticker está quieto.
+- El render tiene exactamente los `frames` de `clip.json` y el audio de la persona (revísalo con ffprobe).
 
-## Traps
-- Any change in the CLIP block (even a note's wording) needs `bake.py` again: `build.py` refuses to run until then.
-- The size is measured, not typed: a speaker cut by the frame on both sides forces a size of 1.0 or more. `CUT_Y` above the point where the shoulders leave the frame frees it (head-and-neck sticker that floats).
-- A raised hand above the head, a hood or long hair can fool the head finder (green box): set `HEAD`.
-- Parts of the cutout not joined to the body on the freeze frame (a hand in the air) are left out, and `bake.py` says so.
-- With `F_OUT`, the sticker flies off the top in 6 frames; a body that runs off the bottom shows its straight cut edge for those frames (blurred, by design).
-- `GRADE` stays on every live frame, including the plain ones: leave it off unless the reel is graded the same way. Sounds are the stock template ones at 0.75x volume, under the voice.
+## Trampas
+- Cualquier cambio en el bloque CLIP (incluso la redacción de una nota) necesita `bake.py` de nuevo: `build.py` se niega
+  a correr hasta entonces.
+- El tamaño se mide, no se escribe: una persona cortada por el cuadro en ambos lados obliga a un tamaño de 1,0 o más.
+  `CUT_Y` sobre el punto donde los hombros salen del cuadro lo libera (sticker de cabeza y cuello que flota).
+- Una mano levantada sobre la cabeza, una capucha o pelo largo pueden engañar al buscador de cabeza (caja verde): pon
+  `HEAD`.
+- Las partes del recorte que no están unidas al cuerpo en el cuadro congelado (una mano en el aire) quedan fuera, y
+  `bake.py` lo dice.
+- Con `F_OUT`, el sticker sale volando por arriba en 6 cuadros; un cuerpo que sigue fuera de la pantalla hacia abajo
+  muestra su borde recto de corte en esos cuadros (desenfocado, a propósito).
+- `GRADE` queda puesto en cada cuadro en vivo, incluidos los simples: déjalo apagado salvo que el reel tenga el mismo
+  color. Los sonidos son los de la plantilla a 0,75x de volumen, bajo la voz.

@@ -1,25 +1,27 @@
-# zoom-through demo clip
+# Corte en Zoom: el clip de demo
 
-> The demo render and stills this note mentions (`demo.mp4`, `stills/`) are not part of the skill. What carries over to a new clip is the CLIP block and the numbers.
+> El render y los cuadros de demo que menciona esta nota (`demo.mp4`, `stills/`) no son parte de la skill. Lo que sirve
+> para un clip nuevo es el bloque CLIP y los números.
 
-**Sources (two shots, 1080x1920):** shot A, 67 frames (wide, sitting on the floor by the armchair). Shot B, 74 frames (wide, in the armchair). 141 frames in total, cut on frame 67.
+**Orígenes (dos tomas, 1080x1920):** toma A, 67 cuadros (abierto, sentado en el piso junto al sillón individual). Toma B,
+74 cuadros (abierto, en el sillón individual). 141 cuadros en total, corte en el cuadro 67.
 
-**Spoken line:** "And you can get the cool girl aesthetic like this. / Or you can get the cool dude aesthetic ..."
+**Frase dicha:** "And you can get the cool girl aesthetic like this. / Or you can get the cool dude aesthetic ..."
 
-**CLIP block that made `demo.mp4`:**
+**Bloque CLIP que hizo `demo.mp4`:**
 
 ```python
-CUT = 67                  # clip.json cut_frames
-HALF = 9                  # 18 transition frames, 58 to 75
-POINT_A = (480, 1212)     # hand-picked on the speaker's black tee, last frame of shot A
-POINT_B = (516, 1200)     # hand-picked on the speaker's tee, first frame of shot B
+CUT = 67                  # cut_frames de clip.json
+HALF = 9                  # 18 cuadros de transición, del 58 al 75
+POINT_A = (480, 1212)     # elegido a mano en la polera negra, último cuadro de la toma A
+POINT_B = (516, 1200)     # elegido a mano en la polera, primer cuadro de la toma B
 DEPTH = 80.0
 SHARP = 2.4
 ROLL = 5.0
 CREEP_A = 1.03
 CREEP_B = 1.04
-GRADE_A = 'girl'          # warm, soft
-GRADE_B = 'dude'          # dark, cool
+GRADE_A = 'girl'          # cálido, suave
+GRADE_B = 'dude'          # oscuro, frío
 CAP_A = {'style': 'girl', 'top': 1126,
          'lead': [(0.42, 'you'), (0.52, 'can'), (0.64, 'get'), (0.80, 'the')],
          'punch': [(0.92, 'cool'), (1.10, 'girl')],
@@ -32,10 +34,19 @@ CAP_B = {'style': 'dude', 'top': 1150,
 WHOOSH_VOL = 0.30
 ```
 
-The packaged `build.py` ships with the same caption words and timings, but with `POINT_A`, `POINT_B`, both `top` values and both grades set to `None` (measured by prep.py, footage left ungraded), which are the right defaults for a new clip.
+El `build.py` del paquete trae las mismas palabras y tiempos de subtítulo, pero con `POINT_A`, `POINT_B`, ambos valores
+`top` y ambos colores en `None` (medidos por prep.py, imagen sin color), que son los valores correctos para un clip
+nuevo.
 
-**Beats:** the "cool girl" block builds word by word over shot A; on frame 58 the camera starts to dive into the speaker's tee and the block rushes past the lens; frame 67 (the cut) is dark with shot B as a small bright burst at the point; shot B opens out and brakes into place by frame 76 with "or you can get the" riding in with the picture; "cool dude" rises on its words.
+**Momentos:** el bloque "cool girl" se arma palabra por palabra sobre la toma A; en el cuadro 58 la cámara empieza a
+entrar en la polera y el bloque pasa rápido por el lente; el cuadro 67 (el corte) es oscuro con la toma B como un
+pequeño destello en el punto; la toma B se abre y frena en su lugar hacia el cuadro 76 con "or you can get the" entrando
+con la imagen; "cool dude" sube en sus palabras.
 
-**What differs from the packaged effect:** `demo.mp4` is the render from before packaging. Around shot B, while it was smaller than the frame, that build used mirrored copies of the room, darkened. The packaged `bake.py` replaces them with the picture's own border colours stretched outward along the zoom rays and fading to dark, so a fresh run of this clip will show soft rays there instead. Everything else (camera curve, blur, portal, captions, whoosh) is the same code path.
+**Qué difiere del efecto empaquetado:** `demo.mp4` es el render de antes de empaquetar. Alrededor de la toma B, mientras
+era más chica que el cuadro, ese armado usaba copias espejadas del cuarto, oscurecidas. El `bake.py` del paquete las
+reemplaza por los propios colores de borde de la imagen estirados hacia afuera a lo largo de los rayos del zoom y
+desvaneciéndose a oscuro, así que una pasada nueva de este clip muestra rayos suaves ahí. Todo lo demás (curva de
+cámara, desenfoque, portal, subtítulos, whoosh) es el mismo código.
 
-**Stills:** `stills/zoom-through-1.jpg` shot A with its caption, `-2.jpg` the pass-through, `-3.jpg` shot B landed.
+**Cuadros:** `stills/zoom-through-1.jpg` toma A con su subtítulo, `-2.jpg` el paso a través, `-3.jpg` toma B llegada.

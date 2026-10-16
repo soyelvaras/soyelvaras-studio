@@ -1,38 +1,51 @@
-# type-wall demo clip
+# Muro de Palabras: el clip de demo
 
-> The demo render and stills this note mentions (`demo.mp4`, `stills/`) are not part of the skill. What carries over to a new clip is the CLIP block and the numbers.
+> El render y los cuadros de demo que menciona esta nota (`demo.mp4`, `stills/`) no son parte de la skill. Lo que sirve
+> para un clip nuevo es el bloque CLIP y los números.
 
-**Source:** the demo clip, 92 frames (3.07 s). Medium shot, the speaker sitting on the floor leaning on a wooden chest, clear wall above the speaker's head (head top y 328 to 340). The camera is not locked: it settles over the first 1.5 s (prep.py measures about 97 px of background movement across the slot).
+**Origen:** el clip de demo, 92 cuadros (3,07 s). Plano medio, la persona sentada en el piso apoyada en un baúl de
+madera, pared libre sobre la cabeza (lo alto de la cabeza en y 328 a 340). La cámara no está fija: se asienta durante
+los primeros 1,5 s (prep.py mide unos 97 px de movimiento del fondo en el espacio).
 
-**Spoken line:** "Everybody's talking about how Claude can edit your videos."
+**Frase dicha:** "Everybody's talking about how Claude can edit your videos."
 
-**CLIP block for this clip** (these are the values the packaged `build.py` ships with):
+**Bloque CLIP de este clip** (son los valores que trae el `build.py` del paquete):
 
 ```python
 PHRASES = [
-    {'words': [(3, 'EVERY'), (11, 'BODY’S'), (21, 'TALKING')]},     # speech starts f3; "body's" is the dip at f11; "talking" f21
-    {'words': [(42, 'CLAUDE')], 'hit': True},                       # the hard "Cl" at f42: wall punch, yellow row, low hit
-    {'words': [(56, 'EDIT'), (65, 'YOUR'), (71, 'VIDEOS')]},        # the wall ends reading EDIT / YOUR / VIDEOS top to bottom
+    {'words': [(3, 'EVERY'), (11, 'BODY’S'), (21, 'TALKING')]},     # la voz empieza en f3; "body's" es la caída en f11; "talking" f21
+    {'words': [(42, 'CLAUDE')], 'hit': True},                       # la "Cl" dura en f42: golpe del muro, fila de acento, impacto grave
+    {'words': [(56, 'EDIT'), (65, 'YOUR'), (71, 'VIDEOS')]},        # el muro termina leyendo EDIT / YOUR / VIDEOS de arriba abajo
 ]
-IN_FRAME = 0        # the clip opens on the wall
+IN_FRAME = 0        # el clip abre con el muro
 OUT_FRAME = None
 KEEP = []
 FS = 205
-ACCENT_Y = None     # measured: yellow row letters y 165 to 314 (the hand-placed demo had them at 167 to 317)
+ACCENT_Y = None     # medido: letras de la fila de acento en y 165 a 314 (la demo a mano las tenía en 167 a 317)
 HEAD_GAP = 14
-XC = {}             # measured: rows 0 to 4 centred at x 470, 536, 200, 940, 1016
+XC = {}             # medido: filas 0 a 4 centradas en x 470, 536, 200, 940, 1016
 GROUND = ('#22261A', '#14160F', '#0B0C09')
 INK = '#EEEADF'
-ACCENT = '#FAE67A'
+ACCENT = '#FAE67A'  # en Soy Elvaras el acento por defecto es dorado #C9A15B
 VOL_IN, VOL_HIT, VOL_SWAP = .28, .08, .16
 ```
 
-**Beats:** rows whip in from alternating sides on the first frame; the wall builds EVERY / BODY'S / TALKING as the speaker says it; on "Claude" every row snaps to CLAUDE spreading out from the row above the speaker's head, the wall punches in and that row turns yellow; then EDIT, YOUR, VIDEOS build down the wall.
+**Momentos:** las filas entran de golpe desde lados alternados en el primer cuadro; el muro arma EVERY / BODY'S /
+TALKING mientras la persona lo dice; en "Claude" cada fila salta a CLAUDE esparciéndose desde la fila sobre la cabeza,
+el muro se acerca de golpe y esa fila pasa al color de acento; luego EDIT, YOUR, VIDEOS se arman hacia abajo.
 
-**How `demo.mp4` differs from what the package builds on the same clip** (the demo render was made before packaging):
-- The chest and rug stay in front of the wall in the demo. That was a hand-drawn shape tracked to the moving camera frame by frame. The package does not ship that tracker: its `KEEP` shapes are fixed, for a still camera. On this clip the package would be run with `KEEP = []` (wall all the way down) or on a locked-off retake.
-- In the demo the rows that will say TALKING are empty until the speaker says it. The package starts every row on the first word and turns rows to the 2nd and 3rd word as the speaker says them (the same way the demo builds EDIT / YOUR / VIDEOS).
-- Row heights and word positions were typed by hand in the demo and are measured from the cutout in the package. The numbers land within 3 px for the yellow row.
-- Word frames: the demo used 56 / 65 / 71 for edit / your / videos. `onsets.py` hears those words start at 53 / 62 / 67. Both read as on the word; the later ones are the ones the demo uses.
+**En qué se diferencia `demo.mp4` de lo que arma el paquete sobre el mismo clip** (el render de demo se hizo antes de
+empaquetar):
+- En la demo el baúl y la alfombra quedan delante del muro. Eso fue una forma dibujada a mano y seguida con la cámara en
+  movimiento cuadro a cuadro. El paquete no trae ese seguimiento: sus formas `KEEP` son fijas, para una cámara quieta. En
+  este clip el paquete se correría con `KEEP = []` (muro hasta abajo) o sobre una toma nueva con cámara fija.
+- En la demo las filas que dirán TALKING están vacías hasta que la persona lo dice. El paquete empieza cada fila en la
+  primera palabra y pasa filas a la 2.ª y 3.ª palabra cuando la persona las dice (igual que la demo arma EDIT / YOUR /
+  VIDEOS).
+- Las alturas de fila y las posiciones de palabra se escribieron a mano en la demo y se miden desde el recorte en el
+  paquete. Los números quedan a menos de 3 px para la fila de acento.
+- Cuadros de palabra: la demo usó 56 / 65 / 71 para edit / your / videos. `onsets.py` oye esas palabras empezar en
+  53 / 62 / 67. Ambos se leen en la palabra; los más tardíos son los que usa la demo.
 
-**Files:** `demo.mp4` (720x1280 preview with sound), `stills/type-wall-1.jpg` to `-3.jpg` (three beats from the demo in order; `-2.jpg` is the CLAUDE hit).
+**Archivos:** `demo.mp4` (vista previa 720x1280 con sonido), `stills/type-wall-1.jpg` a `-3.jpg` (tres momentos de la
+demo en orden; `-2.jpg` es el golpe de CLAUDE).

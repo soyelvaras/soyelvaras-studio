@@ -1,70 +1,115 @@
-# pull-back-reveal
+# pull-back-reveal (Revelado)
 
-**What it does:** the live video shrinks into a card inside a plain app window on a light page. Beside it a checklist of the real edit ticks off, the window's timeline strip plays the reel's own shots, and a counter rolls up to its number as everything turns "done". Then the card grows back to full frame.
-**Job:** proof ("this video was edited by ...", "here is what it just did", "it took N steps"). Works as a hook line or mid-reel.
-**Trigger phrases:** "pull back and show this video being edited", "shrink me into the app window and tick off what it did", "show the edit happening around me".
+**Qué hace:** el video en vivo se achica a una tarjeta dentro de una ventana de app simple sobre una página clara. Al
+lado, un checklist de la edición real se va marcando, la tira de línea de tiempo de la ventana reproduce las tomas del
+propio reel, y un contador sube a su número mientras todo pasa a "listo". Luego la tarjeta vuelve a crecer a cuadro
+completo.
+**Función:** prueba ("este video lo editó ...", "esto es lo que acaba de hacer", "tomó N pasos"). Funciona como frase
+gancho o a mitad del reel.
+**Frases que lo activan:** "aléjate y muestra este video editándose", "achícame en la ventana de la app y marca lo que
+hizo", "muestra la edición pasando a mi alrededor".
 
-## First step: only what is true of this reel
-Everything the window shows is a claim about the buyer's own edit. Write `STEPS` and `SHOTS` from the reel's own edit list (`edl.json` / `plan.json`: how many clips were transcribed, how many shots were cut, each shot's length in frames, whether captions and sound were added). `COUNT_TO`, `COUNT_LABEL` and `COUNT_NAME` are only what the speaker says in this clip. Never invent a step, a count, a number or a name. The frame total is the sum of `SHOTS`, computed, never typed. The window is plain on purpose: a text title, no logo, no real product's interface. The defaults ("Step one", no shots, no counter) are placeholders and `build.py` warns while they are still there. Nothing true to show = leave this effect out.
+## Primer paso: solo lo que es verdad de este reel
+Todo lo que muestra la ventana es una afirmación sobre la edición propia del usuario. Escribe `STEPS` y `SHOTS` desde la
+lista de edición del propio reel (`edl.json` / `plan.json`: cuántos clips se transcribieron, cuántas tomas se cortaron,
+la duración de cada toma en cuadros, si se agregaron subtítulos y sonido). `COUNT_TO`, `COUNT_LABEL` y `COUNT_NAME` son
+solo lo que la persona dice en este clip. Nunca inventes un paso, una cantidad, un número o un nombre. El total de
+cuadros es la suma de `SHOTS`, calculado, nunca escrito. La ventana es simple a propósito: un título de texto, sin logo,
+sin la interfaz de un producto real. Los valores por defecto ("Paso uno", sin tomas, sin contador) son de relleno y
+`build.py` avisa mientras sigan ahí. Nada verdadero que mostrar = deja fuera este efecto.
 
-## Footage it needs
-- **Shot:** wide, medium or close. The whole picture goes into the card (62% size), so the speaker is never cropped.
-- **Camera:** still, drifting or moving. Nothing is tracked.
-- **Wall:** none.
-- **Cutout:** not needed (make the slot with `--no-cutout`).
-- **Breaks it:** a face in the left quarter of the picture at mid height (the checklist covers about 170 px of the card's left edge: set `FACE` and the panel moves off it, or the build warns); a head at the very top of the picture (the title bar covers the top 68 px of the clip); anything that matters in the bottom 240 px of the clip (the timeline strip); a slot under about 3.5 s; a slot that cuts to another shot.
-- **Edges:** frame 0 and the last frame are the untouched clip. The shrink starts on `F_IN`, the picture is back on `F_OUT`. No grade, dim or push-in of its own (`GRADE=0` is accepted and changes nothing). Exception: `F_OUT = 'cut'` keeps the window to the last frame and the reel must cut to another shot there.
+## Toma que necesita
+- **Plano:** abierto, medio o cercano. Toda la imagen entra en la tarjeta (al 62%), así que la persona nunca se corta.
+- **Cámara:** quieta, con deriva o en movimiento. No se sigue nada.
+- **Pared:** ninguna.
+- **Recorte:** no hace falta (crea el espacio con `--no-cutout`). Por eso funciona bien aunque la silla oscura se mezcle
+  con la ropa.
+- **Lo rompe:** una cara en el cuarto izquierdo de la imagen a media altura (el checklist tapa unos 170 px del borde
+  izquierdo de la tarjeta: pon `FACE` y el panel se aparta, o el armado avisa); una cabeza muy arriba en la imagen (la
+  barra de título tapa los 68 px superiores del clip); algo importante en los 240 px inferiores del clip (la tira de
+  línea de tiempo); un espacio de menos de unos 3,5 s; un espacio que corta a otra toma.
+- **Bordes:** el cuadro 0 y el último son el clip sin tocar. Se achica en `F_IN`, la imagen vuelve en `F_OUT`. Sin color,
+  atenuación ni acercamiento propios (`GRADE=0` se acepta y no cambia nada). Excepción: `F_OUT = 'cut'` mantiene la
+  ventana hasta el último cuadro y el reel tiene que cortar a otra toma ahí.
 
-**Slot inputs:** cutout no, `aroll_hi` no. Python: numpy for `onsets.py`, numpy and Pillow for `check.py`; `build.py` needs nothing. No art, stock sounds only.
+**Entradas del espacio:** recorte no, `aroll_hi` no. Python: numpy para `onsets.py`, numpy y Pillow para `check.py`;
+`build.py` no necesita nada. Sin arte, solo sonidos de stock.
 
-## The words are the effect itself: STYLE block (top of build.py)
-The checklist, window title, status line, counter, label and name are the effect, not captions. When the reel has a caption or overall style, set the `STYLE` block to it BEFORE building: `ui_font`, `ui_weight`, `ui_case` (rows, titles), `mono_font` (tag, status, frame count), `num_font` (digits, badge, name), `label_font`, `label_italic`, `label_case`, the colours (`page`, `window`, `panel`, `ink`, `muted`, `accent`, `done`, `highlight` ...), `radius`, and the placement entries `window_x` and `panel_y`. Fonts must be in `assets/fonts/fonts.css`; `width_factor` widens the fit checks for a wider typeface.
-**Captions:** the reel's own captions sit in the middle of the full frame, half off the small card, so they are hidden while the slot plays (`fx_add.py --captions hide`). The effect draws the spoken words on the card instead, from `words.json`, only while the card is small. Set `cap_font`, `cap_weight`, `cap_case`, `cap_size`, `cap_tracking`, `cap_color`, `cap_mark`, `cap_words` to the reel's caption style so the reel keeps one caption look. Limit: the words on the card take typeface, case, size and colour, not a plate behind them and not a word that lights up as it is said: tell the buyer when their style has one of those. Switch: `CAPTIONS=0` draws no caption words (the card then carries no captions unless the reel's own are kept on; those are centred on the frame, not on the card). Keep `F_IN` and the tail after `F_OUT` short: words said while the picture is full frame have no caption.
+## Las palabras son el efecto: bloque STYLE (inicio de build.py)
+El checklist, el título de la ventana, la línea de estado, el contador, la etiqueta y el nombre son el efecto, no
+subtítulos. Cuando el reel tiene un estilo de subtítulos o completo, ajusta el bloque `STYLE` ANTES de armar: `ui_font`,
+`ui_weight`, `ui_case` (filas, títulos), `mono_font` (etiqueta, estado, conteo de cuadros), `num_font` (dígitos,
+insignia, nombre), `label_font`, `label_italic`, `label_case`, los colores (`page`, `window`, `panel`, `ink`, `muted`,
+`accent`, `done`, `highlight` ...), `radius`, y las entradas de ubicación `window_x` y `panel_y`. Las tipografías tienen
+que estar en `assets/fonts/fonts.css`; `width_factor` amplía las revisiones de ajuste para una tipografía más ancha.
+Los textos de la ventana van en español.
+**Subtítulos:** los subtítulos propios del reel van al centro del cuadro completo, medio fuera de la tarjeta pequeña,
+así que se ocultan mientras dura el espacio (`fx_add.py --captions hide`). En su lugar el efecto dibuja las palabras
+dichas en la tarjeta, desde `words.json`, solo mientras la tarjeta está chica. Ajusta `cap_font`, `cap_weight`,
+`cap_case`, `cap_size`, `cap_tracking`, `cap_color`, `cap_mark`, `cap_words` al estilo de subtítulos del reel para que el
+reel mantenga un solo look de subtítulos. Límite: las palabras de la tarjeta toman tipografía, mayúsculas, tamaño y
+color, no una placa detrás ni una palabra que se ilumina al decirse: avísale al usuario cuando su estilo tiene una de
+esas. Interruptor: `CAPTIONS=0` no dibuja palabras de subtítulo (la tarjeta entonces no lleva subtítulos salvo que se
+mantengan los del reel; esos van centrados en el cuadro, no en la tarjeta). Mantén cortos `F_IN` y la cola después de
+`F_OUT`: las palabras dichas mientras la imagen está a cuadro completo no tienen subtítulo.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `STEPS` | 2 to 7 checklist lines, about 22 characters each; `('text', frame)` pins a tick | the reel's edit list; true steps only |
-| `SHOTS` | each shot's length in frames, in order (`[]` = one plain bar, no frame count) | `edl.json`: seconds x 30 |
-| `WINDOW_TITLE`, `WINDOW_FILE` | text at the right of the title bar; small file name in its middle (`''` = none) | the user's words; plain text |
-| `PANEL_TITLE`, `PANEL_TAG` | grey line above the list; pill beside it (`''` = none) | what is doing the work |
-| `STATUS_RUN`, `STATUS_DONE` | status word in the strip, before and after `DONE_AT` | defaults |
-| `COUNT_TO`, `COUNT_UNIT` | number the counter lands on (`None` = no counter); 1 or 2 characters in the badge | a number the speaker says |
-| `COUNT_LABEL`, `COUNT_NAME` | short line under the number; one highlighted word under that (`''` = none) | the speaker's own words |
-| `F_IN` | frame the shrink starts (2 or later); landed 12 frames on | just before the line |
-| `TICK_FROM`, `DONE_AT` | first tick; last tick = timeline finished = counter lands | `onsets.py`: the word that says it is done |
-| `COUNT_AT`, `LABEL_AT`, `NAME_AT` | digits start rolling; label writes on (one frame, or one per word); name wipes in | onsets of those words; `None` = spaced after `DONE_AT` |
-| `F_OUT` | `'auto'` (3 frames before the end), a frame, or `'cut'` | leave 12 frames for the way back |
-| `FACE` | `(x0, y0, x1, y1)` around the face in the clip, px; the panel is kept off it | a frame of `assets/aroll.mp4` |
-| `CAP_FIX`, `CAP_MARK` | misheard caption words `{'heard': 'meant'}`; words in the accent colour | the caption lines `build.py` prints |
-| `SOUNDS`, `SEED` | `'auto'`, `[]`, or `(name, frame, volume)` with stock names; bar shuffle | defaults |
+| `STEPS` | 2 a 7 líneas de checklist, unos 22 caracteres cada una; `('texto', cuadro)` fija una marca | la lista de edición del reel; solo pasos verdaderos |
+| `SHOTS` | la duración de cada toma en cuadros, en orden (`[]` = una barra simple, sin conteo de cuadros) | `edl.json`: segundos x 30 |
+| `WINDOW_TITLE`, `WINDOW_FILE` | texto a la derecha de la barra de título; nombre de archivo pequeño al medio (`''` = ninguno) | las palabras del usuario; texto simple |
+| `PANEL_TITLE`, `PANEL_TAG` | línea gris sobre la lista; cápsula al lado (`''` = ninguna) | lo que está haciendo el trabajo |
+| `STATUS_RUN`, `STATUS_DONE` | palabra de estado en la tira, antes y después de `DONE_AT` | por defecto (ponlas en español: "editando", "listo") |
+| `COUNT_TO`, `COUNT_UNIT` | número en que cae el contador (`None` = sin contador); 1 o 2 caracteres en la insignia | un número que dice la persona |
+| `COUNT_LABEL`, `COUNT_NAME` | línea corta bajo el número; una palabra destacada bajo eso (`''` = ninguna) | las palabras de la persona |
+| `F_IN` | cuadro en que empieza a achicarse (2 o más); llega 12 cuadros después | justo antes de la frase |
+| `TICK_FROM`, `DONE_AT` | primera marca; última marca = línea de tiempo terminada = el contador cae | `onsets.py`: la palabra que dice que está listo |
+| `COUNT_AT`, `LABEL_AT`, `NAME_AT` | los dígitos empiezan a girar; la etiqueta se escribe (un cuadro, o uno por palabra); el nombre aparece | inicios de esas palabras; `None` = repartidos después de `DONE_AT` |
+| `F_OUT` | `'auto'` (3 cuadros antes del final), un cuadro, o `'cut'` | deja 12 cuadros para la vuelta |
+| `FACE` | `(x0, y0, x1, y1)` alrededor de la cara en el clip, px; el panel se mantiene fuera | un cuadro de `assets/aroll.mp4` |
+| `CAP_FIX`, `CAP_MARK` | palabras de subtítulo mal escuchadas `{'escuchado': 'dicho'}`; palabras en el color de acento | las líneas de subtítulo que imprime `build.py` |
+| `SOUNDS`, `SEED` | `'auto'`, `[]`, o `(nombre, cuadro, volumen)` con nombres de stock; mezcla de barras | por defecto |
 
-**Switches:** `SAFE=1` safe-zone guide (snapshots only), `CAPTIONS=0` no caption words on the card, `SFX=0` no sounds, `GRADE=0` accepted (no grade to drop).
+**Interruptores:** `SAFE=1` guía de zona segura (solo instantáneas), `CAPTIONS=0` sin palabras de subtítulo en la
+tarjeta, `SFX=0` sin sonidos, `GRADE=0` se acepta (no hay color que sacar).
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-# first: read the reel's own edit list (edl.json / plan.json) and write STEPS and SHOTS from it: only steps that were really done and the real length of every shot in frames. COUNT_TO, COUNT_LABEL and COUNT_NAME are only what the speaker says in this clip. Never invent a step, a count, a number or a name, never draw a logo. Nothing true to show = leave Pull-Back Reveal out and say so
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. every word with its frame
-# edit: the STYLE block and the CLIP block in build.py (true steps and shot lengths from the reel's edit list)
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 2. page with the guide; prints every beat, the caption lines, the snapshot times
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <times build.py printed>
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # 3. guide off
+# primero: lee la lista de edición propia del reel (edl.json / plan.json) y escribe STEPS y SHOTS desde ella: solo pasos que realmente se hicieron y la duración real de cada toma en cuadros. COUNT_TO, COUNT_LABEL y COUNT_NAME son solo lo que la persona dice en este clip. Nunca inventes un paso, una cantidad, un número o un nombre, nunca dibujes un logo. Nada verdadero que mostrar = deja fuera Revelado y dilo
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. cada palabra con su cuadro
+# editar: el bloque STYLE y el bloque CLIP en build.py (pasos verdaderos y duraciones de toma desde la lista de edición del reel)
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 2. página con la guía; imprime cada momento, las líneas de subtítulo, los tiempos de instantánea
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <tiempos que imprimió build.py>
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # 3. guía apagada
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # 4. frame count, plain edges, work/check/sheet.jpg, phone copy
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # 4. cantidad de cuadros, bordes simples, work/check/sheet.jpg, copia para celular
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
 
-## What to look at (work/check/sheet.jpg)
-- The whole clip sits in the card; the face is clear of the checklist panel, the title bar and the strip.
-- On the DONE frame (not one later): every step ticked, the timeline in the done colour, the frame count at its total, the counter on `COUNT_TO`. The frame before, the last tick is still popping in and the digits are still rolling. Each tick starts two frames before its frame, so it is fully on ON its frame.
-- Every text fits its box (rows inside the panel, title inside the bar, label and name left of the window).
-- With `SAFE=1`: nothing in the red bands. `build.py` prints the window and panel boxes.
-- "before", "back" and "last" are the plain picture (`check.py` prints the difference with the render's overall tone shift taken out); frame count matches `clip.json`.
+## Qué mirar (work/check/sheet.jpg)
+- Todo el clip está en la tarjeta; la cara queda fuera del panel del checklist, la barra de título y la tira.
+- En el cuadro DONE (no uno después): cada paso marcado, la línea de tiempo en el color de listo, el conteo de cuadros en
+  su total, el contador en `COUNT_TO`. En el cuadro anterior, la última marca todavía está apareciendo y los dígitos
+  siguen girando. Cada marca empieza dos cuadros antes de su cuadro, así que está completa EN su cuadro.
+- Cada texto cabe en su caja (filas dentro del panel, título dentro de la barra, etiqueta y nombre a la izquierda de la
+  ventana).
+- Con `SAFE=1`: nada en las franjas rojas. `build.py` imprime las cajas de la ventana y del panel.
+- "before", "back" y "last" son la imagen simple (`check.py` imprime la diferencia descontando el cambio general de tono
+  del render); la cantidad de cuadros coincide con `clip.json`.
 
-## Traps
-- The slot needs about 105 frames with a counter, label and name, plus 15 for the way back: `build.py` says how many when it is short. Ticks are 4 frames or more apart.
-- Text widths are estimated at build time. Another typeface can run wider: look at a snapshot, raise `width_factor`.
-- `window_x = 375` gives a wider left column and bigger digits, but the window's lower right corner then sits under the app's buttons (no text is there).
-- Whisper word starts are 1 to 3 frames off and it mishears names: use the onset column, fix spellings in `CAP_FIX`.
-- Sounds are stock only at 0.75x template volume (`whoosh-short`, `click-soft`, `impact-bass-1`, `pop`). Colours: never orange. `F_OUT = 'cut'` only where the reel really cuts on the slot's last frame; otherwise the window pops off. A 5 s slot takes about 5 minutes (no cutout to wait for).
+## Trampas
+- El espacio necesita unos 105 cuadros con contador, etiqueta y nombre, más 15 para la vuelta: `build.py` dice cuántos
+  cuando es corto. Las marcas están a 4 cuadros o más entre sí.
+- Los anchos de texto se estiman al armar. Otra tipografía puede ser más ancha: mira una instantánea, sube
+  `width_factor`.
+- `window_x = 375` da una columna izquierda más ancha y dígitos más grandes, pero la esquina inferior derecha de la
+  ventana queda bajo los botones de la app (ahí no hay texto).
+- Los inicios de palabra de Whisper están 1 a 3 cuadros corridos y escucha mal los nombres: usa la columna de inicios,
+  corrige la ortografía en `CAP_FIX`.
+- Los sonidos son solo de stock a 0,75x del volumen de la plantilla (`whoosh-short`, `click-soft`, `impact-bass-1`,
+  `pop`). Colores: nunca naranjo. `F_OUT = 'cut'` solo donde el reel realmente corta en el último cuadro del espacio;
+  si no, la ventana sale de golpe. Un espacio de 5 s toma unos 5 minutos (no hay recorte que esperar).

@@ -1,66 +1,99 @@
-# pointer-callout
+# pointer-callout (Llamadas)
 
-**What it does:** callout cards that stay put, each tied to a point on the speaker (head, shoulder, hand, chest) by a thin line that stretches and swings with them on every frame.
-**Job:** explain (name the 2 to 4 things the speaker lists, one card per thing, each landing on its word).
-**Trigger phrases:** "put callout cards on these three things and tie them to me with a line that follows me", "label the things I list and connect them to me", "pointer callouts on this line".
+**Qué hace:** tarjetas de llamada que se quedan en su lugar, cada una unida a un punto de la persona (cabeza, hombro,
+mano, pecho) por una línea delgada que se estira y se balancea con ella en cada cuadro.
+**Función:** explicar (nombrar las 2 a 4 cosas que enumera la persona, una tarjeta por cosa, cada una cayendo en su
+palabra).
+**Frases que lo activan:** "pon tarjetas en estas tres cosas y únelas a mí con una línea que me siga", "etiqueta las
+cosas que enumero y conéctalas a mí", "llamadas en esta frase".
 
-## Footage it needs
-- **Shot:** wide or medium is best (clear background beside or above the speaker). Close works with 1 or 2 short cards tied to `head_left` / `head_right`.
-- **Camera:** still, drifting or moving. The cards stay put on screen, the line end follows the speaker. A camera that swings hard makes the head sweep the frame and leaves less room.
-- **Wall:** beside or above helps (cards go on clear background first). With none, cards sit over the body, never over the head.
-- **Cutout:** only measured (head outline, where the body is, the hands). Nothing is layered over the picture.
-- **Best when** the speaker moves or points: a hand that travels makes the line visibly follow. A still speaker gives a static diagram.
-- **What breaks it:** a tight selfie with a swinging camera (the head fills the safe zone: build.py stops and says how many cards fit, often 1 or 2), a hood or long hair hiding the neck or a hand on the head (track.py stops: no head outline), a second person in the cutout, the speaker leaving the frame. Hands: gloves, bare arms the same colour up to the shoulder, or skin-coloured clothes confuse the hand finder (use head / shoulder / chest).
-- Each card needs 1 s on screen. The slot starts and ends on the plain picture: cards come on at `IN_F` at the earliest and everything is gone 6 frames before the end.
+## Toma que necesita
+- **Plano:** abierto o medio es lo mejor (fondo libre al lado o sobre la persona). Cercano funciona con 1 o 2 tarjetas
+  cortas unidas a `head_left` / `head_right`.
+- **Cámara:** quieta, con deriva o en movimiento. Las tarjetas se quedan en su lugar en pantalla, el extremo de la línea
+  sigue a la persona. Una cámara que se balancea fuerte hace que la cabeza barra el cuadro y deja menos espacio.
+- **Pared:** al lado o arriba ayuda (las tarjetas van primero sobre fondo libre). Sin pared, van sobre el cuerpo, nunca
+  sobre la cabeza.
+- **Recorte:** solo se mide (silueta de la cabeza, dónde está el cuerpo, las manos). Nada se pone como capa sobre la
+  imagen.
+- **Mejor cuando** la persona se mueve o apunta: una mano que viaja hace que la línea la siga a la vista. Una persona
+  quieta da un diagrama estático.
+- **Qué lo rompe:** una selfie cercana con la cámara balanceándose (la cabeza llena la zona segura: build.py se detiene y
+  dice cuántas tarjetas caben, a menudo 1 o 2), una capucha o pelo largo que tapa el cuello o una mano en la cabeza
+  (track.py se detiene: sin silueta de cabeza), una segunda persona en el recorte, la persona que sale del cuadro.
+  Manos: guantes, brazos descubiertos del mismo color hasta el hombro, o ropa color piel confunden al buscador de manos
+  (usa cabeza / hombro / pecho).
+- Cada tarjeta necesita 1 s en pantalla. El espacio empieza y termina en la imagen simple: las tarjetas entran en `IN_F`
+  como pronto y todo se fue 6 cuadros antes del final.
 
-## Slot inputs
-`assets/aroll.mp4`, `assets/subject.webm` (cutout: REQUIRED), `words.json`, `clip.json`. No `aroll_hi`. Fonts (Inter Tight 800) and `pop.mp3`, `click-soft.mp3` come from the template. Python: numpy, scipy, Pillow only. The effect ships no pictures and needs none from the buyer: only their own words for the cards.
+## Entradas del espacio
+`assets/aroll.mp4`, `assets/subject.webm` (recorte: OBLIGATORIO), `words.json`, `clip.json`. Sin `aroll_hi`. Las
+tipografías (Inter Tight 800) y `pop.mp3`, `click-soft.mp3` vienen de la plantilla. Python: solo numpy, scipy, Pillow.
+El efecto no trae imágenes y no necesita ninguna del usuario: solo sus propias palabras para las tarjetas.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `CARDS[i].text` | the words on the card | the speaker's own name for the thing, 1 to 3 words (one long text shrinks every card: none is wider than half the frame). Never a number, result or claim they do not say |
-| `say` | the spoken word the card lands on | as track.py prints it; `'this#2'` = the second "this". `''` = one after the other from `IN_F` |
-| `anchor` | what the line is tied to: `head`, `head_left`, `head_right`, `chest`, `shoulder_left`, `shoulder_right`, `hand_left`, `hand_right` (as seen on screen) | track.py lists the ones that exist, their travel in px and whether they stay in the safe zone. Pick the ones that move |
-| `side` | where the card sits: `'left'`, `'right'`, `'auto'` | `auto` = the clearest spot near its anchor |
-| `icon`, `sub` | icon tile (`check`, `image`, `script`, `launch`, `spark`, `none`) and the small detail under the text (`lines`, `thumbs`, `progress`, `none`) | what suits the thing; `none` for a plain card |
-| `at`, `pos` | optional: seconds (overrides `say`), `(left, top)` px to place one card by hand | only after looking at the snapshot |
-| `IN_F`, `OUT_F` | first frame a card may appear, frame everything is gone by | 4, `None` (6 frames before the end) |
-| `DONE_SAY` | optional word on which every dot pulses and `progress` bars complete | `''` = off |
-| `SIZE`, `FLOOR` | card size (`'auto'` = as large as the open space allows) and the smallest readable size | leave; a number for `SIZE` only to match another slot |
-| `ACCENT`, `CREAM`, `INK` | line / dots / icon tile, text, card | brand colours, never orange |
-| `GRADE` | CSS filter on the picture | `'none'` (the reel grades) |
+| `CARDS[i].text` | las palabras de la tarjeta | el nombre propio que la persona le da a la cosa, 1 a 3 palabras (un texto largo achica todas las tarjetas: ninguna es más ancha que la mitad del cuadro). Nunca un número, resultado o afirmación que no dice |
+| `say` | la palabra dicha en que cae la tarjeta | como la imprime track.py; `'esto#2'` = el segundo "esto". `''` = una tras otra desde `IN_F` |
+| `anchor` | a qué se une la línea: `head`, `head_left`, `head_right`, `chest`, `shoulder_left`, `shoulder_right`, `hand_left`, `hand_right` (como se ve en pantalla) | track.py lista los que existen, cuánto viajan en px y si se quedan en la zona segura. Elige los que se mueven |
+| `side` | dónde va la tarjeta: `'left'`, `'right'`, `'auto'` | `auto` = el lugar más libre cerca de su ancla |
+| `icon`, `sub` | ícono (`check`, `image`, `script`, `launch`, `spark`, `none`) y el detalle pequeño bajo el texto (`lines`, `thumbs`, `progress`, `none`) | lo que le calce a la cosa; `none` para una tarjeta simple |
+| `at`, `pos` | opcional: segundos (reemplaza `say`), `(left, top)` px para ubicar una tarjeta a mano | solo después de mirar la instantánea |
+| `IN_F`, `OUT_F` | primer cuadro en que puede aparecer una tarjeta, cuadro en que todo se fue | 4, `None` (6 cuadros antes del final) |
+| `DONE_SAY` | palabra opcional en que todos los puntos laten y las barras `progress` se completan | `''` = apagado |
+| `SIZE`, `FLOOR` | tamaño de tarjeta (`'auto'` = lo más grande que permite el espacio libre) y el tamaño legible mínimo | déjalos; un número en `SIZE` solo para igualar otro espacio |
+| `ACCENT`, `CREAM`, `INK` | línea / puntos / ícono, texto, tarjeta | colores de marca (dorado, crema, tinta), nunca naranjo |
+| `GRADE` | filtro CSS sobre la imagen | `'none'` (el reel da el color) |
 
-## Switches
-`SAFE=1` safe-zone guide (snapshots only). `SFX=0` no pop sounds. `CAPTIONS=0` is accepted and changes nothing (the effect has no caption words). `DEBUG=1` prints why a card found no spot.
+## Interruptores
+`SAFE=1` guía de zona segura (solo instantáneas). `SFX=0` sin sonidos de pop. `CAPTIONS=0` se acepta y no cambia nada
+(el efecto no tiene palabras de subtítulo). `DEBUG=1` imprime por qué una tarjeta no encontró lugar.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" track.py      # measure the head, the tie points, the open space and the word starts (about 30 s); read what it prints
-# edit: the CLIP block in build.py, then build with the guide on; a line starting with !! is a stop or a warning to act on
+PY "SK/scripts/fx_run.py" "<slot>" track.py      # mide la cabeza, los puntos de anclaje, el espacio libre y los inicios de palabra (cerca de 30 s); lee lo que imprime
+# editar: el bloque CLIP en build.py, luego arma con la guía puesta; una línea que empieza con !! es un alto o un aviso que hay que atender
 PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1
 PY "SK/scripts/fx_run.py" "<slot>" hf lint
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 3.6,4.5      # snapshot 0.6 s after the last card lands and 0.5 s before the end (seconds; build.py prints the landing frames)
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # build without the guide, then render
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 3.6,4.5      # instantánea 0,6 s después de que cae la última tarjeta y 0,5 s antes del final (segundos; build.py imprime los cuadros de llegada)
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # arma sin la guía, luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # numbers, sheet, lock crops, stills, phone copy
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # números, hoja, recortes de fijación, cuadros, copia para celular
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-A 5 s slot takes about 4 minutes end to end once the cutout exists (track 25 s, build 2 s, render 25 s).
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Un espacio de 5 s toma unos 4 minutos de punta a punta una vez que existe el recorte (track 25 s, armado 2 s, render
+25 s).
 
-## What to look at (work/check/)
-- check.py numbers: frame count matches, frame 0 and the last frame plain, 0 changed pixels outside the safe zone and inside the face, each card first seen within 3 frames of its word.
-- `sheet.jpg`: no card or line over the blue head box from the brows down, nothing past the red lines, cards do not touch, lines do not cross.
-- `lock.jpg`: one row per card. The dot sits on the same spot of the speaker in each crop. A dot that wanders = weak track: switch that card to `head` or a shoulder.
-- Text reads at phone size (`renders/<slot>-phone.mp4`). build.py prints the text height in px: under 40 is small.
+## Qué mirar (work/check/)
+- Números de check.py: la cantidad de cuadros coincide, cuadro 0 y último cuadro simples, 0 píxeles cambiados fuera de
+  la zona segura y dentro de la cara, cada tarjeta vista por primera vez dentro de 3 cuadros de su palabra.
+- `sheet.jpg`: ninguna tarjeta ni línea sobre la caja azul de la cabeza desde las cejas hacia abajo, nada pasado las
+  líneas rojas, las tarjetas no se tocan, las líneas no se cruzan.
+- `lock.jpg`: una fila por tarjeta. El punto queda en el mismo lugar de la persona en cada recorte. Un punto que deambula
+  = seguimiento débil: cambia esa tarjeta a `head` o a un hombro.
+- El texto se lee en tamaño celular (`renders/<slot>-phone.mp4`). build.py imprime la altura del texto en px: menos de
+  40 es pequeño.
 
-## Traps
-- No room is a result, not a bug. "no room for 3 cards: 2 fit" means drop a card, shorten the text or tie lines to `head_left` / `head_right`. Do not lower `FLOOR` to squeeze them in.
-- `!! over the body` in the layout line: there is no clear background, the cards cover clothes or hands. Look at the snapshot before rendering.
-- Hands are found by skin colour sampled from the speaker's own face. When a hand is hidden or under y 1470 the line rests on that shoulder and travels back when the hand returns. Under 50% found (track.py says so): prefer a shoulder.
-- A hand that sweeps across the body leaves its card far away: the line gets long and crosses the torso (never the face). If that reads messy, tie that card to a shoulder.
-- Whisper word starts are 0.1 to 0.3 s off: `say` uses the start snapped to the audio (good to about 3 frames). Card early or late in the render: set `at=` in seconds.
-- A point that leaves the safe zone gets one constant nudge (never a per-frame clamp, that unsticks the dot). Too far out = build.py stops and lists the points that are inside.
-- The line travel is computed per frame in Python: a `stroke-dashoffset` draw-on snapped from hidden to full in the renderer. The dot sits exactly on the track, the spring is only in the curve: a lagging dot reads as bad tracking.
-- Snapshots seek loosely during an entrance: judge landing timing on frames from the real render.
-- On screen: the speaker's words only, no made-up names or numbers, no em dashes, no orange.
+## Trampas
+- Que no haya espacio es un resultado, no un error. "no room for 3 cards: 2 fit" significa saca una tarjeta, acorta el
+  texto o une las líneas a `head_left` / `head_right`. No bajes `FLOOR` para meterlas.
+- `!! over the body` en la línea de composición: no hay fondo libre, las tarjetas tapan ropa o manos. Mira la instantánea
+  antes de renderizar.
+- Las manos se encuentran por el color de piel tomado de la propia cara de la persona. Cuando una mano está escondida o
+  bajo y 1470, la línea descansa en ese hombro y vuelve cuando vuelve la mano. Menos de 50% encontrada (track.py lo
+  dice): mejor un hombro.
+- Una mano que barre el cuerpo deja su tarjeta lejos: la línea se alarga y cruza el torso (nunca la cara). Si se ve
+  desordenado, une esa tarjeta a un hombro.
+- Los inicios de palabra de Whisper están 0,1 a 0,3 s corridos: `say` usa el inicio ajustado al audio (preciso a unos 3
+  cuadros). Tarjeta adelantada o atrasada en el render: pon `at=` en segundos.
+- Un punto que sale de la zona segura recibe un ajuste constante (nunca un límite por cuadro, eso despega el punto).
+  Demasiado afuera = build.py se detiene y lista los puntos que están adentro.
+- El recorrido de la línea se calcula por cuadro en Python: un dibujo con `stroke-dashoffset` pasa de oculto a completo
+  en el motor de render. El punto va exactamente sobre el seguimiento, el resorte está solo en la curva: un punto
+  atrasado se lee como mal seguimiento.
+- Las instantáneas buscan de forma aproximada durante una entrada: juzga el tiempo de llegada en cuadros del render
+  real.
+- En pantalla: solo las palabras de la persona, sin nombres ni números inventados, sin guiones largos, sin naranjo.

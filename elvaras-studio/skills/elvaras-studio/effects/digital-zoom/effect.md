@@ -1,61 +1,97 @@
-# digital-zoom
+# digital-zoom (Zoom Digital)
 
-**What it does:** word-timed digital zooms on one continuous shot that aim at the speaker's face, not the frame centre: a slow creep in, a hard snap punch with real zoom blur, a whip pull-back. Any number of moves, in any order.
-**Job:** hook / retention. Gives a single take two or three "camera angles" without a cut.
-**Trigger phrases:** "punch in on my face when I say X", "slow zoom into me on this line", "add digital zooms on the key words", "zoom in, then snap back out when I say Y".
+**Qué hace:** zooms digitales sincronizados con las palabras en una toma continua, que apuntan a la cara de la persona,
+no al centro del cuadro: un acercamiento lento, un golpe seco con desenfoque de zoom real, un regreso rápido. Cualquier
+cantidad de movimientos, en cualquier orden.
+**Función:** gancho / retención. Le da a una sola toma dos o tres "ángulos de cámara" sin cortar.
+**Frases que lo activan:** "acércate a mi cara cuando digo X", "zoom lento hacia mí en esta frase", "agrega zooms
+digitales en las palabras clave", "acércate, y luego vuelve de golpe cuando digo Y".
 
-## Footage it needs, and where it fails
-- One continuous shot (no internal cuts) with the speaker's face visible the whole time. Wide, mid and close-up selfie all work; tripod or handheld both work (the face track holds the speaker, the room moves instead).
-- Best with `assets/aroll_hi.mp4` (make the slot with `--hi`): 1728 wide is lossless to 1.6x, 1440 wide to 1.33x. With a 1080 source every zoom is an upscale: build.py caps the scale at `MAX_UPSCALE` (1.5x) and prints that it did. Keep 1080 clips to a creep of about 1.15 and a snap of about 1.35.
-- Fails or looks wrong when: the speaker's face leaves the frame or turns fully away (the track falls back to the matte and wobbles); a hand covers the speaker's eyes for more than a few frames; the head already fills the frame (nothing left to punch into); the shot has a cut in it.
-- A close-up leaves little room under the chin once zoomed: use `CAPTIONS=0` or one short line (see clearance below).
+## Toma que necesita, y dónde falla
+- Una toma continua (sin cortes internos) con la cara visible todo el tiempo. Plano abierto, medio y selfie cercana
+  funcionan; trípode o en mano funcionan (el seguimiento de la cara sostiene a la persona, el cuarto se mueve en su
+  lugar).
+- Mejor con `assets/aroll_hi.mp4` (crea el espacio con `--hi`): 1728 de ancho no pierde calidad hasta 1,6x, 1440 de
+  ancho hasta 1,33x. Con una fuente de 1080 todo zoom es una ampliación: build.py limita la escala a `MAX_UPSCALE`
+  (1,5x) e imprime que lo hizo. En clips de 1080 mantén un acercamiento de unos 1,15 y un golpe de unos 1,35.
+- Falla o se ve mal cuando: la cara sale del cuadro o se da vuelta por completo (el seguimiento vuelve al recorte y
+  tiembla); una mano tapa los ojos más de unos pocos cuadros; la cabeza ya llena el cuadro (no queda nada donde
+  acercarse); la toma tiene un corte.
+- Un plano cercano deja poco espacio bajo la barbilla una vez acercado: usa `CAPTIONS=0` o una línea corta (ver el
+  margen abajo). Para dejar la barbilla libre de los subtítulos del reel, sube `EYE` (por ejemplo `(540, 600)`).
 
-## Slot inputs
-cutout `assets/subject.webm`: yes (head position). `assets/aroll_hi.mp4`: optional, strongly preferred. `words.json`: only as a guide for `onsets.py`. Python: the skill's Python only (numpy, PIL), no extra packages.
+## Entradas del espacio
+recorte `assets/subject.webm`: sí (posición de la cabeza). `assets/aroll_hi.mp4`: opcional, muy recomendado.
+`words.json`: solo como guía para `onsets.py`. Python: solo el Python de la skill (numpy, PIL), sin paquetes extra.
 
-## CLIP block (top of build.py, between the CLIP markers)
-| Field | What it is | How to find it for a new clip |
+## Bloque CLIP (inicio de build.py, entre los marcadores CLIP)
+| Campo | Qué es | Cómo encontrarlo para un clip nuevo |
 |---|---|---|
-| `ZOOMS` | list of `zoom(t_start, t_land, scale, kind)`, kind `creep` / `snap` / `pull`, times as `F(frame)` | frames from `onsets.py`. creep lands 2 frames after the vowel; snap lands ON the stressed vowel and starts 3 frames before; pull starts on the word's onset, lands ~9 frames later. Optional per zoom: `drift=` (0 = hold still), `over=`, `sfx=False` |
-| `EYE` | where the speaker's eyes sit on screen when tight | (540, 640) wide and mid shots; about (540, 620) on a close-up. build.py prints "aim: ... fully framed from N x": start snaps above N |
-| `FOLLOW` | how tightly the camera follows the speaker's head (sigma, frames) | 5 default; 3 for handheld; 8 to 10 if a tripod background swims |
-| `AIM` | manual eye point `(frame, x, y)`, default `None` | only if `work/track_check.jpg` shows the cross off the speaker's eyes |
-| `MAX_UPSCALE` | how far past lossless a scale may go | leave at 1.5 |
-| `CAPS` | caption groups `(last frame, [(top px, size, [(frame, word, 'y' or '')])])`, size `'sm'` / `'lg'` / `'big'` or a number of px | word frames from `onsets.py`; tops and sizes from the printed clearance (it warns: too close to the chin, below 1470, too wide) |
-| `WHOOSH` | whoosh volume on each snap (0 = none) | 0.26 sits under the speaker's voice at normal speech level |
-| `GRADE` | CSS grade on the picture | leave, or match the reel |
+| `ZOOMS` | lista de `zoom(t_inicio, t_llegada, escala, tipo)`, tipo `creep` / `snap` / `pull`, tiempos como `F(cuadro)` | cuadros de `onsets.py`. creep llega 2 cuadros después de la vocal; snap llega EN la vocal acentuada y empieza 3 cuadros antes; pull empieza en el inicio de la palabra, llega ~9 cuadros después. Opcional por zoom: `drift=` (0 = quieto), `over=`, `sfx=False` |
+| `EYE` | dónde quedan los ojos en pantalla cuando está cerrado | (540, 640) planos abiertos y medios; cerca de (540, 620) en un plano cercano. build.py imprime "aim: ... fully framed from N x": empieza los golpes sobre N |
+| `FOLLOW` | qué tan de cerca sigue la cámara a la cabeza (sigma, cuadros) | 5 por defecto; 3 en mano; 8 a 10 si el fondo de un trípode "nada" |
+| `AIM` | punto de los ojos manual `(cuadro, x, y)`, por defecto `None` | solo si `work/track_check.jpg` muestra la cruz fuera de los ojos (con lentes puede quedar sobre un lente: pon el punto entre los ojos) |
+| `MAX_UPSCALE` | cuánto puede pasar una escala del límite sin pérdida | deja 1,5 |
+| `CAPS` | grupos de subtítulos `(último cuadro, [(top px, tamaño, [(cuadro, palabra, 'y' o '')])])`, tamaño `'sm'` / `'lg'` / `'big'` o px | cuadros de palabra de `onsets.py`; tops y tamaños desde el margen impreso (avisa: muy cerca de la barbilla, bajo 1470, muy ancho) |
+| `WHOOSH` | volumen del whoosh en cada golpe (0 = ninguno) | 0,26 queda bajo la voz a un volumen normal de habla |
+| `GRADE` | color CSS sobre la imagen | déjalo, o iguálalo al reel |
 
-## Switches (environment variables on build.py)
-`SAFE=1` safe-zone guide + eye target + chin line (snapshots only). `CAPTIONS=0` no caption words: ALWAYS in a reel, so the reel's own captions stay on over the zoom in the caption style the buyer picked (the `CAPS` list is only for a stand-alone clip). build.py then prints one "reel captions" line: whether the chin stays clear of the reel's caption band at the tightest zoom. `SFX=0` no whoosh. `GRADE=0` no grade, vignette or flash: use it when the slot is laid into a graded reel, otherwise the look steps at the slot edges. `HI=0` ignore aroll_hi and work from the 1080 a-roll.
+## Interruptores (variables de entorno de build.py)
+`SAFE=1` guía de zona segura + objetivo de los ojos + línea de la barbilla (solo instantáneas). `CAPTIONS=0` sin palabras
+de subtítulo: SIEMPRE en un reel, para que los subtítulos propios del reel sigan sobre el zoom en el estilo que eligió el
+usuario (la lista `CAPS` es solo para un clip suelto). build.py imprime entonces una línea "reel captions": si la
+barbilla queda libre de la franja de subtítulos del reel en el zoom más cerrado. `SFX=0` sin whoosh. `GRADE=0` sin
+color, viñeta ni destello: úsalo cuando el espacio va dentro de un reel con color, si no, el look salta en los bordes del
+espacio. `HI=0` ignora aroll_hi y trabaja desde la toma de 1080.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. onset frame of every word; then edit the CLIP block
-PY "SK/scripts/fx_run.py" "<slot>" track.py      # 2. eye track. LOOK at work/track_check.jpg (cross between the speaker's eyes in every tile)
-PY "SK/scripts/fx_run.py" "<slot>" build.py GRADE=0 CAPTIONS=0      # 3. camera + index.html. Read the printout: caps, scale per frame, the reel captions line
-PY "SK/scripts/fx_run.py" "<slot>" bake.py      # 4. assets/zoom.mp4, 1 to 3 min (PY bake.py --frames 80-90 previews a few frames first)
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # 5. must be 0 errors
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. cuadro de inicio de cada palabra; luego edita el bloque CLIP
+PY "SK/scripts/fx_run.py" "<slot>" track.py      # 2. seguimiento de los ojos. MIRA work/track_check.jpg (cruz entre los ojos en cada recuadro)
+PY "SK/scripts/fx_run.py" "<slot>" build.py GRADE=0 CAPTIONS=0      # 3. cámara + index.html. Lee lo que imprime: subtítulos, escala por cuadro, la línea de subtítulos del reel
+PY "SK/scripts/fx_run.py" "<slot>" bake.py      # 4. assets/zoom.mp4, 1 a 3 min (PY bake.py --frames 80-90 previsualiza unos cuadros primero)
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # 5. tiene que dar 0 errores
 PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 GRADE=0 CAPTIONS=0
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.2,2.9,3.6      # use your own times: one just after each landing
-PY "SK/scripts/fx_run.py" "<slot>" build.py GRADE=0 CAPTIONS=0      # 6. guide off again, same switches as the render
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.2,2.9,3.6      # usa tus propios tiempos: uno justo después de cada llegada
+PY "SK/scripts/fx_run.py" "<slot>" build.py GRADE=0 CAPTIONS=0      # 6. guía apagada de nuevo, los mismos interruptores que el render
 PY "SK/scripts/fx_run.py" "<slot>" hf render --video-frame-format png
-PY "SK/scripts/fx_run.py" "<slot>" post.py      # 7. frame count, renders/<slot>-phone.mp4, stills, work/qa/sheet_*.jpg
+PY "SK/scripts/fx_run.py" "<slot>" post.py      # 7. cantidad de cuadros, renders/<slot>-phone.mp4, cuadros, work/qa/sheet_*.jpg
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-Re-bake after any change to ZOOMS, EYE, FOLLOW, AIM or HI; captions, grade and sound only need build.py and the render.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Vuelve a hornear después de cualquier cambio en ZOOMS, EYE, FOLLOW, AIM o HI; subtítulos, color y sonido solo necesitan
+build.py y el render.
 
-## What to look at in the final frames (work/qa/sheet_*.jpg)
-- Each snap: two blurred travelling frames, then a sharp frame ON the stressed vowel. Each creep: motion stops within a frame or two of its word. Each pull: wide and sharp again before the next phrase.
-- The speaker's eyes on the `EYE` line in every tight frame, face centred. Zoom blur streaks away from the speaker's face, the speaker's face stays the sharpest thing.
-- No caption over eyes to chin, nothing readable above y 220 or below y 1470, right column clear from y 1155.
-- First frame identical to the a-roll. Last frame at exactly 1.0x if the list ends with a pull (otherwise the reel cuts back to the wide, which is a choice: build.py prints a note).
+## Qué mirar en los cuadros finales (work/qa/sheet_*.jpg)
+- Cada golpe: dos cuadros desenfocados en viaje, luego un cuadro nítido EN la vocal acentuada. Cada acercamiento: el
+  movimiento se detiene a uno o dos cuadros de su palabra. Cada regreso: abierto y nítido de nuevo antes de la frase
+  siguiente.
+- Los ojos en la línea `EYE` en cada cuadro cerrado, cara centrada. El desenfoque de zoom se estira alejándose de la
+  cara, la cara queda como lo más nítido.
+- Ningún subtítulo de los ojos a la barbilla, nada legible sobre y 220 ni bajo y 1470, columna derecha libre desde
+  y 1155.
+- El primer cuadro idéntico a la toma. El último cuadro exactamente a 1,0x si la lista termina con un regreso (si no, el
+  reel corta de vuelta al plano abierto, lo que es una decisión: build.py imprime una nota; si el siguiente tramo ya
+  viene acercado, el corte se ve natural).
 
-## Traps
-- Whisper word starts are 1 to 4 frames early or late. Never time a zoom from words.json: use `onsets.py`.
-- The top of the head from the matte is not the eye line (it drifts 20 to 30px when the speaker tips the speaker's head). The plate template match fixes that; the matte is only the guard rail. Trust `track_check.jpg`, not the numbers.
-- An ease-out "arrives" 4 to 5 frames before its last keyframe. That is why a creep's `t_land` goes 2 frames after the vowel.
-- Blur is gated by speed: creeps stay crisp, snaps streak. A creep that covers more than about 0.6x in under 15 frames starts to blur; make it a snap or give it more frames.
-- Caption pops with more than 18px of blur show as a grey smudge for a frame. A tween that starts on a word's frame shows nothing on that frame (`T()` starts it 1.4 frames early).
-- At 1.0x the crop cannot move, so the aim blends in as the scale leaves 1.0. A snap that starts below the "fully framed" scale also slides the picture and smears the speaker's face for its two travelling frames (build.py prints a note). Fix: let a creep reach that scale first, or move `EYE` nearer to where the speaker's eyes already are. The same slide happens at the end of a pull back to 1.0 when the speaker sits off-centre; it is hidden in the whip.
-- The slot render keeps the audio untouched plus the whoosh. If the reel adds its own sound design, render with `SFX=0`.
-- Not built: zooming the cutout as well (for words behind the speaker's head during a zoom). It needs a second bake pass over subject.webm with the same camera.json.
+## Trampas
+- Los inicios de palabra de Whisper llegan 1 a 4 cuadros antes o después. Nunca tomes el tiempo de un zoom desde
+  words.json: usa `onsets.py`.
+- Lo alto de la cabeza según el recorte no es la línea de los ojos (se corre 20 a 30 px cuando la persona inclina la
+  cabeza). La coincidencia de plantilla lo corrige; el recorte es solo la baranda. Confía en `track_check.jpg`, no en los
+  números.
+- Una salida suavizada "llega" 4 a 5 cuadros antes de su último fotograma clave. Por eso el `t_llegada` de un
+  acercamiento va 2 cuadros después de la vocal.
+- El desenfoque depende de la velocidad: los acercamientos quedan nítidos, los golpes se estiran. Un acercamiento que
+  recorre más de unos 0,6x en menos de 15 cuadros empieza a desenfocarse; hazlo golpe o dale más cuadros.
+- Las apariciones de subtítulos con más de 18 px de desenfoque se ven como una mancha gris un cuadro. Una animación que
+  empieza en el cuadro de una palabra no muestra nada en ese cuadro (`T()` la empieza 1,4 cuadros antes).
+- A 1,0x el recorte no se puede mover, así que la mira se mezcla a medida que la escala sale de 1,0. Un golpe que empieza
+  bajo la escala "fully framed" también desliza la imagen y mancha la cara en sus dos cuadros de viaje (build.py imprime
+  una nota). Arreglo: deja que un acercamiento llegue antes a esa escala, o acerca `EYE` a donde ya están los ojos. El
+  mismo deslizamiento pasa al final de un regreso a 1,0 cuando la persona está descentrada; se esconde en el latigazo.
+- El render del espacio deja el audio intacto más el whoosh. Si el reel agrega su propio diseño de sonido, renderiza con
+  `SFX=0`.
+- No implementado: hacer zoom también al recorte (para palabras detrás de la cabeza durante un zoom). Necesita una
+  segunda pasada de horneado sobre subject.webm con el mismo camera.json.

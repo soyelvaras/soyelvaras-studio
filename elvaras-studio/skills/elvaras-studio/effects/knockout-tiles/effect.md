@@ -1,65 +1,100 @@
-# knockout-tiles
+# knockout-tiles (Fichas Fuera)
 
-**What it does:** name tiles slam onto the wall behind the speaker, one per spoken word; each is struck out and knocked away (dropped, flicked or shattered) as the next lands. Optional second half: receipts stack up beside the head while a running total counts them, then the pile is struck and falls.
-**Job:** explain / proof ("you do not need X, Y or Z", "stop paying for A, B and C", any spoken list that gets crossed off).
-**Trigger phrases:** "put these three names on the wall behind me and knock each one out as I say it", "cross them off behind me", "stack the receipts and show what it adds up to".
+**Qué hace:** fichas con nombres caen de golpe en la pared detrás de la persona, una por palabra dicha; cada una se
+tacha y sale volando (cae, se lanza o se rompe) cuando llega la siguiente. Segunda mitad opcional: se apilan recibos al
+lado de la cabeza mientras un total los va sumando, y luego la pila se tacha y cae.
+**Función:** explicar / prueba ("no necesitas X, Y ni Z", "deja de pagar por A, B y C", cualquier lista dicha que se va
+tachando).
+**Frases que lo activan:** "pon estos tres nombres en la pared detrás de mí y saca cada uno cuando lo digo",
+"táchalos detrás de mí", "apila los recibos y muestra cuánto suman".
 
-## First step: only the speaker's own names and amounts
-Every tile is a name the speaker says in this clip or the user gave you. Every amount on a receipt is one they said or supplied; the total is added up by the build, never typed. Never invent a name, a price or a count, and never draw a logo: tiles are plain text. No list in the line = leave this effect out. The CLIP defaults ("Tool one", "Receipt", 0) are placeholders; `build.py` warns while they are still there.
+## Primer paso: solo nombres y montos propios de la persona
+Cada ficha es un nombre que la persona dice en este clip o que te dio el usuario. Cada monto en un recibo es uno que
+dijo o entregó; el total lo suma el armado, nunca se escribe a mano. Nunca inventes un nombre, un precio o una
+cantidad, y nunca dibujes un logo: las fichas son texto simple. Sin lista en la frase = deja fuera este efecto. Los
+valores por defecto del CLIP ("Herramienta uno", "Recibo", 0) son de relleno; `build.py` avisa mientras sigan ahí.
 
-## Footage it needs
-- **Shot:** wide or medium, with wall around the head. Each tile needs about 400 x 150 px of clear wall beside or above the head, inside the safe zone. Close fails: `prep.py` stops with "no clear wall".
-- **Camera:** still. A slow drift is fine (a tile is up for under a second). A moving camera breaks it: the pieces are not tracked to the room.
-- **Wall:** beside the head for tiles and receipts, above it for the third tile and the total. No wall above = tiles alternate left / right and the total needs `TOTAL_POS` or stays off.
-- **Cutout:** layered and measured. `assets/subject.webm` goes over the pieces, and head position, head movement and the clear wall are read from its alpha. `aroll_hi` is not used.
-- **Breaks it:** a cutout that loses hair or keeps a patch of wall (the piece shows through, or is cut by a ghost edge), two people in the shot, big arm swings at head height while a tile is up, a slot that cuts to another shot.
-- **Edges:** frame 0 and the last frame are the untouched clip. The effect switches on at `F_IN` (5 frames before the first tile) and is gone by `F_OUT`; it has no grade, dim or push-in.
+## Toma que necesita
+- **Plano:** abierto o medio, con pared alrededor de la cabeza. Cada ficha necesita unos 400 x 150 px de pared libre al
+  lado o sobre la cabeza, dentro de la zona segura. Cercano falla: `prep.py` se detiene con "no clear wall".
+- **Cámara:** quieta. Una deriva lenta está bien (una ficha está arriba menos de un segundo). Una cámara en movimiento
+  lo rompe: las piezas no se siguen con el cuarto.
+- **Pared:** al lado de la cabeza para fichas y recibos, arriba para la tercera ficha y el total. Sin pared arriba = las
+  fichas alternan izquierda / derecha y el total necesita `TOTAL_POS` o queda apagado.
+- **Recorte:** como capa y medido. `assets/subject.webm` va sobre las piezas, y la posición de la cabeza, su
+  movimiento y la pared libre se leen de su alfa. `aroll_hi` no se usa.
+- **Lo rompe:** un recorte que pierde pelo o conserva un pedazo de pared (la pieza se ve a través, o la corta un borde
+  fantasma), dos personas en la toma, grandes movimientos de brazos a la altura de la cabeza mientras hay una ficha
+  arriba, un espacio que corta a otra toma.
+- **Bordes:** el cuadro 0 y el último son el clip sin tocar. El efecto se enciende en `F_IN` (5 cuadros antes de la
+  primera ficha) y ya se fue en `F_OUT`; no tiene color, atenuación ni acercamiento.
 
-**Slot inputs:** cutout yes, `aroll_hi` no. Python: numpy, Pillow. No extra packages, no art, stock sounds only.
+**Entradas del espacio:** recorte sí, `aroll_hi` no. Python: numpy, Pillow. Sin paquetes extra, sin arte, solo sonidos
+de stock.
 
-## The words are the effect itself: STYLE block (top of build.py)
-The tiles, receipts and total are not captions, so the reel's captions keep running through the slot (the pieces sit at head height and above, captions lower). `CAPTIONS=0` is accepted and changes nothing. When the reel has a caption or overall style, set the `STYLE` block to it before building: `name_font`, `name_weight`, `name_case`, `name_tracking` (names, receipt titles, total), `small_font`, `small_weight`, `small_case` (label, receipt lines, tag), the colours (`tile_bg`, `tile_text`, `label_color`, `strike`, `paper`, `paper_ink`), `radius`, and `order` (which wall spots are used, in turn). Fonts must be in `assets/fonts/fonts.css`. `width_factor` widens the tiles if another typeface touches the edge.
+## Las palabras son el efecto: bloque STYLE (inicio de build.py)
+Las fichas, recibos y total no son subtítulos, así que los subtítulos del reel siguen durante el espacio (las piezas
+van a la altura de la cabeza y más arriba, los subtítulos más abajo). `CAPTIONS=0` se acepta y no cambia nada. Cuando
+el reel tiene un estilo de subtítulos o un estilo completo, ajusta el bloque `STYLE` a ese estilo antes de armar:
+`name_font`, `name_weight`, `name_case`, `name_tracking` (nombres, títulos de recibo, total), `small_font`,
+`small_weight`, `small_case` (etiqueta, líneas de recibo, etiqueta del total), los colores (`tile_bg`, `tile_text`,
+`label_color`, `strike`, `paper`, `paper_ink`), `radius`, y `order` (qué lugares de la pared se usan, por turno). Las
+tipografías tienen que estar en `assets/fonts/fonts.css`. `width_factor` ensancha las fichas si otra tipografía toca el
+borde.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `TILES` | one dict per tile: `text`, `at` (spoken word, `'word#2'`, or frame); optional `exit`, `spot`, `knock` | `prep.py words`; spoken order; 2 to 5 tiles, each up 9 frames or more |
-| `TILE_LABEL` | small line under every name (`''` = none) | what the things are, in the speaker's words |
-| `RECEIPTS_ON` | switch for the second half | `False` = tiles only |
-| `RECEIPTS` | one entry per receipt: a word / frame, or a dict with `at`, `title`, `item`, `amount` | after the last tile; up to 8 |
-| `RECEIPT_TITLE`, `RECEIPT_ITEM`, `RECEIPT_AMOUNT`, `CURRENCY` | defaults for every receipt; text before each amount | whole numbers the speaker said |
-| `TOTAL_AT`, `TOTAL_TAG`, `TOTAL_TAG_AT`, `TOTAL_POS` | when the total lands (`None` = no total), tag under it, hand position | the word where they add it up |
-| `WIPE_AT`, `F_IN`, `F_OUT` | when the pile falls; first and last frame of the effect | `None` = measured; `F_OUT` at most frames - 2 |
-| `WALL`, `SPOTS`, `PILES`, `SIZE` | usable wall box; hand positions; overall size | only when `work/layout.jpg` shows a piece on a window, shelf or furniture |
-| `RECEIPT_FIRST_SIDE`, `VOICE`, `SOUNDS`, `SEED` | first pile side, clip audio, sounds, tilt shuffle | defaults |
+| `TILES` | un diccionario por ficha: `text`, `at` (palabra dicha, `'palabra#2'`, o cuadro); opcional `exit`, `spot`, `knock` | `prep.py words`; en el orden dicho; 2 a 5 fichas, cada una arriba 9 cuadros o más |
+| `TILE_LABEL` | línea pequeña bajo cada nombre (`''` = ninguna) | qué son esas cosas, con las palabras de la persona |
+| `RECEIPTS_ON` | interruptor de la segunda mitad | `False` = solo fichas |
+| `RECEIPTS` | una entrada por recibo: una palabra / cuadro, o un diccionario con `at`, `title`, `item`, `amount` | después de la última ficha; hasta 8 |
+| `RECEIPT_TITLE`, `RECEIPT_ITEM`, `RECEIPT_AMOUNT`, `CURRENCY` | valores por defecto de cada recibo; texto antes de cada monto | números enteros que dijo la persona |
+| `TOTAL_AT`, `TOTAL_TAG`, `TOTAL_TAG_AT`, `TOTAL_POS` | cuándo cae el total (`None` = sin total), etiqueta bajo él, posición a mano | la palabra donde lo suma |
+| `WIPE_AT`, `F_IN`, `F_OUT` | cuándo cae la pila; primer y último cuadro del efecto | `None` = medido; `F_OUT` como máximo frames - 2 |
+| `WALL`, `SPOTS`, `PILES`, `SIZE` | caja de pared usable; posiciones a mano; tamaño general | solo cuando `work/layout.jpg` muestra una pieza sobre una ventana, repisa o mueble |
+| `RECEIPT_FIRST_SIDE`, `VOICE`, `SOUNDS`, `SEED` | lado de la primera pila, audio del clip, sonidos, mezcla de inclinaciones | por defecto |
 
-**Switches:** `SAFE=1` safe-zone guide (snapshots only), `SFX=0` no sounds. `CAPTIONS=0` and `GRADE=0` are accepted and change nothing.
+**Interruptores:** `SAFE=1` guía de zona segura (solo instantáneas), `SFX=0` sin sonidos. `CAPTIONS=0` y `GRADE=0` se
+aceptan y no cambian nada.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-# first: ask which names go on the tiles and, for receipts, which amounts: only names and amounts the speaker says in this clip or the buyer gave you. Never invent a name, a price or a count, never draw a logo. No spoken list = leave Knockout Tiles out and say so
-PY "SK/scripts/fx_run.py" "<slot>" prep.py words      # 1. every word with its frame -> edit STYLE and CLIP in build.py
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. measures the cutout, places every piece -> work/layout.jpg (LOOK)
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 3. page with the guide; prints every beat and the snapshot times
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <times build.py printed>
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. guide off
+# primero: pregunta qué nombres van en las fichas y, para recibos, qué montos: solo nombres y montos que la persona dice en este clip o que te dio el usuario. Nunca inventes un nombre, un precio ni una cantidad, nunca dibujes un logo. Sin lista dicha = deja fuera Fichas Fuera y dilo
+PY "SK/scripts/fx_run.py" "<slot>" prep.py words      # 1. cada palabra con su cuadro -> edita STYLE y CLIP en build.py
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. mide el recorte, ubica cada pieza -> work/layout.jpg (MÍRALO)
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 3. página con la guía; imprime cada momento y los tiempos de instantánea
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <tiempos que imprimió build.py>
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. guía apagada
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # 5. frame count, plain edges, face, work/check/sheet.jpg, phone copy
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # 5. cantidad de cuadros, bordes simples, cara, work/check/sheet.jpg, copia para celular
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-After ANY change to the CLIP block run `prep.py` again (`build.py` refuses a layout made for other values). A 6 s slot takes about 5 minutes after the cutout.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Después de CUALQUIER cambio en el bloque CLIP ejecuta `prep.py` de nuevo (`build.py` rechaza una composición hecha
+para otros valores). Un espacio de 6 s toma unos 5 minutos después del recorte.
 
-## What to look at (work/check/sheet.jpg)
-- On its LANDS frame each tile is flat on the wall at resting size (the frame before, it is still flying in, bigger); the strike is drawn before it leaves.
-- Pieces pass behind the speaker: hair, ears and hands stay in front, no piece crosses the face.
-- Names fit inside their tiles; receipt amounts and the total read at phone size; the final total is the sum.
-- Nothing rests above y 220 or below y 1470. First and last frame are the plain clip (`check.py` prints it).
+## Qué mirar (work/check/sheet.jpg)
+- En su cuadro LANDS cada ficha está plana en la pared a tamaño de reposo (el cuadro anterior todavía viene volando,
+  más grande); el tachado se dibuja antes de que salga.
+- Las piezas pasan detrás de la persona: pelo, orejas y manos quedan adelante, ninguna pieza cruza la cara.
+- Los nombres caben dentro de sus fichas; los montos de los recibos y el total se leen en tamaño celular; el total
+  final es la suma.
+- Nada queda en reposo sobre y 220 ni bajo y 1470. El primer y el último cuadro son el clip simple (`check.py` lo
+  imprime).
 
-## Traps
-- Whisper is 1 to 3 frames off and mishears names: `prep.py words` shows the frame the voice really starts on. Use that word, or the frame.
-- The slot must start 6 frames or more before the first name and run 12 frames past the last piece: `build.py` says how many frames it needs.
-- A tile that is knocked through the side of the frame crosses the side margin for 3 to 4 frames while fading; resting pieces are always inside the safe zone.
-- `prep.py` prints `shrunk to 0.xx`: shorten the name, drop `TILE_LABEL`, or change the spots in `STYLE['order']`. Under 0.8 the name gets small on a phone.
-- A hand that waves through a tile's spot is fine (it passes in front). A speaker who leans across it for most of the tile's time moves the tile: look at `work/layout.jpg`.
-- Sounds are stock only (`pop`, `whoosh-short`, `impact-bass-1`) at 0.75x template volume. Colours: never orange, never black and white.
+## Trampas
+- Whisper está 1 a 3 cuadros corrido y escucha mal los nombres: `prep.py words` muestra el cuadro en que realmente
+  empieza la voz. Usa esa palabra, o el cuadro.
+- El espacio tiene que empezar 6 cuadros o más antes del primer nombre y seguir 12 cuadros después de la última pieza:
+  `build.py` dice cuántos cuadros necesita.
+- Una ficha lanzada por el costado del cuadro cruza el margen lateral durante 3 o 4 cuadros mientras se desvanece; las
+  piezas en reposo siempre quedan dentro de la zona segura.
+- `prep.py` imprime `shrunk to 0.xx`: acorta el nombre, saca `TILE_LABEL`, o cambia los lugares en `STYLE['order']`.
+  Bajo 0,8 el nombre queda pequeño en un celular.
+- Una mano que pasa por el lugar de una ficha está bien (pasa por delante). Una persona que se inclina sobre ella
+  durante casi todo el tiempo de la ficha mueve la ficha: mira `work/layout.jpg`.
+- Los sonidos son solo de stock (`pop`, `whoosh-short`, `impact-bass-1`) a 0,75x del volumen de la plantilla. Colores:
+  nunca naranjo, nunca blanco y negro (usa bosque, crema y dorado).

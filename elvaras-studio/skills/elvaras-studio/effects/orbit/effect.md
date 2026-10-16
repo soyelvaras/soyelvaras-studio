@@ -1,67 +1,97 @@
-# orbit
+# orbit (Órbita)
 
-**What it does:** the speaker's own reel covers circle around them in a ring. On the far side the cards pass behind the speaker, on the near side they pass in front at chest height, always under the face.
-**Job:** hook ("I post every day", "all of these came from one skill", "you need edits like this"). Works anywhere: set `F_IN` and `F_OUT` and the frames before and after are untouched a-roll.
-**Trigger phrases:** "put my reels in orbit around me", "make my reels circle me", "orbit".
+**Qué hace:** las portadas de los propios reels de la persona giran a su alrededor en un anillo. Del lado de atrás las
+tarjetas pasan detrás de la persona, del lado de adelante pasan por delante a la altura del pecho, siempre bajo la
+cara.
+**Función:** gancho ("publico todos los días", "todos estos salieron de una sola skill", "necesitas ediciones así").
+Funciona en cualquier parte: pon `F_IN` y `F_OUT` y los cuadros de antes y después son la toma sin tocar.
+**Frases que lo activan:** "pon mis reels en órbita a mi alrededor", "haz que mis reels giren a mi alrededor",
+"órbita".
 
-## First step: the covers are the user's own
-Ask for a folder of their reel cover images (jpg / png / webp, at least 4, 6 is the default ring; 9:16 is best, anything else is cropped to 9:16). Copy them into `covers/` in the slot. The effect ships no covers. **No covers from the user = leave the effect out**, do not invent or borrow any. Cards carry no numbers unless the user gives real view counts for `COUNTS`: never estimate or round up a count.
+## Primer paso: las portadas son del usuario
+Pídele una carpeta con las imágenes de portada de sus reels (jpg / png / webp, al menos 4, 6 es el anillo por defecto;
+9:16 es lo mejor, cualquier otra cosa se recorta a 9:16). Cópialas a `covers/` en el espacio. El efecto no trae
+portadas. **Sin portadas del usuario = deja fuera el efecto**, no inventes ni tomes prestadas. Las tarjetas no llevan
+números salvo que el usuario dé conteos de vistas reales para `COUNTS`: nunca estimes ni redondees hacia arriba un
+conteo. Cuadros de sus propios reels editados sirven como portadas.
 
-## Footage it needs
-- **Shot:** wide or medium, speaker centred, with the chin above about y 1000 so a card fits between chin and y 1470. One continuous shot while the ring is up.
-- **Camera:** still or drifting (the ring follows the head once it travels more than 10 px). Not for a moving, walking camera.
-- **Wall:** none needed. The ring floats in the room; whatever is behind the speaker stays as it is.
-- **Cutout:** layered. Far cards sit under `assets/subject.webm`, near cards over it; the ring itself is measured from the cutout's alpha.
-- **What breaks it:** a close-up selfie (the face reaches too low, `prep.py` stops and says so); a speaker who fills the frame width (cards swap from behind to in front while still over an arm, `prep.py` warns); a speaker far off centre; a hand held above the head (it is read as the head); a weak cutout (hair or fingers lost: far cards show through them); a second person in the shot.
+## Toma que necesita
+- **Plano:** abierto o medio, persona centrada, con la barbilla sobre y 1000 aprox. para que quepa una tarjeta entre la
+  barbilla e y 1470. Una toma continua mientras el anillo está arriba.
+- **Cámara:** quieta o con deriva (el anillo sigue la cabeza una vez que se mueve más de 10 px). No para una cámara que
+  se mueve o camina.
+- **Pared:** no hace falta. El anillo flota en el cuarto; lo que está detrás de la persona queda como está.
+- **Recorte:** como capa. Las tarjetas de atrás van bajo `assets/subject.webm`, las de adelante sobre él; el anillo se
+  mide desde el alfa del recorte.
+- **Qué lo rompe:** una selfie cercana (la cara llega muy abajo, `prep.py` se detiene y lo dice); una persona que llena
+  el ancho del cuadro (las tarjetas pasan de atrás a adelante estando todavía sobre un brazo, `prep.py` avisa); una
+  persona muy descentrada; una mano levantada sobre la cabeza (se lee como la cabeza); un recorte débil (pelo o dedos
+  perdidos: las tarjetas de atrás se ven a través); una segunda persona en la toma.
 
-**Slot inputs:** cutout yes, `aroll_hi` no. Python: numpy and Pillow for `prep.py` and `onsets.py`; `build.py` needs nothing. No OpenCV.
+**Entradas del espacio:** recorte sí, `aroll_hi` no. Python: numpy y Pillow para `prep.py` y `onsets.py`; `build.py` no
+necesita nada. Sin OpenCV.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `COVERS` | folder with the user's cover images | default `covers` inside the slot; file-name order is ring order |
-| `COUNTS` | optional real view counts per file | from the user's own insights; `{}` = no numbers, no play icons |
-| `CARDS` | cards on the ring, 4 to 8 | 6 |
-| `F_IN` | frame the ring lands on | `onsets.py`: onset of the word (5 or later) |
-| `F_OUT` | frame the plain picture is back, or `None` | onset of a later word, at least 45 after `F_IN`, at most frames - 2 |
-| `CAPS`, `CAP_Y` | the effect's own caption words and their top | spoken words, frames from `onsets.py`; `None` = measured, yellow box on `work/ring.jpg` |
-| `CX`, `CY`, `RX` | ring centre and half width | `None` = measured from the cutout; type px only to overrule what `work/ring.jpg` shows |
-| `TILT` | ring height / width | .33; smaller is flatter |
-| `CARD_W`, `NEAR`, `FAR` | card width at the front, size at front and back | 190, 1.0, .6; `prep.py` shrinks the card by itself if the ring does not fit |
-| `FACE_GAP` | px kept clear between near cards and the face box | 30 |
-| `REV`, `DIR`, `PHASE` | seconds per turn, direction, start angle | 5.2, 1, .35 |
-| `FOLLOW` | ring follows the head when the shot drifts | `True` |
-| `CROP_Y`, `FAR_DIM` | which part of a non 9:16 cover is kept, far card brightness | .5, .75 |
-| `GRADE` | optional look while the ring is up | `None` = off |
-| `VOICE`, `REF`, `SOUNDS` | speaker audio on/off, frame on the check picture, sounds | defaults |
+| `COVERS` | carpeta con las imágenes de portada del usuario | por defecto `covers` dentro del espacio; el orden de los nombres de archivo es el orden del anillo |
+| `COUNTS` | conteos de vistas reales opcionales por archivo | de las estadísticas propias del usuario; `{}` = sin números, sin íconos de reproducción |
+| `CARDS` | tarjetas en el anillo, 4 a 8 | 6 |
+| `F_IN` | cuadro en que llega el anillo | `onsets.py`: inicio de la palabra (5 o más) |
+| `F_OUT` | cuadro en que vuelve la imagen simple, o `None` | inicio de una palabra posterior, al menos 45 después de `F_IN`, como máximo frames - 2 |
+| `CAPS`, `CAP_Y` | las palabras de subtítulo propias del efecto y su parte superior | palabras dichas, cuadros de `onsets.py`; `None` = medido, caja amarilla en `work/ring.jpg` |
+| `CX`, `CY`, `RX` | centro del anillo y medio ancho | `None` = medido desde el recorte; escribe px solo para corregir lo que muestra `work/ring.jpg` |
+| `TILT` | alto / ancho del anillo | ,33; más chico es más plano |
+| `CARD_W`, `NEAR`, `FAR` | ancho de tarjeta adelante, tamaño adelante y atrás | 190, 1,0, ,6; `prep.py` achica la tarjeta solo si el anillo no cabe |
+| `FACE_GAP` | px libres entre las tarjetas de adelante y la caja de la cara | 30 |
+| `REV`, `DIR`, `PHASE` | segundos por vuelta, dirección, ángulo inicial | 5,2, 1, ,35 |
+| `FOLLOW` | el anillo sigue la cabeza cuando la toma deriva | `True` |
+| `CROP_Y`, `FAR_DIM` | qué parte de una portada no 9:16 se conserva, brillo de las tarjetas de atrás | ,5, ,75 |
+| `GRADE` | look opcional mientras el anillo está arriba | `None` = apagado |
+| `VOICE`, `REF`, `SOUNDS` | audio de la persona sí/no, cuadro en la imagen de revisión, sonidos | por defecto |
 
-**Switches:** `SAFE=1` draws the safe-zone guide (snapshots only). `CAPTIONS=0` drops the effect's caption words. `SFX=0` drops its sounds.
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `CAPTIONS=0` saca las palabras de
+subtítulo propias del efecto. `SFX=0` saca sus sonidos.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-# first: ask the buyer for a folder of their own reel cover images (their saved covers, or covers exported from their profile) and copy them into <slot>/covers/ (fx_new.py --buyer-files <folder> does the copy). No covers from the buyer = no Orbit: leave it out and say so
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # copy the user's reel covers into ./covers  (create the folder; 4 or more images); 1. word onsets as frames -> F_IN, F_OUT, CAPS in build.py
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. cards + ring measured from the cutout (seconds)
-# edit: LOOK at work/ring.jpg (red face box on the whole head, no yellow near card on it, no card in the red border), read the WARNING lines, fix the CLIP block and run prep.py again until it is right.
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. page with the safe guide
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
+# primero: pídele al usuario una carpeta con las portadas de sus propios reels (sus portadas guardadas, o exportadas de su perfil) y cópialas a <slot>/covers/ (fx_new.py --buyer-files <carpeta> hace la copia). Sin portadas del usuario = sin Órbita: déjalo fuera y dilo
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # copia las portadas del usuario a ./covers (crea la carpeta; 4 o más imágenes); 1. inicios de palabra como cuadros -> F_IN, F_OUT, CAPS en build.py
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. tarjetas + anillo medidos desde el recorte (segundos)
+# editar: MIRA work/ring.jpg (caja roja de la cara sobre toda la cabeza, ninguna tarjeta amarilla de adelante sobre ella, ninguna tarjeta en el borde rojo), lee las líneas WARNING, corrige el bloque CLIP y ejecuta prep.py de nuevo hasta que esté bien.
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. página con la guía de seguridad
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
 PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.0,1.5,2.0,2.5,3.0,3.5
-PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-Any python with numpy and Pillow works in place of the venv path. Pick snapshot times inside the ring's time on screen.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Cualquier Python con numpy y Pillow sirve en lugar de la ruta del entorno. Elige los tiempos de instantánea dentro del
+tiempo en pantalla del anillo.
 
-## What to look at in the final frames
-- Frame 0, the frame before `F_IN - 4`, the frame of `F_OUT` and the last frame: plain picture, no card, no dark edge.
-- The frame of `F_IN`: the first cards are up and clearly visible on the word.
-- Six frames spread over the hold: no near card on the face (chin included), far cards really hidden by head and shoulders, never drawn over them.
-- At full size, one frame with a far card next to the hair or a hand: clean cutout edge, no card showing through. At the left and right ends of the ring a card changes from behind to in front beside the body, not on an arm.
-- Everything inside the safe zone (top 220, bottom 1470, sides 35, right 100 from y 1155). Numbers on cards only if `COUNTS` was filled. The render has exactly the `frames` of `clip.json` (ffprobe it).
+## Qué mirar en los cuadros finales
+- El cuadro 0, el cuadro antes de `F_IN - 4`, el cuadro de `F_OUT` y el último cuadro: imagen simple, ninguna tarjeta,
+  sin borde oscuro.
+- El cuadro de `F_IN`: las primeras tarjetas están arriba y se ven claramente en la palabra.
+- Seis cuadros repartidos durante el anillo: ninguna tarjeta de adelante sobre la cara (barbilla incluida), las de atrás
+  realmente escondidas por la cabeza y los hombros, nunca dibujadas encima.
+- A tamaño completo, un cuadro con una tarjeta de atrás junto al pelo o a una mano: borde de recorte limpio, ninguna
+  tarjeta asomando. En los extremos izquierdo y derecho del anillo una tarjeta pasa de atrás a adelante al lado del
+  cuerpo, no sobre un brazo.
+- Todo dentro de la zona segura (arriba 220, abajo 1470, lados 35, derecha 100 desde y 1155). Números en las tarjetas
+  solo si se llenó `COUNTS`. El render tiene exactamente los `frames` de `clip.json` (revísalo con ffprobe).
 
-## Traps
-- The face box is measured from the silhouette, not from a face detector: it runs from the top of the head (cap, hair) to the narrowest row above the shoulders. A high collar, a hood or a hand at the chin hides the neck; then the box is 1.35 head-widths tall. If the red box on `work/ring.jpg` ends above the chin, raise `FACE_GAP` or type `CY`.
-- Near cards cross the chest, so they cover gesturing hands for a moment. That is the look; if a hand gesture carries the line, pick another moment.
-- `prep.py` must be run again after any change to `F_IN`, `F_OUT`, `CARDS` or the ring fields: `build.py` refuses a `work/ring.json` measured for other frames.
-- With `CX`, `CY` or `RX` typed in, nothing is corrected for you: the warnings are the only guard. `F_OUT = None` keeps the ring to the last frame: only when the reel cuts away there.
-- Sounds are stock template sounds at 0.75x template volume: one whoosh and a soft pop in, one whoosh out.
+## Trampas
+- La caja de la cara se mide desde la silueta, no con un detector de caras: va de lo alto de la cabeza (gorro, pelo) a
+  la fila más angosta sobre los hombros. Un cuello alto, una capucha o una mano en la barbilla esconden el cuello;
+  entonces la caja mide 1,35 anchos de cabeza de alto. Si la caja roja de `work/ring.jpg` termina sobre la barbilla, sube
+  `FACE_GAP` o escribe `CY`.
+- Las tarjetas de adelante cruzan el pecho, así que tapan las manos que gesticulan por un momento. Ese es el look; si un
+  gesto de la mano lleva la frase, elige otro momento.
+- `prep.py` tiene que correr de nuevo después de cualquier cambio en `F_IN`, `F_OUT`, `CARDS` o los campos del anillo:
+  `build.py` rechaza un `work/ring.json` medido para otros cuadros.
+- Con `CX`, `CY` o `RX` escritos a mano, no se corrige nada por ti: los avisos son la única protección. `F_OUT = None`
+  mantiene el anillo hasta el último cuadro: solo cuando el reel corta ahí.
+- Los sonidos son de la plantilla a 0,75x del volumen: un whoosh y un pop suave al entrar, un whoosh al salir.

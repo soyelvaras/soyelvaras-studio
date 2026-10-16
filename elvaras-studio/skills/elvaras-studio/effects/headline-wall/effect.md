@@ -1,64 +1,94 @@
-# headline-wall
+# headline-wall (Muro de Titulares)
 
-**What it does:** the wall behind the speaker fills with headline, post, search and video cards that all say the same thing in different words, stuck to the room behind the speaker; on the key word a yellow highlighter swipes one phrase on every card and big hero cards land on the next spoken words.
-**Job:** proof / explain ("everybody is talking about X", "everyone says X"). Works as an opener and just as well mid-video or under b-roll: set `F_OUT` and the wall whips off again inside the take.
-**Trigger phrases:** "fill the wall behind me with headlines about X", "everybody's talking about X, show the clippings", "headline wall".
+**Qué hace:** la pared detrás de la persona se llena de tarjetas de titulares, publicaciones, búsquedas y videos que
+dicen todos lo mismo con distintas palabras, pegadas al cuarto detrás de la persona; en la palabra clave un
+destacador dorado pasa sobre una frase en cada tarjeta y tarjetas grandes caen en las palabras siguientes.
+**Función:** prueba / explicar ("todo el mundo habla de X", "todos dicen X"). Funciona como apertura e igual de bien a
+mitad de video o sobre b-roll: pon `F_OUT` y el muro sale de golpe dentro de la toma.
+**Frases que lo activan:** "llena la pared detrás de mí con titulares sobre X", "todos hablan de X, muestra los
+recortes", "muro de titulares".
 
-## Footage it needs, and where it fails
-- ONE continuous shot (no internal cuts), 3 to 6 s, with visible wall beside or above the speaker's head. Works wide (sofa, chair, floor) and medium. Camera may be still or moving: a moving camera is tracked.
-- Each hero card needs about 280 x 220 px of clear wall beside the speaker's head inside the safe zone. A tight selfie that fills the frame has no room: use 1 or 2 heroes, or another effect.
-- Fails on: a wall that is really a window / mirror / open doorway (the track slides), big arm swings across the wall after the heroes land (they get hidden), a shot that cuts.
-- Leave 1.5 s after the last hero so the wall can be read.
+## Toma que necesita, y dónde falla
+- UNA toma continua (sin cortes internos), 3 a 6 s, con pared visible al lado o sobre la cabeza. Funciona en plano
+  abierto (sillón, silla, piso) y medio. La cámara puede estar quieta o moverse: una cámara en movimiento se sigue.
+- Cada tarjeta grande necesita unos 280 x 220 px de pared libre al lado de la cabeza dentro de la zona segura. Una
+  selfie cercana que llena el cuadro no tiene espacio: usa 1 o 2 tarjetas grandes, u otro efecto.
+- Falla en: una pared que en realidad es ventana / espejo / puerta abierta (el seguimiento se desliza), grandes
+  movimientos de brazos sobre la pared después de que caen las tarjetas grandes (quedan tapadas), una toma que corta.
+  Una pared con monitores o pizarra detrás (como en el escritorio) no sirve.
+- Deja 1,5 s después de la última tarjeta grande para que el muro se alcance a leer.
 
-**Slot inputs:** cutout yes (`assets/subject.webm`), `aroll_hi` no. Python: numpy, scipy, Pillow (the skill's Python has them). No OpenCV, no extra packages.
+**Entradas del espacio:** recorte sí (`assets/subject.webm`), `aroll_hi` no. Python: numpy, scipy, Pillow (el Python de
+la skill los tiene). Sin OpenCV, sin paquetes extra.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `HEADLINES` | plain list of strings, one per card, `[phrase]` = highlighted | write 12 to 20 versions of the speaker's message, under ~40 characters; no real outlets, people, numbers |
-| `HEROES` | `(headline, frame)` big cards that land on a word, 2 to 4 | frames from `onsets.py`; in spoken order |
-| `SEARCH` | text of the search-bar pill, or `None` | lowercase, like a typed query |
-| `F_START`, `F_PEAK` | first card, last pile card | first syllable; end of the opening phrase |
-| `F_ACCENT` | highlighter + bump + low hit | onset of the key word (usually the first hero's frame) |
-| `F_OUT` | frame the wall whips off again, `None` = stays to the end | mid-take use; needs `PUSH = BUMP = 1` and `F_OUT <= frames - 12` |
-| `DENSITY`, `LEAD` | pile-up acceleration; hero head start | leave at 1.8 and 4 |
-| `WALL` | `(x0, y0, x1, y1)` wall the cards may cover | `None` first, then read it off `work/layout.jpg`: stop above sofas, desks, windows |
-| `KEEP_OUT`, `FOREGROUND` | screen boxes no card may enter; furniture polygons cards pass behind | default `[]`; the main reel's label pill; a pillow or sofa back in front of the wall |
-| `FACE`, `HERO_FIRST_SIDE` | push-in target; side of the first hero | `None` = measured; the side with more clear wall |
-| `N_MID`, `N_FAR`, `FAR_BLEED_SIDES` | card counts per depth, side bleed | `None` = by wall area |
-| `PUSH`, `BUMP`, `DIM`, `ACCENT` | push-in, bump, room dim, highlighter colour | raise `DIM` to ~1.3 on a white wall |
-| `OUTLETS`, `PEOPLE`, `CHAT_REPLIES`, `DARK_LABEL` | placeholder source labels | keep them generic |
-| `VOICE`, `FIX_MATTE`, `TRACK_YMAX`, `REF`, `SEED`, `SOUNDS` | the speaker's audio on/off, matte fix, track region, layout frame, shuffle, sounds | defaults; see traps |
+| `HEADLINES` | lista simple de textos, uno por tarjeta, `[frase]` = destacada | escribe 12 a 20 versiones del mensaje de la persona, en español, de menos de ~40 caracteres; sin medios, personas ni números reales |
+| `HEROES` | `(titular, cuadro)` tarjetas grandes que caen en una palabra, 2 a 4 | cuadros de `onsets.py`; en el orden en que se dicen |
+| `SEARCH` | texto de la cápsula de búsqueda, o `None` | minúsculas, como una búsqueda tipeada |
+| `F_START`, `F_PEAK` | primera tarjeta, última tarjeta del montón | primera sílaba; fin de la frase de apertura |
+| `F_ACCENT` | destacador + golpe + impacto grave | inicio de la palabra clave (normalmente el cuadro de la primera tarjeta grande) |
+| `F_OUT` | cuadro en que el muro sale de golpe, `None` = se queda hasta el final | uso a mitad de toma; necesita `PUSH = BUMP = 1` y `F_OUT <= frames - 12` |
+| `DENSITY`, `LEAD` | aceleración del amontonamiento; ventaja de la tarjeta grande | deja 1.8 y 4 |
+| `WALL` | `(x0, y0, x1, y1)` pared que pueden cubrir las tarjetas | primero `None`, luego léela en `work/layout.jpg`: detente sobre sillones, escritorios, ventanas |
+| `KEEP_OUT`, `FOREGROUND` | cajas de pantalla donde no entra ninguna tarjeta; polígonos de muebles que las tarjetas pasan por detrás | por defecto `[]`; la cápsula de título del reel; un cojín o respaldo de sillón delante de la pared |
+| `FACE`, `HERO_FIRST_SIDE` | objetivo del acercamiento; lado de la primera tarjeta grande | `None` = medido; el lado con más pared libre |
+| `N_MID`, `N_FAR`, `FAR_BLEED_SIDES` | cantidad de tarjetas por profundidad, sangrado a los lados | `None` = según el área de pared |
+| `PUSH`, `BUMP`, `DIM`, `ACCENT` | acercamiento, golpe, atenuación del cuarto, color del destacador | sube `DIM` a ~1,3 en una pared blanca; acento dorado |
+| `OUTLETS`, `PEOPLE`, `CHAT_REPLIES`, `DARK_LABEL` | etiquetas de fuente de relleno | mantenlas genéricas, en español |
+| `VOICE`, `FIX_MATTE`, `TRACK_YMAX`, `REF`, `SEED`, `SOUNDS` | audio de la persona sí/no, arreglo de máscara, zona de seguimiento, cuadro de composición, mezcla, sonidos | por defecto; ver trampas |
 
-**Switches:** `SAFE=1` draws the safe-zone guide (snapshots only). `SFX=0` drops the effect's sounds. `GRADE=0` drops the effect's vignette (the main reel grades once). `CAPTIONS=0` is accepted and does nothing: this effect has no caption words.
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `SFX=0` saca los sonidos del efecto.
+`GRADE=0` saca la viñeta del efecto (el reel da color una sola vez). `CAPTIONS=0` se acepta y no hace nada: este
+efecto no tiene palabras de subtítulo.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. word onsets as frames -> fill HEADLINES, HEROES, F_* in build.py
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. track + matte + layout (about 1 to 2 min). LOOK at work/layout.jpg (and work/trackcheck.jpg if the camera moves). Set WALL / HERO_FIRST_SIDE if needed, then
-PY "SK/scripts/fx_run.py" "<slot>" prep.py layout      # re-layout only (seconds). Repeat until the picture is right
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 GRADE=0      # 3. page with the safe guide
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. inicios de palabra como cuadros -> llena HEADLINES, HEROES, F_* en build.py
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. seguimiento + máscara + composición (1 a 2 min). MIRA work/layout.jpg (y work/trackcheck.jpg si la cámara se mueve). Pon WALL / HERO_FIRST_SIDE si hace falta, luego
+PY "SK/scripts/fx_run.py" "<slot>" prep.py layout      # solo recompone (segundos). Repite hasta que la imagen esté bien
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 GRADE=0      # 3. página con la guía de seguridad
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
 PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 0.5,1.0,1.5,2.0,2.5,3.0
-PY "SK/scripts/fx_run.py" "<slot>" build.py GRADE=0      # 4. clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" build.py GRADE=0      # 4. página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-Nudging one card by hand: edit `x`, `y`, `rot` in `work/layout.json`, run `python3 build.py` (a later `prep.py layout` overwrites it).
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Mover una tarjeta a mano: edita `x`, `y`, `rot` en `work/layout.json`, ejecuta `python3 build.py` (un `prep.py layout`
+posterior lo sobrescribe).
 
-## What to look at in the final frames
-- The first hero is fully landed on the frame of its word and the highlighter starts on that frame (pull the word frame and the one before).
-- Cards stay glued to the wall while the camera moves (compare a wall detail next to a card on two frames 10 apart).
-- Every hero line is fully readable, none tucked behind the speaker's head or shoulder; nothing covers the speaker's face (cards are behind the speaker).
-- Nothing in the top 220 px; hero and mid cards inside the safe zone on the last frame. Far cards may run off the sides.
-- The speaker's outline: no cream showing through a fast hand or sleeve, no light fringe around the cap or hair. The render has exactly the `frames` of `clip.json` (ffprobe it).
+## Qué mirar en los cuadros finales
+- La primera tarjeta grande ya llegó del todo en el cuadro de su palabra y el destacador empieza en ese cuadro (saca el
+  cuadro de la palabra y el anterior).
+- Las tarjetas quedan pegadas a la pared mientras la cámara se mueve (compara un detalle de la pared junto a una
+  tarjeta en dos cuadros a 10 de distancia).
+- Cada línea de tarjeta grande se lee completa, ninguna escondida detrás de la cabeza o el hombro; nada tapa la cara
+  (las tarjetas están detrás de la persona).
+- Nada en los 220 px superiores; tarjetas grandes y medianas dentro de la zona segura en el último cuadro. Las
+  tarjetas lejanas pueden salirse por los lados.
+- La silueta de la persona: sin crema asomando por una mano o manga rápida, sin borde claro alrededor del gorro o el
+  pelo. El render tiene exactamente los `frames` de `clip.json` (revísalo con ffprobe).
 
-## Traps
-- `WALL = None` runs down to elbow height: fine on a bare wall, wrong when a sofa back or desk is in that band. Always check the cyan box in `work/layout.jpg`.
-- prep prints `shrunk to 0.xx` / `dropped` when a hero has no room: shorten the headline, switch `HERO_FIRST_SIDE`, or use fewer heroes. Under 0.8 the text gets small on a phone.
-- Put the `[phrase]` early in a headline: line breaks are balanced, the first line is the one that survives a card tucked behind the speaker.
-- Word onsets: Whisper is 1 to 3 frames off and mishears names. `onsets.py` shows the level per frame; a hero with `LEAD` 4 lands on the word, less than 3 reads late.
-- A hero only has to clear where the speaker is from its own landing frame on, mid and far cards where the speaker is from the accent on: if the speaker leans into a card later in the slot, cut the slot shorter or lower that card.
-- The track is fitted on wall pixels above `TRACK_YMAX` (1100). If `work/trackcheck.jpg` shows a doubled wall, lower it to just above the furniture and run `prep.py --force`. After editing `FOREGROUND` run `prep.py matte`.
-- `matrix3d` is not handed to GSAP: a function-based property (`cam.frame`) sets it per frame. Keep it that way, it is seek-safe.
-- `click-soft` is a very quiet file (needs ~.34 base volume); `impact-bass-short` ships in `assets_fx/`. Far cards never enter the top 220 px (checked on every frame); side bleed is on by default, `FAR_BLEED_SIDES = False` keeps them fully in frame.
+## Trampas
+- `WALL = None` baja hasta la altura de los codos: bien en una pared desnuda, mal cuando hay un respaldo de sillón o un
+  escritorio en esa franja. Revisa siempre la caja cian en `work/layout.jpg`.
+- prep imprime `shrunk to 0.xx` / `dropped` cuando una tarjeta grande no tiene espacio: acorta el titular, cambia
+  `HERO_FIRST_SIDE`, o usa menos tarjetas grandes. Bajo 0,8 el texto queda pequeño en un celular.
+- Pon la `[frase]` al principio de un titular: los saltos de línea se equilibran, y la primera línea es la que
+  sobrevive a una tarjeta escondida detrás de la persona.
+- Inicios de palabra: Whisper está 1 a 3 cuadros corrido y escucha mal los nombres. `onsets.py` muestra el nivel por
+  cuadro; una tarjeta grande con `LEAD` 4 cae en la palabra, menos de 3 se lee tarde.
+- Una tarjeta grande solo tiene que quedar libre de donde está la persona desde su propio cuadro de llegada, las
+  medianas y lejanas desde el acento: si la persona se inclina hacia una tarjeta más tarde en el espacio, acorta el
+  espacio o baja esa tarjeta.
+- El seguimiento se ajusta en los píxeles de pared sobre `TRACK_YMAX` (1100). Si `work/trackcheck.jpg` muestra una
+  pared duplicada, bájalo justo sobre los muebles y ejecuta `prep.py --force`. Después de editar `FOREGROUND` ejecuta
+  `prep.py matte`.
+- `matrix3d` no se le pasa a GSAP: una propiedad basada en función (`cam.frame`) lo pone por cuadro. Déjalo así, es
+  seguro al buscar.
+- `click-soft` es un archivo muy bajo (necesita ~,34 de volumen base); `impact-bass-short` viene en `assets_fx/`. Las
+  tarjetas lejanas nunca entran a los 220 px superiores (revisado en cada cuadro); el sangrado lateral está encendido
+  por defecto, `FAR_BLEED_SIDES = False` las mantiene completas dentro del cuadro.

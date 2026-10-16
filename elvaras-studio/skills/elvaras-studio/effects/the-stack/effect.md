@@ -1,64 +1,103 @@
-# the-stack ("The Stack")
+# the-stack ("La Pila")
 
-**What it does:** the picture snaps down into a rounded window at the bottom of a light dotted page and data cards stack above the speaker: each card drops in on a word and pushes the speaker's window down, its bars race with counting numbers, the winning bar arrives on the word you pick. Then the window grows back to the full frame.
-**Job:** explain (compare a few figures while the speaker talks: costs, hours, results, before and after).
-**Trigger phrases:** "do the stacked data card layout on this line", "stack the numbers above me", "the stack".
+**Qué hace:** la imagen baja de golpe a una ventana redondeada en la parte inferior de una página clara punteada y
+tarjetas de datos se apilan sobre la persona: cada tarjeta cae en una palabra y empuja la ventana de la persona hacia
+abajo, sus barras compiten con números que cuentan, y la barra ganadora llega en la palabra que elijas. Luego la
+ventana vuelve a crecer a cuadro completo.
+**Función:** explicar (comparar unas pocas cifras mientras la persona habla: costos, horas, resultados, antes y
+después).
+**Frases que lo activan:** "haz la composición de tarjetas de datos en esta frase", "apila los números sobre mí", "la
+pila".
 
-## First step: the figures are the user's own
-Every title, label, value and unit in `CARDS` comes from what is said in the clip or from figures the user gives you. Ask for them if the line does not hold them. Never invent, estimate or round up a number, a name, a tool or a ranking: the winning row is the one the user's numbers make the winner. No figures from the user = leave this effect out. The package ships a placeholder and `build.py` stops until it is replaced.
+## Primer paso: las cifras son del usuario
+Cada título, etiqueta, valor y unidad en `CARDS` sale de lo que se dice en el clip o de cifras que te da el usuario.
+Pídeselas si la frase no las tiene. Nunca inventes, estimes ni redondees hacia arriba un número, un nombre, una
+herramienta o un ranking: la fila ganadora es la que los números del usuario hacen ganadora. Sin cifras del usuario =
+deja fuera este efecto. El paquete trae un relleno y `build.py` se detiene hasta que se reemplace.
 
-## Footage it needs, and where it fails
-- Shot: wide, medium or close. Camera: still, drifting or handheld. Wall: none needed. One speaker with head and shoulders in frame, one continuous take, 3 to 6 s, at least 1.5 s between `F_IN` and `F_OUT`.
-- Cutout: only measured, never layered. `measure.py` reads the alpha of `assets/subject.webm` to find the speaker's head, so the window crop centres the speaker's face with a little room above it. With `HEAD` typed by hand the slot needs no cutout (`fx_new.py --no-cutout`). `aroll_hi`: no. Python: numpy, Pillow.
-- What breaks it: a very tight selfie (the picture cannot shrink below the window width, so the head stays large and the stack holds about 5 rows in all: `build.py` stops and says how many px to drop); a far-away wide shot (enlarged over 2x, soft); hands above the head, a hood or two people (the head box is wrong: check `work/head.jpg`, type `HEAD`); a speaker who leaves the frame; a shot with a cut in it. A handheld or swaying speaker is fine: the window follows the speaker's head (`FOLLOW`).
-- Captions: the layout replaces the whole frame, so the effect draws its own caption words (`CAPS`) on the speaker's chest inside the window. With `CAPTIONS=0` that band stays empty and `build.py` prints it (`caption band: y .. to ..`): the reel's caption for these frames goes there, anywhere else it lands on the cards.
-- Edges: every frame before `F_IN - 8` and from `F_OUT` on is the untouched picture. `F_OUT = None` keeps the layout up to the last frame: the reel has to cut on that frame.
+## Toma que necesita, y dónde falla
+- Plano: abierto, medio o cercano. Cámara: quieta, con deriva o en mano. Pared: no hace falta. Una persona con cabeza y
+  hombros en cuadro, una toma continua, 3 a 6 s, al menos 1,5 s entre `F_IN` y `F_OUT`.
+- Recorte: solo se mide, nunca como capa. `measure.py` lee el alfa de `assets/subject.webm` para encontrar la cabeza, así
+  que el recorte de la ventana centra la cara con un poco de espacio arriba. Con `HEAD` escrito a mano el espacio no
+  necesita recorte (`fx_new.py --no-cutout`). `aroll_hi`: no. Python: numpy, Pillow.
+- Qué lo rompe: una selfie muy justa (la imagen no puede achicarse bajo el ancho de la ventana, así que la cabeza queda
+  grande y la pila cabe unas 5 filas en total: `build.py` se detiene y dice cuántos px sacar); un plano abierto lejano
+  (se agranda más de 2x, blando); manos sobre la cabeza, una capucha o dos personas (la caja de la cabeza queda mal:
+  revisa `work/head.jpg`, escribe `HEAD`); una persona que sale del cuadro; una toma con un corte. Una persona en mano o
+  que se balancea está bien: la ventana sigue su cabeza (`FOLLOW`).
+- Subtítulos: la composición reemplaza todo el cuadro, así que el efecto dibuja sus propias palabras de subtítulo
+  (`CAPS`) sobre el pecho dentro de la ventana. Con `CAPTIONS=0` esa franja queda vacía y `build.py` la imprime
+  (`caption band: y .. to ..`): ahí va el subtítulo del reel para esos cuadros, en cualquier otro lugar cae sobre las
+  tarjetas.
+- Bordes: cada cuadro antes de `F_IN - 8` y desde `F_OUT` en adelante es la imagen sin tocar. `F_OUT = None` mantiene la
+  composición hasta el último cuadro: el reel tiene que cortar en ese cuadro.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `TITLE` | bold line above the cards | the user's words, under 30 characters; `''` = none |
-| `CARDS[].title`, `sub` | card heading, small grey line under it | what is compared; the source or the unit in words |
-| `CARDS[].rows` | `(label, value)`, 1 to 5 per card, 1 to 3 cards | the user's figures; a string is shown as typed (`'12,400'`) |
-| `unit`, `full` | text before / after every value; the value of a full bar | `('$', '')`, `('', '%')`; `full=100` for percentages |
-| `win` | row that takes the accent and arrives last | what the numbers say; `None` = all bars accent, no winner |
-| `at`, `race`, `win_at` | frames: card landed, bars start, winner arrives | `onsets.py`; the first card always lands on `F_IN` |
-| `F_IN`, `F_OUT` | frames: layout landed, plain picture back | `onsets.py`; `F_IN` 8 or more; `F_OUT` up to frames - 1, or `None` |
-| `CAPS` | caption words `(frame, 'WORDS')` or `(frame, 'WORD', 'acc')` | words the speaker says, 22 characters or fewer, frames from `onsets.py` |
-| `ACCENT` | the one colour (winner bar, number, tick, glow, punch word) | the user's brand hex; not orange |
-| `HEAD`, `FOLLOW` | typed head box `(top, centre_x, width)`; window follows the speaker's head | `None` = measured; read px off `work/head.jpg` (half size). `FOLLOW = False` = one fixed crop |
-| `ZOOM`, `HEADROOM` | the speaker's size in the window, px of picture above the speaker's head | 1.0 and 40 |
-| `CAP_Y`, `SOUNDS` | top of the caption band; sounds | `None` = just under the speaker's chin; `'auto'` or a list of stock sounds |
+| `TITLE` | línea en negrita sobre las tarjetas | las palabras del usuario, menos de 30 caracteres; `''` = ninguna |
+| `CARDS[].title`, `sub` | encabezado de la tarjeta, línea gris pequeña bajo él | lo que se compara; la fuente o la unidad en palabras |
+| `CARDS[].rows` | `(etiqueta, valor)`, 1 a 5 por tarjeta, 1 a 3 tarjetas | las cifras del usuario; un texto se muestra tal como está escrito (`'12.400'`) |
+| `unit`, `full` | texto antes / después de cada valor; el valor de una barra llena | `('$', '')`, `('', '%')`; `full=100` para porcentajes |
+| `win` | fila que toma el acento y llega al final | lo que dicen los números; `None` = todas las barras con acento, sin ganadora |
+| `at`, `race`, `win_at` | cuadros: tarjeta llegada, barras empiezan, ganadora llega | `onsets.py`; la primera tarjeta siempre cae en `F_IN` |
+| `F_IN`, `F_OUT` | cuadros: composición llegada, imagen simple de vuelta | `onsets.py`; `F_IN` 8 o más; `F_OUT` hasta frames - 1, o `None` |
+| `CAPS` | palabras de subtítulo `(cuadro, 'PALABRAS')` o `(cuadro, 'PALABRA', 'acc')` | palabras que dice la persona, 22 caracteres o menos, cuadros de `onsets.py` |
+| `ACCENT` | el único color (barra ganadora, número, marca, brillo, palabra de golpe) | el hex de marca del usuario (dorado #C9A15B); nunca naranjo |
+| `HEAD`, `FOLLOW` | caja de cabeza escrita `(top, centre_x, width)`; la ventana sigue la cabeza | `None` = medido; lee los px en `work/head.jpg` (a la mitad del tamaño). `FOLLOW = False` = un recorte fijo |
+| `ZOOM`, `HEADROOM` | tamaño de la persona en la ventana, px de imagen sobre la cabeza | 1,0 y 40 |
+| `CAP_Y`, `SOUNDS` | parte superior de la franja de subtítulos; sonidos | `None` = justo bajo la barbilla; `'auto'` o una lista de sonidos de stock |
 
-**Switches:** `SAFE=1` draws the safe-zone guide and the caption band (snapshots only). `CAPTIONS=0` drops the effect's caption words. `SFX=0` drops its sounds. `GRADE=1` puts a light grade on the picture for the whole slot, edges included: only when the reel carries the same grade (default off).
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura y la franja de subtítulos (solo instantáneas). `CAPTIONS=0`
+saca las palabras de subtítulo del efecto. `SFX=0` saca sus sonidos. `GRADE=1` pone un color suave en la imagen durante
+todo el espacio, bordes incluidos: solo cuando el reel lleva el mismo color (apagado por defecto).
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-# first: get the figures from the buyer: every title, label, value and unit in CARDS comes from what is said in the clip or from figures the buyer gives. Never invent, estimate or round up a number, a name, a tool or a ranking. No figures from the buyer = no Stack: leave it out and say so
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. word onsets as frames -> F_IN, F_OUT, at, win_at, CAPS in build.py
-PY "SK/scripts/fx_run.py" "<slot>" measure.py      # 2. head from the cutout alpha -> work/head.json; LOOK at work/head.jpg
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. page with the safe guide; read what it prints
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
+# primero: consigue las cifras del usuario: cada título, etiqueta, valor y unidad en CARDS sale de lo que se dice en el clip o de cifras que da el usuario. Nunca inventes, estimes ni redondees hacia arriba un número, un nombre, una herramienta o un ranking. Sin cifras del usuario = sin La Pila: déjalo fuera y dilo
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. inicios de palabra como cuadros -> F_IN, F_OUT, at, win_at, CAPS en build.py
+PY "SK/scripts/fx_run.py" "<slot>" measure.py      # 2. cabeza desde el alfa del recorte -> work/head.json; MIRA work/head.jpg
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. página con la guía de seguridad; lee lo que imprime
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
 PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 0.5,1.0,1.5,2.0,3.0,4.0
-PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-Pick the snapshot times from your own frames (frame / 30): just after `F_IN`, after each card's `at`, each `win_at`, just before `F_OUT - 8`. `build.py` needs no packages; any python with numpy and Pillow runs the other two.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Elige los tiempos de instantánea desde tus propios cuadros (cuadro / 30): justo después de `F_IN`, después del `at` de
+cada tarjeta, cada `win_at`, justo antes de `F_OUT - 8`. `build.py` no necesita paquetes; cualquier Python con numpy y
+Pillow corre los otros dos.
 
-## What to look at in the final frames
-- Frame `F_IN - 8` and frame `F_OUT`: the plain picture, no page, no card, no shade. Frame `F_IN`: title and first card landed, the speaker's head whole inside the window.
-- Each `at`: the card sits in its place and the window has moved down under it, nothing overlapping. Each `win_at` + 2: the winning number shows the exact figure typed, tick on, the other rows already stopped.
-- Every figure on screen against the user's own: same digits, same unit, same label. No row that the user did not give.
-- The speaker's face: centred in the window, hair or cap not cut by the window top, chin above the caption words, caption inside the dashed band of the `SAFE=1` snapshot.
-- Safe zone: title and cards between y 220 and the window, inside x 90 to 990; caption words above y 1470. The window itself is picture and runs to the bottom of the frame.
-- The render has exactly the `frames` of `clip.json` (ffprobe it).
+## Qué mirar en los cuadros finales
+- Cuadro `F_IN - 8` y cuadro `F_OUT`: la imagen simple, sin página, sin tarjeta, sin sombra. Cuadro `F_IN`: título y
+  primera tarjeta llegados, la cabeza completa dentro de la ventana.
+- Cada `at`: la tarjeta queda en su lugar y la ventana bajó bajo ella, nada se solapa. Cada `win_at` + 2: el número
+  ganador muestra la cifra exacta escrita, marca puesta, las otras filas ya detenidas.
+- Cada cifra en pantalla contra las del usuario: mismos dígitos, misma unidad, misma etiqueta. Ninguna fila que el
+  usuario no dio.
+- La cara: centrada en la ventana, pelo o gorro sin cortar por el borde superior de la ventana, barbilla sobre las
+  palabras de subtítulo, subtítulo dentro de la franja punteada de la instantánea con `SAFE=1`.
+- Zona segura: título y tarjetas entre y 220 y la ventana, dentro de x 90 a 990; palabras de subtítulo sobre y 1470. La
+  ventana en sí es imagen y llega hasta el borde inferior del cuadro.
+- El render tiene exactamente los `frames` de `clip.json` (revísalo con ffprobe).
 
-## Traps
-- Every card heading costs about 100 px and every row 48: three cards only fit with 2 rows each. `build.py` stops with the number of px to drop.
-- The window follows a smoothed track of the top of the speaker's head, so the room behind the speaker moves a little while the speaker stays put. With a typed `HEAD` or `FOLLOW = False` the crop is fixed and uses the highest point the speaker's head reaches.
-- The chin is taken as 1.5 head widths under the top of the head (a collar often hides the neck). If the caption sits on a long beard or a raised hand, set `CAP_Y` by hand from the dashed band in the `SAFE=1` snapshot.
-- Bars are drawn to scale against the biggest value (or `full`). A value under 3% of it is a stub: that is honest, do not stretch it.
-- `win_at` after the layout has left (later than `F_OUT - 8`) leaves the winner still racing at the collapse: `build.py` warns.
-- Long labels are cut with an ellipsis at about 25 characters; long values shrink the bars. Shorten the label, never the figure.
-- Sounds are stock template sounds at 0.75x volume: a whoosh in, a pop per card, a sparkle on the last winner, a whoosh back.
+## Trampas
+- Cada encabezado de tarjeta cuesta unos 100 px y cada fila 48: tres tarjetas solo caben con 2 filas cada una.
+  `build.py` se detiene con la cantidad de px que hay que sacar.
+- La ventana sigue un seguimiento suavizado de lo alto de la cabeza, así que el cuarto detrás se mueve un poco mientras
+  la persona queda quieta. Con `HEAD` escrito o `FOLLOW = False` el recorte queda fijo y usa el punto más alto que
+  alcanza la cabeza.
+- La barbilla se toma como 1,5 anchos de cabeza bajo lo alto de la cabeza (un cuello alto suele tapar el cuello). Si el
+  subtítulo cae sobre una barba larga o una mano levantada, pon `CAP_Y` a mano desde la franja punteada de la
+  instantánea con `SAFE=1`.
+- Las barras se dibujan a escala contra el valor más grande (o `full`). Un valor bajo el 3% de ese es un muñón: eso es
+  honesto, no lo estires.
+- `win_at` después de que la composición se fue (más tarde que `F_OUT - 8`) deja a la ganadora todavía corriendo en el
+  cierre: `build.py` avisa.
+- Las etiquetas largas se cortan con puntos suspensivos cerca de los 25 caracteres; los valores largos achican las
+  barras. Acorta la etiqueta, nunca la cifra.
+- Los sonidos son de la plantilla a 0,75x de volumen: un whoosh al entrar, un pop por tarjeta, un destello en la última
+  ganadora, un whoosh al volver.

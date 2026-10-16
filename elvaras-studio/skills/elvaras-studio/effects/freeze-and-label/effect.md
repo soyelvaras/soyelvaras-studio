@@ -1,62 +1,102 @@
-# freeze-label (Freeze and Label)
+# freeze-label (Congela y Señala)
 
-**What it does:** the picture freezes on a word while the voice runs on, the room softens and dims behind the speaker, and label chips with leader lines point at spots on the frozen speaker. Then a hard cut back to live.
-**Job:** explain (also a hook: "here is who this is" in two labels).
-**Trigger phrases:** "freeze the frame on X and label me: A, B", "freeze on that word and tag me", "pause the picture and point out A and B".
+**Qué hace:** la imagen se congela en una palabra mientras la voz sigue, el cuarto se suaviza y atenúa detrás de la
+persona, y etiquetas con líneas guía apuntan a partes de la persona congelada. Luego un corte seco de vuelta al video
+en vivo.
+**Función:** explicar (también un gancho: "esta es la persona" en dos etiquetas).
+**Frases que lo activan:** "congela la imagen en X y ponme etiquetas: A, B", "congela en esa palabra y etiquétame",
+"pausa la imagen y señala A y B".
 
-## Footage it needs
-- **Shot:** wide or medium is best (room beside or above the speaker for the chips). Close works with 1 or 2 short labels and `ZOOM = 1.0`.
-- **Camera:** still, drifting or moving: the picture is frozen, nothing is tracked. A moving camera only makes the jump back to live bigger, and the held frame more likely to be blurred.
-- **Wall:** beside or above helps (chips go on clear background first). With none they sit over the body, never over the head.
-- **Cutout:** layered and measured. The speaker stays sharp over the softened room (baked into the frozen plate), and the head, tie points and open space are measured ONCE on the held frame. `LOOK = 'off'`: only measured.
-- **What breaks it:** a blink or motion blur on the freeze word (pick another frame or word), a hood / long hair over the neck / a hand on the head / a head that is not the top of the cutout (no head outline: type `HEAD`), a second person in the cutout, a tight selfie with 3 labels (build.py stops and says how many fit). Hands are found by skin colour sampled from the face: gloves, bare arms, skin-coloured clothes or a hand in front of the chest are missed or misplaced (use chest / shoulder / a fraction point).
-- The hold needs about 1 s per label, and 13 frames of live picture after the release.
+## Toma que necesita
+- **Plano:** abierto o medio es lo mejor (espacio al lado o sobre la persona para las etiquetas). Cercano funciona con
+  1 o 2 etiquetas cortas y `ZOOM = 1.0`.
+- **Cámara:** quieta, con deriva o en movimiento: la imagen está congelada, no se sigue nada. Una cámara en movimiento
+  solo hace más grande el salto de vuelta al video en vivo, y más probable que el cuadro detenido esté movido.
+- **Pared:** al lado o arriba ayuda (las etiquetas van primero sobre fondo libre). Sin pared, van sobre el cuerpo,
+  nunca sobre la cabeza.
+- **Recorte:** como capa y medido. La persona queda nítida sobre el cuarto suavizado (horneado en la imagen congelada),
+  y la cabeza, los puntos de anclaje y el espacio libre se miden UNA vez en el cuadro detenido. `LOOK = 'off'`: solo
+  medido.
+- **Qué lo rompe:** un parpadeo o desenfoque de movimiento en la palabra del congelado (elige otro cuadro u otra
+  palabra), una capucha / pelo largo sobre el cuello / una mano en la cabeza / una cabeza que no es lo más alto del
+  recorte (sin silueta de cabeza: escribe `HEAD`), una segunda persona en el recorte, una selfie cercana con 3
+  etiquetas (build.py se detiene y dice cuántas caben). Las manos se encuentran por el color de piel tomado de la cara:
+  guantes, brazos descubiertos, ropa color piel o una mano delante del pecho se pierden o quedan mal ubicadas (usa
+  pecho / hombro / un punto en fracción).
+- La pausa necesita cerca de 1 s por etiqueta, y 13 cuadros de imagen en vivo después de soltar.
 
-## Slot inputs
-`assets/aroll.mp4`, `assets/subject.webm` (cutout: REQUIRED), `words.json`, `clip.json`. No `aroll_hi`. Fonts (Inter Tight 800, JetBrains Mono 500) and `click.mp3`, `pop.mp3`, `whoosh-short.mp3` come from the template. Python: numpy, scipy, Pillow. The effect ships no pictures or sounds and needs none from the buyer: only their own words for the labels.
+## Entradas del espacio
+`assets/aroll.mp4`, `assets/subject.webm` (recorte: OBLIGATORIO), `words.json`, `clip.json`. Sin `aroll_hi`. Las
+tipografías (Inter Tight 800, JetBrains Mono 500) y `click.mp3`, `pop.mp3`, `whoosh-short.mp3` vienen de la plantilla.
+Python: numpy, scipy, Pillow. El efecto no trae imágenes ni sonidos y no necesita ninguno del usuario: solo sus propias
+palabras para las etiquetas.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `FREEZE` | spoken word the picture freezes on | as `bake_freeze.py` prints it (Whisper's spelling); `'this#2'` = the second "this"; or a frame number |
-| `HOLD` | which frame is held | `'auto'` = sharpest of the 6 frames from the freeze word on; or 0 to 5 frames after it. ALWAYS check `work/freeze_pick.jpg` |
-| `RELEASE` | word the live picture comes back on | a word or frame at least 13 frames before the slot ends. `None` = stay frozen to the last frame |
-| `LABELS[i]` | `(text, word it lands on, what it points at)` plus optional `'left'` / `'right'` for the chip's side | text: the speaker's own words, 1 to 3 words, never a number, result or claim they do not say. word `''` = one after the other. points at: `head`, `cap`, `chest`, `shoulder`, `hand` (or `head_left`, `hand_right` ... as seen on screen), or `(fx, fy)` = a spot as a fraction of the speaker's box |
-| `ZOOM`, `DRIFT` | punch-in of the frozen picture, slow push during the hold | 1.12 and 0.03. Wide: up to 1.2. Close: 1.0 to 1.06 |
-| `LOOK` | the frozen room: `'subtle'`, `'strong'`, `'off'` | `'subtle'`. Blur and dim only: the frozen picture always stays in full colour |
-| `NUMBERS` | the small 01 / 02 tab on each chip | `True`; `False` = text only |
-| `ACCENT`, `CHIP`, `INK` | dot and tab, chip and line, text | brand colours, never orange |
-| `HEAD` | head box typed by hand `(x0, y0, x1, y1)`, cap to chin | `None`. Only when build.py cannot find the head: read it off `work/hold.jpg` |
+| `FREEZE` | palabra dicha en que se congela la imagen | como la imprime `bake_freeze.py` (ortografía de Whisper); `'esto#2'` = el segundo "esto"; o un número de cuadro |
+| `HOLD` | qué cuadro se detiene | `'auto'` = el más nítido de los 6 cuadros desde la palabra; o 0 a 5 cuadros después de ella. SIEMPRE revisa `work/freeze_pick.jpg` |
+| `RELEASE` | palabra en que vuelve el video en vivo | una palabra o cuadro al menos 13 cuadros antes de que termine el espacio. `None` = congelado hasta el último cuadro |
+| `LABELS[i]` | `(texto, palabra en que aparece, a qué apunta)` más `'left'` / `'right'` opcional para el lado de la etiqueta | texto: palabras propias de la persona, 1 a 3 palabras, nunca un número, resultado o afirmación que no dice. palabra `''` = una después de otra. apunta a: `head`, `cap`, `chest`, `shoulder`, `hand` (o `head_left`, `hand_right` ... como se ve en pantalla), o `(fx, fy)` = un punto como fracción de la caja de la persona |
+| `ZOOM`, `DRIFT` | acercamiento de la imagen congelada, avance lento durante la pausa | 1.12 y 0.03. Abierto: hasta 1,2. Cercano: 1,0 a 1,06 |
+| `LOOK` | el cuarto congelado: `'subtle'`, `'strong'`, `'off'` | `'subtle'`. Solo desenfoque y atenuación: la imagen congelada siempre queda a todo color |
+| `NUMBERS` | la pestaña pequeña 01 / 02 de cada etiqueta | `True`; `False` = solo texto |
+| `ACCENT`, `CHIP`, `INK` | punto y pestaña, etiqueta y línea, texto | colores de marca (dorado, crema, tinta), nunca naranjo |
+| `HEAD` | caja de la cabeza escrita a mano `(x0, y0, x1, y1)`, de lo alto a la barbilla | `None`. Solo cuando build.py no encuentra la cabeza: léela en `work/hold.jpg` |
 
-## Switches
-`SAFE=1` safe-zone guide (snapshots only, never render it). `SFX=0` no sounds. `GRADE=0` no freeze look (same as `LOOK = 'off'`; the live picture is never graded). `CAPTIONS=0` is accepted and changes nothing (no caption words). `COLTEST=1` colour QA build: the held frame untreated at 1:1.
+## Interruptores
+`SAFE=1` guía de zona segura (solo instantáneas, nunca la renderices). `SFX=0` sin sonidos. `GRADE=0` sin look de
+congelado (igual que `LOOK = 'off'`; la imagen en vivo nunca recibe color). `CAPTIONS=0` se acepta y no cambia nada (no
+hay palabras de subtítulo). `COLTEST=1` armado de control de color: el cuadro detenido sin tratar a 1:1.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" bake_freeze.py      # print the words with their start frames and check the cutout is finished
-# edit: fill the CLIP block in build.py, then build (about 12 s); a line starting with !! is a stop or a warning to act on
+PY "SK/scripts/fx_run.py" "<slot>" bake_freeze.py      # imprime las palabras con sus cuadros de inicio y revisa que el recorte esté terminado
+# editar: llena el bloque CLIP en build.py, luego arma (cerca de 12 s); una línea que empieza con !! es un alto o un aviso que hay que atender
 PY "SK/scripts/fx_run.py" "<slot>" build.py
 PY "SK/scripts/fx_run.py" "<slot>" hf lint
 PY "SK/scripts/fx_run.py" "<slot>" hf render      # render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # numbers, sheet, stills, phone copy
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # números, hoja, cuadros, copia para celular
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-A 5 s slot takes about 3 minutes end to end once the cutout exists (build 12 s, render 30 s, check 5 s).
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Un espacio de 5 s toma unos 3 minutos de punta a punta una vez que existe el recorte (armado 12 s, render 30 s,
+revisión 5 s).
 
-## How it ends (the jump back to live)
-The frozen frame and the live picture never match, so the jump is made on purpose: the chips whip off sideways, the still inhales for 0.2 s, then a HARD CUT lands on the `RELEASE` word with a cut punch (live picture 1.07 to 1.0 over 10 frames) and a short light flash. Frame 0 to the freeze word is plain live picture, and so is everything from 11 frames after the release. `RELEASE = None`: no way out, the labels stay and the slot ENDS frozen, on a cut. Use that only when the reel cuts to something else right after the slot.
+## Cómo termina (el salto de vuelta al video en vivo)
+El cuadro congelado y la imagen en vivo nunca coinciden, así que el salto se hace a propósito: las etiquetas salen
+hacia el lado, la imagen fija "inhala" 0,2 s, luego un CORTE SECO cae en la palabra de `RELEASE` con un golpe de corte
+(imagen en vivo de 1,07 a 1,0 en 10 cuadros) y un destello corto de luz. Del cuadro 0 a la palabra del congelado es
+imagen en vivo simple, y también todo desde 11 cuadros después de soltar. `RELEASE = None`: sin salida, las etiquetas
+se quedan y el espacio TERMINA congelado, en un corte. Úsalo solo cuando el reel corta a otra cosa justo después del
+espacio.
 
-## What to look at (work/check/)
-- check.py numbers: frame count, first / last frames plain, the hold really frozen, RESULT: ok.
-- `sheet.jpg`: no chip or line over the blue head box, nothing past the red lines, each chip up by its word, last frame plain.
-- The first frozen frames against the last live ones: no colour jump (only the flash and the dim). Text reads at phone size (`renders/<slot>-phone.mp4`; build.py prints the text height, under 40 px is small).
+## Qué mirar (work/check/)
+- Los números de check.py: cantidad de cuadros, primeros / últimos cuadros simples, la pausa realmente congelada,
+  RESULT: ok.
+- `sheet.jpg`: ninguna etiqueta ni línea sobre la caja azul de la cabeza, nada pasado las líneas rojas, cada etiqueta
+  arriba en su palabra, último cuadro simple.
+- Los primeros cuadros congelados contra los últimos en vivo: sin salto de color (solo el destello y la atenuación). El
+  texto se lee en tamaño celular (`renders/<slot>-phone.mp4`; build.py imprime la altura del texto, menos de 40 px es
+  pequeño).
 
-## Traps
-- `HOLD = 'auto'` takes the sharpest frame, and the sharpest frame is often a blink (it was on the test clip). Eyes cannot be measured here: open `work/freeze_pick.jpg` every time. "held frame is soft" = motion blur warning: try a neighbour or another word.
-- The frozen plates are VIDEOS made from the a-roll's own YUV pixels, with its colour tags on ffmpeg's input side. A PNG or JPG still, or tags given as output options, shifts the colour by 3 to 4 levels at the freeze and the release. Do not swap them for stills.
-- A label on the freeze word itself cannot start before the freeze: it is readable about 8 frames after the hit. Later labels open on their word.
-- No room is a result, not a bug: drop a label, shorten the text or lower `ZOOM`. `!! over the body` = no clear background, look at the plan first.
-- An unsided `head` / `shoulder` / `hand` takes the side with more room; a `_left` point always gets its chip on the left, so no line runs over the head.
-- Chip widths in the plan are estimates (5% wide). The real chip hugs its text and is pinned by the side its line meets.
-- Whisper word starts are snapped to the audio, good to about 3 frames. Freeze early or late in the render: pass a frame number.
-- On screen: the speaker's words only, no made-up names or numbers, no em dashes, no orange. Sounds are the stock three at 0.75x.
+## Trampas
+- `HOLD = 'auto'` toma el cuadro más nítido, y el cuadro más nítido suele ser un parpadeo (lo fue en el clip de
+  prueba). Aquí no se pueden medir los ojos: abre `work/freeze_pick.jpg` cada vez. "held frame is soft" = aviso de
+  desenfoque de movimiento: prueba un cuadro vecino u otra palabra. Con lentes, revisa también los reflejos.
+- Las imágenes congeladas son VIDEOS hechos de los propios píxeles YUV de la toma, con sus etiquetas de color del lado
+  de entrada de ffmpeg. Una imagen fija PNG o JPG, o etiquetas dadas como opciones de salida, corren el color 3 a 4
+  niveles en el congelado y al soltar. No las cambies por imágenes fijas.
+- Una etiqueta en la propia palabra del congelado no puede empezar antes del congelado: se lee unos 8 cuadros después
+  del golpe. Las etiquetas siguientes se abren en su palabra.
+- Que no haya espacio es un resultado, no un error: saca una etiqueta, acorta el texto o baja `ZOOM`. `!! over the body`
+  = no hay fondo libre, mira primero el plan.
+- Un `head` / `shoulder` / `hand` sin lado toma el lado con más espacio; un punto `_left` siempre lleva su etiqueta a la
+  izquierda, así ninguna línea cruza la cabeza.
+- Los anchos de etiqueta en el plan son estimaciones (5% más anchos). La etiqueta real se ajusta a su texto y queda
+  fijada por el lado donde llega su línea.
+- Los inicios de palabra de Whisper se ajustan al audio, precisos a unos 3 cuadros. Si congela antes o después en el
+  render: pasa un número de cuadro.
+- En pantalla: solo las palabras de la persona, sin nombres ni números inventados, sin guiones largos, sin naranjo. Los
+  sonidos son los tres de stock a 0,75x.

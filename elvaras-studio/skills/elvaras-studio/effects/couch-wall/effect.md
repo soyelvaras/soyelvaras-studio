@@ -1,66 +1,98 @@
-# couch-wall
+# couch-wall (Muro de Portadas)
 
-**What it does:** the wall behind the speaker turns into a grid of the speaker's own reel covers. The columns flick up from behind the speaker (and behind the sofa, chair or floor), drift upward like a feed, then sink back and the real room returns.
-**Job:** explain / proof ("look at everything I posted", "they all do the same thing", "my last 20 videos"). Works anywhere in a video: set `F_IN` and `F_OUT` and the frames before and after are untouched a-roll.
-**Trigger phrases:** "put my reels as a grid on the wall behind me", "turn the wall into my profile grid", "couch wall".
+**Qué hace:** la pared detrás de la persona se convierte en una grilla con las portadas de sus propios reels. Las
+columnas suben desde detrás de la persona (y del sillón, la silla o el piso), se deslizan hacia arriba como un feed,
+luego bajan y vuelve el cuarto real.
+**Función:** explicar / prueba ("mira todo lo que publiqué", "todos hacen lo mismo", "mis últimos 20 videos").
+Funciona en cualquier parte de un video: pon `F_IN` y `F_OUT` y los cuadros de antes y después son la toma sin tocar.
+**Frases que lo activan:** "pon mis reels como grilla en la pared detrás de mí", "convierte la pared en mi grilla de
+perfil", "muro de portadas".
 
-## The covers are the user's own
-Ask for a folder of their reel cover images (jpg / png / webp, at least 4, 9 or more looks best; 9:16 covers are cropped to 3:4 tiles). Copy them into `covers/` in the slot. The effect ships no covers. Tiles carry no numbers unless the user gives real view counts for `COUNTS`: never estimate or round up a count.
+## Las portadas son del usuario
+Pídele una carpeta con las imágenes de portada de sus reels (jpg / png / webp, al menos 4, 9 o más se ve mejor; las
+portadas 9:16 se recortan a fichas 3:4). Cópialas a `covers/` en el espacio. El efecto no trae portadas. Las fichas no
+llevan números salvo que el usuario dé conteos de vistas reales para `COUNTS`: nunca estimes ni redondees hacia
+arriba un conteo.
 
-## Footage it needs, and where it fails
-- ONE continuous shot (no internal cuts), 3 to 6 s, wide or medium, with a plain wall filling a good part of the upper frame. Camera still or gently moving (it is tracked).
-- At least 1.5 s between `F_IN` and `F_OUT` so the grid can be read.
-- Fails on: a tight selfie (no wall to cover); furniture, floor or clothes close to the wall colour (white pillow on a white wall, beige sofa on a beige wall: the grid leaks onto them until you draw them in `IN_FRONT`); patterned wallpaper, brick, bookshelves or a window as the "wall" (it is not one colour, so `auto` finds little: use `FURNITURE = 'off'` with a `WALL` rectangle); a shot that cuts; hair or fast hands that the cutout loses.
-- Things hanging on the wall (pictures, lamps, a clock) are covered by the grid on purpose. Anything that reaches the bottom of the frame (sofa, chair, floor, door frame, a floor lamp) stays in front.
+## Toma que necesita, y dónde falla
+- UNA toma continua (sin cortes internos), 3 a 6 s, plano abierto o medio, con una pared lisa ocupando buena parte de
+  la zona superior. Cámara quieta o con movimiento suave (se sigue).
+- Al menos 1,5 s entre `F_IN` y `F_OUT` para que la grilla se alcance a leer.
+- Falla en: una selfie cercana (no hay pared que cubrir); muebles, piso o ropa de un color parecido a la pared (cojín
+  blanco en pared blanca, sillón beige en pared beige: la grilla se mete en ellos hasta que los dibujes en `IN_FRONT`);
+  papel mural con diseño, ladrillo, repisas o una ventana como "pared" (no es de un color, así que `auto` encuentra
+  poco: usa `FURNITURE = 'off'` con un rectángulo `WALL`); una toma que corta; pelo o manos rápidas que el recorte
+  pierde.
+- Lo que cuelga en la pared (cuadros, lámparas, un reloj) queda tapado por la grilla a propósito. Todo lo que llega al
+  borde inferior del cuadro (sillón, silla, piso, marco de puerta, lámpara de pie) queda adelante.
 
-**Slot inputs:** cutout yes (`assets/subject.webm`, made by `fx_new.py` with `_shared/rvm_cut.py`), `aroll_hi` no. Python: numpy, scipy, Pillow. No OpenCV, no extra packages.
+**Entradas del espacio:** recorte sí (`assets/subject.webm`, hecho por `fx_new.py` con `_shared/rvm_cut.py`),
+`aroll_hi` no. Python: numpy, scipy, Pillow. Sin OpenCV, sin paquetes extra.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `COVERS` | folder with the user's cover images | default `covers` inside the slot; file-name order is grid order |
-| `COUNTS` | optional real view counts per file | from the user's own insights; `{}` = no numbers, no play icons |
-| `TOP_BY_COUNT` | best covers take the top row | only matters with `COUNTS` |
-| `F_IN` | frame the grid has landed on | `onsets.py`: onset of the word |
-| `F_OUT` | frame the room is fully back, or `None` | onset of a later word; `None` = grid stays to the end |
-| `CAPS`, `CAP_Y` | the effect's own caption words and their height | words the speaker says, frames from `onsets.py`; `None` = measured, check the yellow box |
-| `WALL` | rectangle the grid may use | `None` = whole frame; read px off `work/wall.jpg` (shown at half size) |
-| `FURNITURE` | `'auto'` or `'off'` | `auto` first; `off` + `WALL` when the wall is not one plain colour |
-| `IN_FRONT`, `BEHIND` | hand-drawn shapes kept in front of / forced behind the grid | default `[]`; points in px on the reference frame |
-| `WALL_TOL`, `EDGE_CHOKE` | colour tolerance of the wall; px the furniture edge is pulled in | 1.0 and 1; see traps |
-| `COLS`, `SCROLL`, `CROP_Y` | tiles across, drift px per second, which part of a tall cover is kept | 3, 190, 0.42 |
-| `LOOK`, `SHADOW` | tile dimming, shadow of speaker and furniture on the grid | lower `LOOK[0]` in a dark room |
-| `VOICE`, `TRACK_YMAX`, `REF`, `SOUNDS` | the speaker's audio on/off, track region, measuring frame, sounds | defaults |
+| `COVERS` | carpeta con las imágenes de portada del usuario | por defecto `covers` dentro del espacio; el orden de los nombres de archivo es el orden de la grilla |
+| `COUNTS` | conteos de vistas reales opcionales por archivo | de las estadísticas propias del usuario; `{}` = sin números, sin íconos de reproducción |
+| `TOP_BY_COUNT` | las mejores portadas van en la fila de arriba | solo importa con `COUNTS` |
+| `F_IN` | cuadro en que la grilla ya llegó | `onsets.py`: inicio de la palabra |
+| `F_OUT` | cuadro en que el cuarto volvió del todo, o `None` | inicio de una palabra posterior; `None` = la grilla se queda hasta el final |
+| `CAPS`, `CAP_Y` | las palabras de subtítulo propias del efecto y su altura | palabras que dice la persona, cuadros de `onsets.py`; `None` = medido, revisa la caja amarilla |
+| `WALL` | rectángulo que puede usar la grilla | `None` = todo el cuadro; lee los px en `work/wall.jpg` (a la mitad del tamaño) |
+| `FURNITURE` | `'auto'` u `'off'` | primero `auto`; `off` + `WALL` cuando la pared no es de un color liso |
+| `IN_FRONT`, `BEHIND` | formas dibujadas a mano que quedan adelante / van forzadas detrás de la grilla | por defecto `[]`; puntos en px en el cuadro de referencia |
+| `WALL_TOL`, `EDGE_CHOKE` | tolerancia de color de la pared; px que se mete el borde del mueble | 1.0 y 1; ver trampas |
+| `COLS`, `SCROLL`, `CROP_Y` | fichas a lo ancho, px de deslizamiento por segundo, qué parte de una portada alta se conserva | 3, 190, 0.42 |
+| `LOOK`, `SHADOW` | atenuación de las fichas, sombra de la persona y los muebles sobre la grilla | baja `LOOK[0]` en un cuarto oscuro |
+| `VOICE`, `TRACK_YMAX`, `REF`, `SOUNDS` | audio de la persona sí/no, zona de seguimiento, cuadro de medición, sonidos | por defecto |
 
-**Switches:** `SAFE=1` draws the safe-zone guide (snapshots only). `CAPTIONS=0` drops the effect's caption words. `SFX=0` drops its sounds.
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `CAPTIONS=0` saca las palabras de
+subtítulo propias del efecto. `SFX=0` saca sus sonidos.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-# first: ask the buyer for a folder of their own reel cover images (their saved covers, or covers exported from their profile) and copy them into <slot>/covers/ (fx_new.py --buyer-files <folder> does the copy). No covers from the buyer = no Couch Wall: leave it out and say so
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # copy the user's reel covers into ./covers  (create the folder; 4 or more images); 1. word onsets as frames -> F_IN, F_OUT, CAPS in build.py
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. covers, camera track, wall matte, fg.webm (about 3 min). LOOK at work/wall.jpg. If the cyan area is wrong, edit WALL / IN_FRONT / BEHIND / WALL_TOL, then
-PY "SK/scripts/fx_run.py" "<slot>" prep.py wall      # re-measure only (20 s); repeat until right, then run. prep.py once more WITHOUT "wall" so fg.webm is baked from the final matte
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. page with the safe guide
-PY "SK/scripts/fx_run.py" "<slot>" hf lint      # must be 0 errors
+# primero: pídele al usuario una carpeta con las portadas de sus propios reels (sus portadas guardadas, o exportadas de su perfil) y cópialas a <slot>/covers/ (fx_new.py --buyer-files <carpeta> hace la copia). Sin portadas del usuario = sin Muro de Portadas: déjalo fuera y dilo
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # copia las portadas del usuario a ./covers (crea la carpeta; 4 o más imágenes); 1. inicios de palabra como cuadros -> F_IN, F_OUT, CAPS en build.py
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. portadas, seguimiento de cámara, máscara de la pared, fg.webm (unos 3 min). MIRA work/wall.jpg. Si el área cian está mal, edita WALL / IN_FRONT / BEHIND / WALL_TOL, luego
+PY "SK/scripts/fx_run.py" "<slot>" prep.py wall      # vuelve a medir solo eso (20 s); repite hasta que esté bien, luego ejecuta prep.py una vez más SIN "wall" para que fg.webm se hornee desde la máscara final
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1 CAPTIONS=0      # 3. página con la guía de seguridad
+PY "SK/scripts/fx_run.py" "<slot>" hf lint      # tiene que dar 0 errores
 PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 0.5,1.0,1.5,2.0,2.5,3.0
-PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" build.py CAPTIONS=0      # 4. página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-Any python with numpy, scipy and Pillow works in place of the venv path. `build.py` itself needs no packages.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Cualquier Python con numpy, scipy y Pillow sirve en lugar de la ruta del entorno. `build.py` en sí no necesita
+paquetes.
 
-## What to look at in the final frames
-- The frame of `F_IN` and the one before: the columns are up and almost still on the word. The frame of `F_OUT`: plain room, no tile left.
-- Furniture edge at full size: no tile on the sofa, chair or floor, no strip of real wall left between furniture and grid, no bright rim.
-- The speaker's outline: no wall colour showing through hair, fingers or a fast sleeve; no tile inside the speaker's body.
-- Caption words on the speaker's chest, never on the speaker's face or hands, inside the safe zone (top 220, bottom 1470, sides 35). The grid itself is background and may run under those zones.
-- Tile numbers appear only if `COUNTS` was filled. The render has exactly the `frames` of `clip.json` (ffprobe it).
+## Qué mirar en los cuadros finales
+- El cuadro de `F_IN` y el anterior: las columnas están arriba y casi quietas en la palabra. El cuadro de `F_OUT`:
+  cuarto simple, sin ninguna ficha.
+- Borde del mueble a tamaño completo: ninguna ficha sobre el sillón, la silla o el piso, ninguna franja de pared real
+  entre el mueble y la grilla, sin borde brillante.
+- La silueta de la persona: sin color de pared asomando por el pelo, los dedos o una manga rápida; ninguna ficha dentro
+  del cuerpo.
+- Palabras de subtítulo en el pecho, nunca en la cara ni en las manos, dentro de la zona segura (arriba 220, abajo
+  1470, lados 35). La grilla en sí es fondo y puede pasar bajo esas zonas.
+- Los números de las fichas aparecen solo si se llenó `COUNTS`. El render tiene exactamente los `frames` de `clip.json`
+  (revísalo con ffprobe).
 
-## Traps
-- `auto` reads the wall colour from the upper half of the frame, with the speaker averaged out. It needs the speaker to leave most of the upper wall visible at some point in the slot.
-- Bare wall left uncovered next to furniture (a dark shadow band): raise `WALL_TOL` to 1.3. Grid on a pale sofa or the floor: lower it to 0.7, or draw the piece in `IN_FRONT`. prep prints a warning when the grid reaches the bottom of the frame.
-- A doorway into another room is not wall: if the grid should stop at the door frame and does not, close it with `WALL` or `IN_FRONT`.
-- After any change to the matte fields run `prep.py` (not just `prep.py wall`) before `build.py`, or the render uses the old `fg.webm`.
-- Fewer covers than the wall needs are repeated in order; under 9 the repeats are easy to spot. `F_IN` must be 8 or later (the columns rise for 8 frames before the word); `F_OUT` needs 45 frames after `F_IN` and 2 frames after itself. With `F_OUT = None` the main reel has to cut away on the last frame.
-- Moving camera: the grid is glued to the wall with a per-frame `matrix3d` set by a function-based GSAP property (seek-safe). If it slides, lower `TRACK_YMAX` to just above the furniture and run `prep.py --force`.
-- Sounds play at 0.75x template volume: one whoosh in, one out, a soft pop when the room is back.
+## Trampas
+- `auto` lee el color de la pared desde la mitad superior del cuadro, promediando a la persona. Necesita que la persona
+  deje visible la mayor parte de la pared superior en algún momento del espacio.
+- Pared desnuda sin cubrir al lado de un mueble (una franja de sombra oscura): sube `WALL_TOL` a 1,3. Grilla sobre un
+  sillón claro o el piso: bájalo a 0,7, o dibuja la pieza en `IN_FRONT`. prep avisa cuando la grilla llega al borde
+  inferior del cuadro.
+- Una puerta hacia otra pieza no es pared: si la grilla debería parar en el marco de la puerta y no lo hace, ciérrala
+  con `WALL` o `IN_FRONT`.
+- Después de cualquier cambio en los campos de la máscara ejecuta `prep.py` (no solo `prep.py wall`) antes de
+  `build.py`, o el render usa el `fg.webm` viejo.
+- Menos portadas de las que necesita la pared se repiten en orden; con menos de 9 las repeticiones se notan. `F_IN`
+  tiene que ser 8 o más (las columnas suben durante 8 cuadros antes de la palabra); `F_OUT` necesita 45 cuadros
+  después de `F_IN` y 2 cuadros después de sí mismo. Con `F_OUT = None` el reel tiene que cortar en el último cuadro.
+- Cámara en movimiento: la grilla se pega a la pared con un `matrix3d` por cuadro, puesto con una propiedad GSAP basada
+  en función (segura al buscar). Si se desliza, baja `TRACK_YMAX` justo sobre el mueble y ejecuta `prep.py --force`.
+- Los sonidos suenan a 0,75x del volumen de la plantilla: un whoosh al entrar, uno al salir, un pop suave cuando vuelve
+  el cuarto.

@@ -1,63 +1,93 @@
-# spotlight
+# spotlight (Foco)
 
-**What it does:** on a key word the room goes dark and out of focus, the speaker stays lit and sharp in a pool of light, the key words land big (the first tucked behind the head, the next in front on the chest), then the lights come back up.
-**Job:** explain (one phrase that has to hit, with a clear in and out).
-**Trigger phrases:** "put a spotlight on me when I say X", "kill the lights on this word", "lights down on X, back up on Y".
+**Qué hace:** en una palabra clave el cuarto se oscurece y desenfoca, la persona queda iluminada y nítida en un círculo
+de luz, las palabras clave caen grandes (la primera escondida detrás de la cabeza, la siguiente adelante sobre el
+pecho), y luego las luces vuelven a subir.
+**Función:** explicar (una frase que tiene que pegar, con una entrada y una salida claras).
+**Frases que lo activan:** "ponme un foco cuando digo X", "apaga las luces en esta palabra", "luces abajo en X, arriba
+en Y".
 
-## Footage it needs
-- **Shot:** wide, medium or close, ONE continuous shot of one person, 3 to 6 s. Best on a wide or medium shot with wall above and beside the head (the dark room is what sells it). On a close shot it still works: the pool tightens to a glow around the head.
-- **Camera:** still, drifting or handheld all work. The dark room is made from the live picture frame by frame (the speaker is painted out of every frame before the blur) and the pool of light follows the measured head. Nothing is a still plate.
-- **Wall:** none needed. Some background above or beside the head gives the first word a place.
-- **Cutout:** layered (`assets/subject.webm` is cleaned for a dark room and drawn over it) and measured (head, neck, free room).
-- **What breaks it:** a cutout that loses hair, fingers or a prop (the lost part goes dark with the room) or keeps a piece of background (it stays lit: `GAP`, `FLECKS`, or pick another span); a hand raised above the head or two people (the head is taken as the highest thing in the cutout); a hood or long hair over the shoulders (no neck to find, check the green box); a head that fills the frame (no room for words: `CAPTIONS=0` or leave the effect out); a speaker who bobs a lot (words are fixed on screen, so the head slides against the word behind it).
+## Toma que necesita
+- **Plano:** abierto, medio o cercano, UNA toma continua de una persona, 3 a 6 s. Mejor en un plano abierto o medio con
+  pared sobre y al lado de la cabeza (el cuarto oscuro es lo que lo vende). En un plano cercano igual funciona: el
+  círculo se cierra a un resplandor alrededor de la cabeza.
+- **Cámara:** quieta, con deriva o en mano funcionan. El cuarto oscuro se hace desde la imagen en vivo cuadro a cuadro (la
+  persona se borra de cada cuadro antes del desenfoque) y el círculo de luz sigue a la cabeza medida. Nada es una imagen
+  fija.
+- **Pared:** no hace falta. Algo de fondo sobre o al lado de la cabeza le da un lugar a la primera palabra.
+- **Recorte:** como capa (`assets/subject.webm` se limpia para un cuarto oscuro y se dibuja encima) y medido (cabeza,
+  cuello, espacio libre).
+- **Qué lo rompe:** un recorte que pierde pelo, dedos o un objeto (la parte perdida se oscurece con el cuarto) o conserva
+  un pedazo de fondo (queda iluminado: `GAP`, `FLECKS`, o elige otro tramo; una silla oscura mezclada con la ropa es
+  este caso); una mano levantada sobre la cabeza o dos personas (la cabeza se toma como lo más alto del recorte); una
+  capucha o pelo largo sobre los hombros (no hay cuello que encontrar, revisa la caja verde); una cabeza que llena el
+  cuadro (sin espacio para palabras: `CAPTIONS=0` o deja fuera el efecto); una persona que se mueve mucho (las palabras
+  quedan fijas en pantalla, así que la cabeza se desliza contra la palabra que tiene detrás).
 
-**Slot inputs:** cutout yes, `aroll_hi` no. Python: numpy, scipy, Pillow for `prep.py` and `check.py`; numpy for `onsets.py`; `build.py` needs nothing (Pillow if present, for exact word widths).
+**Entradas del espacio:** recorte sí, `aroll_hi` no. Python: numpy, scipy, Pillow para `prep.py` y `check.py`; numpy
+para `onsets.py`; `build.py` no necesita nada (Pillow si está, para anchos exactos de palabra).
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `F_IN` | first frame the lights move | `onsets.py`: onset of the first key word minus 1. 3 or later |
-| `F_OUT` | first frame the lights come back, or `None` | onset of the first word said in the normal room; 17+ after `F_IN`, 14+ before the last frame. `None` = dark to the last frame: the slot must END ON A CUT |
-| `KEYWORDS` | `(text, frame, place, size, colour)` per word, only words the speaker says | frame = the word's onset. place `'auto'` (first word `'above'`, the rest `'chest'`), `'above'`, `'left'`, `'right'`, `'chest'`, or `('back' or 'front', centre x, baseline y)`. size `'auto'` or px |
-| `DARK` | how dark the room gets outside the pool | 0.16; 0.10 nearly night, 0.30 dim. It keeps its colour, never grey |
-| `BLUR` | px the room goes out of focus | 11 |
-| `POOL` | size of the pool of light | 1 = measured from the head; 0.8 = tighter, darker room |
-| `EDGE_CHOKE` | px the cutout edge is pulled in | 1.5. Bright halo on `work/check_edge.jpg`: 2.5. Thin hair eaten: 0.8 |
-| `EDGE_SPILL` | px of the outer edge recoloured from inside | 4. Pale line around the speaker: 6. 0 = off |
-| `PUSH` | slow push-in while the lights are down | 1.045; 1 = none |
-| `GAP` | polygon of background the cutout kept (between the legs) | still camera only; read the points off a frame. `None` = off |
-| `FLECKS` | `(first frame, last frame, (x0, y0, x1, y1))`: bright speck showing through a hole in the speaker | only if one shows on the check pictures. `[]` = off |
-| `GRADE`, `SOUNDS` | css filter on the whole slot (`''` = off, default); sounds on / off | defaults |
+| `F_IN` | primer cuadro en que se mueven las luces | `onsets.py`: inicio de la primera palabra clave menos 1. 3 o más |
+| `F_OUT` | primer cuadro en que vuelven las luces, o `None` | inicio de la primera palabra dicha en el cuarto normal; 17+ después de `F_IN`, 14+ antes del último cuadro. `None` = oscuro hasta el último cuadro: el espacio debe TERMINAR EN UN CORTE |
+| `KEYWORDS` | `(texto, cuadro, lugar, tamaño, color)` por palabra, solo palabras que dice la persona | cuadro = inicio de la palabra. lugar `'auto'` (la primera palabra `'above'`, el resto `'chest'`), `'above'`, `'left'`, `'right'`, `'chest'`, o `('back' o 'front', x central, y de la base)`. tamaño `'auto'` o px. Escribe el texto en las mayúsculas o minúsculas del estilo; color crema o dorado |
+| `DARK` | qué tan oscuro queda el cuarto fuera del círculo | 0,16; 0,10 casi de noche, 0,30 atenuado. Mantiene su color, nunca gris |
+| `BLUR` | px de desenfoque del cuarto | 11 |
+| `POOL` | tamaño del círculo de luz | 1 = medido desde la cabeza; 0,8 = más cerrado, cuarto más oscuro |
+| `EDGE_CHOKE` | px que se mete el borde del recorte | 1,5. Halo claro en `work/check_edge.jpg`: 2,5. Pelo fino comido: 0,8 |
+| `EDGE_SPILL` | px del borde exterior recoloreados desde adentro | 4. Línea clara alrededor de la persona: 6. 0 = apagado |
+| `PUSH` | acercamiento lento mientras las luces están abajo | 1,045; 1 = nada |
+| `GAP` | polígono de fondo que conservó el recorte (entre las piernas) | solo cámara quieta; lee los puntos en un cuadro. `None` = apagado |
+| `FLECKS` | `(primer cuadro, último cuadro, (x0, y0, x1, y1))`: punto brillante que asoma por un hoyo en la persona | solo si aparece uno en las imágenes de revisión. `[]` = apagado |
+| `GRADE`, `SOUNDS` | filtro css sobre todo el espacio (`''` = apagado, por defecto); sonidos sí / no | por defecto |
 
-**Switches:** `SAFE=1` draws the safe-zone guide (snapshots only). `CAPTIONS=0` drops the key words (lights only; the reel's own captions carry the words). `SFX=0` drops the sounds.
+**Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `CAPTIONS=0` saca las palabras clave
+(solo luces; los subtítulos propios del reel llevan las palabras). `SFX=0` saca los sonidos.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. prints word onsets as frames
-# edit: the CLIP block in build.py: F_IN, F_OUT, KEYWORDS
-PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. measures and bakes (1 to 3 min). LOOK at work/check_edge.jpg (full size) and work/check_sheet.jpg
-PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 3. places the words and prints each ink box. It stops if a word is on the face or outside the safe zone
+PY "SK/scripts/fx_run.py" "<slot>" onsets.py      # 1. imprime los inicios de palabra como cuadros
+# editar: el bloque CLIP en build.py: F_IN, F_OUT, KEYWORDS
+PY "SK/scripts/fx_run.py" "<slot>" prep.py      # 2. mide y hornea (1 a 3 min). MIRA work/check_edge.jpg (tamaño completo) y work/check_sheet.jpg
+PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1      # 3. ubica las palabras e imprime cada caja de tinta. Se detiene si una palabra queda sobre la cara o fuera de la zona segura
 PY "SK/scripts/fx_run.py" "<slot>" hf lint
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.0,2.4,2.7,3.4,3.7      # your own times: before F_IN, both words on, mid hold, mid release, after
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. the clean page (no guide), then render
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.0,2.4,2.7,3.4,3.7      # tus propios tiempos: antes de F_IN, ambas palabras puestas, mitad de la pausa, mitad del regreso, después
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # 4. la página limpia (sin guía), luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # 5. frame count and plain frames at both ends, writes work/final_sheet.jpg and work/final_edge.jpg
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # 5. cantidad de cuadros y cuadros simples en ambos extremos, escribe work/final_sheet.jpg y work/final_edge.jpg
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
 
-## What to look at in the final frames
-- `work/check_edge.jpg` and `work/final_edge.jpg` at full size, darkest moment: around the head and hair no bright halo and no pale line; the hand has all its fingers; nothing of the speaker is left dark and nothing of the room is left lit inside the outline.
-- Frame 0, the frame before `F_IN`, and (with `F_OUT`) from 8 frames after `F_OUT` to the last frame: plain picture, `check.py` says ok. No dim, no push-in left on.
-- Darkest frame: the room is dark blue and soft but still has colour, the speaker is in full colour, skin not red and not blown out. No grain.
-- Each key word appears on its word, is one the speaker says, never covers the face, and with `SAFE=1` sits inside the safe zone (top 220, nothing below 1470, sides 35, right 100 from y 1155).
-- The render has exactly the `frames` of `clip.json` and the speaker's audio.
+## Qué mirar en los cuadros finales
+- `work/check_edge.jpg` y `work/final_edge.jpg` a tamaño completo, momento más oscuro: alrededor de la cabeza y el pelo
+  sin halo claro ni línea pálida; la mano tiene todos sus dedos; nada de la persona queda oscuro y nada del cuarto
+  queda iluminado dentro de la silueta.
+- El cuadro 0, el cuadro antes de `F_IN`, y (con `F_OUT`) desde 8 cuadros después de `F_OUT` hasta el último: imagen
+  simple, `check.py` dice ok. Sin atenuación ni acercamiento que quede puesto.
+- Cuadro más oscuro: el cuarto es azul oscuro y suave pero conserva color, la persona está a todo color, la piel no
+  está roja ni quemada. Sin grano.
+- Cada palabra clave aparece en su palabra, es una que dice la persona, nunca tapa la cara, y con `SAFE=1` queda dentro
+  de la zona segura (arriba 220, nada bajo 1470, lados 35, derecha 100 desde y 1155).
+- El render tiene exactamente los `frames` de `clip.json` y el audio de la persona.
 
-## Traps
-- `prep.py` bakes `F_IN`, `F_OUT`, `DARK`, `BLUR`, `POOL`, the edge fields, `GAP` and `FLECKS` into the two videos: change one and `build.py` refuses to run until `prep.py` has run again. `KEYWORDS`, `PUSH`, `GRADE`, `SOUNDS` only need `build.py`.
-- A blurred copy of the picture still contains the speaker and glows around the sharp cutout. That is why the room is painted out per frame; never swap `room_dark.mp4` for a css blur on the a-roll.
-- The cutout switches on hard on the first moving frame and dissolves off over the last 3 frames of the return; the light itself is baked per frame. A fade-in of the cutout pumps the speaker's brightness.
-- A tween that starts on frame n still shows its start value on frame n: `build.py` starts everything one frame early, so a key word's `frame` is the first frame it is visible.
-- The word behind the head is tucked only a little when the head moves a lot. If the head hides too much of it, give it by hand: `('back', x, baseline y)` a bit higher, or `'left'` / `'right'`.
-- `'chest'` words are in front of the speaker and cover a hand that gestures there. Wide shot: the word sits over the lap. Close shot: a third of the way down the chest.
-- `GAP` is a fixed polygon: on a moving camera leave it `None` and choose a span where the cutout is clean.
-- Sounds: `assets_fx/impact-bass-short.mp3` as the lights fall, stock `whoosh-short` as they return, both at 0.75x and under the voice.
+## Trampas
+- `prep.py` hornea `F_IN`, `F_OUT`, `DARK`, `BLUR`, `POOL`, los campos de borde, `GAP` y `FLECKS` en los dos videos: si
+  cambias uno, `build.py` se niega a correr hasta que `prep.py` corra de nuevo. `KEYWORDS`, `PUSH`, `GRADE` y `SOUNDS`
+  solo necesitan `build.py`.
+- Una copia desenfocada de la imagen todavía contiene a la persona y brilla alrededor del recorte nítido. Por eso el
+  cuarto se borra cuadro a cuadro; nunca cambies `room_dark.mp4` por un desenfoque css sobre la toma.
+- El recorte se enciende de golpe en el primer cuadro en movimiento y se disuelve en los últimos 3 cuadros del regreso;
+  la luz en sí se hornea por cuadro. Un fundido de entrada del recorte hace bombear el brillo de la persona.
+- Una animación que empieza en el cuadro n todavía muestra su valor inicial en el cuadro n: `build.py` empieza todo un
+  cuadro antes, así que el `frame` de una palabra clave es el primer cuadro en que se ve.
+- La palabra detrás de la cabeza se esconde solo un poco cuando la cabeza se mueve mucho. Si la cabeza tapa demasiado,
+  dala a mano: `('back', x, y de la base)` un poco más arriba, o `'left'` / `'right'`.
+- Las palabras `'chest'` van delante de la persona y tapan una mano que gesticula ahí. Plano abierto: la palabra queda
+  sobre el regazo. Plano cercano: a un tercio del pecho hacia abajo.
+- `GAP` es un polígono fijo: con una cámara en movimiento déjalo en `None` y elige un tramo donde el recorte esté limpio.
+- Sonidos: `assets_fx/impact-bass-short.mp3` cuando caen las luces, `whoosh-short` de stock cuando vuelven, ambos a
+  0,75x y bajo la voz.

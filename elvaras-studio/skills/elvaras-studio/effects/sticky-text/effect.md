@@ -1,66 +1,93 @@
-# sticky-text
+# sticky-text (Etiqueta Pegada)
 
-**What it does:** a tag glued to the speaker's cap, to the side of the speaker's head, or to the speaker's chest. It travels, tilts and scales with the speaker on every frame, so it reads as stuck to the speaker and not floating on the screen.
-**Job:** explain (name the thing the speaker is talking about and pin it to the speaker).
-**Trigger phrases:** "stick a tag that says X to my cap", "pin a label on my chest that follows me", "put a tag next to my head that moves with me".
+**Qué hace:** una etiqueta pegada al gorro de la persona, al lado de su cabeza, o a su pecho. Viaja, se inclina y escala
+con la persona en cada cuadro, así que se lee como pegada a ella y no flotando en la pantalla.
+**Función:** explicar (nombrar aquello de lo que habla la persona y fijarlo a ella).
+**Frases que lo activan:** "pégame una etiqueta que diga X en el gorro", "pon una etiqueta en mi pecho que me siga", "pon
+una etiqueta al lado de mi cabeza que se mueva conmigo".
 
-## Footage it needs
-- **Shot:** medium or close for `cap` and `chest`. Wide works with `head` (beside the speaker); on a wide shot a `cap` tag is wider than the cap (build.py warns).
-- **Camera:** still, drifting or moving. Handheld is fine: the tag follows the speaker, not the wall.
-- **Wall:** none needed for `cap` / `chest`. `head` needs empty space beside the speaker's head inside the safe zone.
-- **Cutout:** always measured (head outline = position and size). Layered over the picture only for `head`, and only while that tag is on.
-- **What breaks it:** a hand above or on the speaker's head, a hood or long hair that hides the neck (track.py stops: no head outline), a second person in the cutout, the speaker leaving the frame, a head turn past about 40 degrees (the roll match weakens, the tag keeps the last good angle), plain cloth with hands crossing it for `chest`.
-- **Close-up (tight selfie):** `head` has almost no room beside the speaker, so it comes out small or build.py refuses it. Use `cap`: it sits on the cap and is sized from the speaker's head. If the cap is inside the top 220 px, build.py pushes the tag down as far as the brow line, then shrinks it, then stops with a message: use `chest`.
-- The tag needs 1.5 s on screen. The slot starts and ends on the plain picture (tags come on at `IN_F` at the earliest and leave 9 frames before the end).
+## Toma que necesita
+- **Plano:** medio o cercano para `cap` y `chest`. Abierto funciona con `head` (al lado de la persona); en un plano
+  abierto una etiqueta `cap` es más ancha que el gorro (build.py avisa). Sin gorro, `cap` va sobre la frente, encima de
+  las cejas (y de los lentes).
+- **Cámara:** quieta, con deriva o en movimiento. En mano está bien: la etiqueta sigue a la persona, no a la pared.
+- **Pared:** no hace falta para `cap` / `chest`. `head` necesita espacio vacío al lado de la cabeza dentro de la zona
+  segura.
+- **Recorte:** siempre se mide (silueta de la cabeza = posición y tamaño). Se usa como capa sobre la imagen solo para
+  `head`, y solo mientras esa etiqueta está puesta.
+- **Qué lo rompe:** una mano sobre o encima de la cabeza, una capucha o pelo largo que tapa el cuello (track.py se
+  detiene: sin silueta de cabeza), una segunda persona en el recorte, la persona que sale del cuadro, un giro de cabeza
+  de más de unos 40 grados (la coincidencia de giro se debilita, la etiqueta mantiene el último ángulo bueno), tela lisa
+  con manos que la cruzan para `chest`.
+- **Plano cercano (selfie justa):** `head` casi no tiene espacio al lado de la persona, así que sale pequeña o build.py
+  la rechaza. Usa `cap`: va sobre el gorro y se dimensiona desde la cabeza. Si el gorro está dentro de los 220 px
+  superiores, build.py baja la etiqueta hasta la línea de las cejas, luego la achica, y luego se detiene con un mensaje:
+  usa `chest`.
+- La etiqueta necesita 1,5 s en pantalla. El espacio empieza y termina en la imagen simple (las etiquetas entran en
+  `IN_F` como pronto y salen 9 cuadros antes del final).
 
-## Slot inputs
-`assets/aroll.mp4`, `assets/subject.webm` (cutout: REQUIRED), `words.json`, `clip.json`. No `aroll_hi`. Fonts (Inter Tight 800 / 900, JetBrains Mono) and `pop.mp3`, `whoosh-short.mp3`, `click-soft.mp3` come from the template. Python: numpy, scipy, Pillow only.
+## Entradas del espacio
+`assets/aroll.mp4`, `assets/subject.webm` (recorte: OBLIGATORIO), `words.json`, `clip.json`. Sin `aroll_hi`. Las
+tipografías (Inter Tight 800 / 900, JetBrains Mono) y `pop.mp3`, `whoosh-short.mp3`, `click-soft.mp3` vienen de la
+plantilla. Python: solo numpy, scipy, Pillow.
 
-## CLIP block (top of build.py)
-| field | what it is | how to find it |
+## Bloque CLIP (inicio de build.py)
+| campo | qué es | cómo encontrarlo |
 |---|---|---|
-| `TAGS[i].text` | the words on the tag | caps, 1 to 3 words: what the speaker says or the name of the thing. No invented claims |
-| `say` | the spoken word it lands on | as track.py prints it; the onset is snapped to the audio. `''` = lands at `IN_F` |
-| `anchor` | `'cap'` (on the cap / forehead, above the brows), `'head'` (beside the speaker's head, tucked behind it), `'chest'` (under the chin) | close-up: `cap`. Wide: `head`. Chest visible above y 1470: `chest` |
-| `at` | seconds, overrides `say` | only if the printed onset is wrong |
-| `small`, `sub`, `sub_say` | optional small line above the word, optional dark second line under the tag and the word it drops on | default none. Only when the speaker says a second thing |
-| `side` | `head` only: `'left'`, `'right'`, `'auto'` | `auto` = the side with more room |
-| `offset`, `tilt`, `size` | fine move in px, degrees at the landing frame, size factor on the auto size | leave out first; adjust after the snapshot |
-| `out` / `OUT` | seconds a tag / every tag leaves | `None` = 9 frames before the slot ends |
-| `IN_F` | first frame a tag may appear | 4 |
-| `BROW`, `HEAD_H` | brow line (fraction of head height) and head height / width | defaults; change only if the blue lines in sheet.jpg miss the speaker's brows / chin |
-| `TAG_COL`, `INK`, `CREAM` | tag, text, sub text colours | brand colours, never orange |
-| `GRADE` | CSS filter on the picture | `'none'` (the reel grades) |
+| `TAGS[i].text` | las palabras de la etiqueta | mayúsculas, 1 a 3 palabras: lo que dice la persona o el nombre de la cosa. Sin afirmaciones inventadas |
+| `say` | la palabra dicha en que cae | como la imprime track.py; el inicio se ajusta al audio. `''` = cae en `IN_F` |
+| `anchor` | `'cap'` (en el gorro / la frente, sobre las cejas), `'head'` (al lado de la cabeza, escondida detrás de ella), `'chest'` (bajo la barbilla) | plano cercano: `cap`. Abierto: `head`. Pecho visible sobre y 1470: `chest` |
+| `at` | segundos, reemplaza `say` | solo si el inicio impreso está mal |
+| `small`, `sub`, `sub_say` | línea pequeña opcional sobre la palabra, segunda línea oscura opcional bajo la etiqueta y la palabra en que cae | por defecto ninguna. Solo cuando la persona dice una segunda cosa |
+| `side` | solo `head`: `'left'`, `'right'`, `'auto'` | `auto` = el lado con más espacio |
+| `offset`, `tilt`, `size` | ajuste fino en px, grados en el cuadro de llegada, factor de tamaño sobre el tamaño automático | déjalos fuera primero; ajústalos después de la instantánea |
+| `out` / `OUT` | segundos en que sale una etiqueta / todas | `None` = 9 cuadros antes de que termine el espacio |
+| `IN_F` | primer cuadro en que puede aparecer una etiqueta | 4 |
+| `BROW`, `HEAD_H` | línea de las cejas (fracción del alto de la cabeza) y alto / ancho de la cabeza | por defecto; cámbialos solo si las líneas azules de sheet.jpg no calzan con las cejas / la barbilla |
+| `TAG_COL`, `INK`, `CREAM` | colores de etiqueta, texto, subtexto | colores de marca (dorado, tinta, crema), nunca naranjo |
+| `GRADE` | filtro CSS sobre la imagen | `'none'` (el reel da el color) |
 
-## Switches
-`SAFE=1` safe-zone guide (snapshots only). `CAPTIONS=0` drops the `small` and `sub` lines, keeps the tag. `SFX=0` no pop / whoosh.
+## Interruptores
+`SAFE=1` guía de zona segura (solo instantáneas). `CAPTIONS=0` saca las líneas `small` y `sub`, mantiene la etiqueta.
+`SFX=0` sin pop / whoosh.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" track.py      # measure the speaker's head, chest and the word starts (about 30 s); read what it prints
-# edit: the CLIP block in build.py, then build with the guide on; fix every line that starts with !!
+PY "SK/scripts/fx_run.py" "<slot>" track.py      # mide la cabeza, el pecho y los inicios de palabra (cerca de 30 s); lee lo que imprime
+# editar: el bloque CLIP en build.py, luego arma con la guía puesta; corrige cada línea que empieza con !!
 PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1
 PY "SK/scripts/fx_run.py" "<slot>" hf lint
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.0,2.2,3.8      # snapshot at landing + 0.3 s, the middle, and 0.5 s before the end (times in seconds)
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # build without the guide, then render
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at 1.0,2.2,3.8      # instantánea en la llegada + 0,3 s, al medio, y 0,5 s antes del final (tiempos en segundos)
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # arma sin la guía, luego render
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # numbers, sheet, lock crops, stills, phone copy
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # números, hoja, recortes de fijación, cuadros, copia para celular
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-A 4.5 s slot takes about 5 minutes end to end once the cutout exists (track 40 s, render 20 s).
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+Un espacio de 4,5 s toma unos 5 minutos de punta a punta una vez que existe el recorte (track 40 s, render 20 s).
 
-## What to look at (work/check/)
-- `lock.jpg`: six crops centred on what the tag is glued to. The tag sits at the same spot on the speaker in each; a tag that swims = weak track (track.py match quality under 0.35).
-- `sheet.jpg`: the frame with the biggest head movement is in it. Tag above the blue brow line (`cap`) or under the blue chin line (`chest`); eyes, nose and mouth never covered. Nothing past the red lines.
-- check.py prints which frames differ from the a-roll: frame 0 and the last frame must be plain.
-- `head`: the cutout edge over the tag is clean, no light rim, no double edge (double edge = cutout frame drift).
+## Qué mirar (work/check/)
+- `lock.jpg`: seis recortes centrados en aquello a lo que está pegada la etiqueta. La etiqueta queda en el mismo lugar
+  de la persona en cada uno; una etiqueta que nada = seguimiento débil (calidad de coincidencia de track.py bajo 0,35).
+- `sheet.jpg`: el cuadro con el mayor movimiento de cabeza está ahí. La etiqueta sobre la línea azul de las cejas
+  (`cap`) o bajo la línea azul de la barbilla (`chest`); ojos, nariz y boca nunca tapados. Nada pasado las líneas rojas.
+- check.py imprime qué cuadros difieren de la toma: el cuadro 0 y el último tienen que ser simples.
+- `head`: el borde del recorte sobre la etiqueta está limpio, sin borde claro, sin borde doble (borde doble = desfase de
+  cuadros del recorte).
 
-## Traps
-- Whisper word starts are 0.1 to 0.3 s off: use `say` (track.py snaps it to the audio, good to about 3 frames). If the tag lands early or late in the render, set `at=` in seconds.
-- A swinging camera that takes the speaker's cap into the top 220 px for a moment rules out `cap` and `head` for the whole span (build.py says so). `chest` still works, or cut the slot shorter.
-- Chest roll is damped on purpose (median, long smoothing, within 8 degrees of the head): cloth folds and a low camera fake a roll.
-- Position comes from the silhouette, roll from a template match against one reference frame. Optical flow on a head drifts and broke on the demo; a face-pose point slid 40 px against the cap.
-- Smoothing is light on purpose (position 0.8 frames, roll and size 1.6). More and the tag lags the head.
-- The safe-zone fix is one constant shift, never a per-frame clamp (a per-frame clamp unsticks the tag).
-- Snapshots seek loosely during the entrance: judge landing timing on frames from the real render.
-- On screen: the speaker's words only, no made-up names or numbers, no em dashes, no orange.
+## Trampas
+- Los inicios de palabra de Whisper están 0,1 a 0,3 s corridos: usa `say` (track.py lo ajusta al audio, preciso a unos 3
+  cuadros). Si la etiqueta cae antes o después en el render, pon `at=` en segundos.
+- Una cámara que se balancea y lleva el gorro a los 220 px superiores por un momento descarta `cap` y `head` en todo el
+  tramo (build.py lo dice). `chest` igual funciona, o acorta el espacio.
+- El giro del pecho se amortigua a propósito (mediana, suavizado largo, dentro de 8 grados de la cabeza): los pliegues
+  de la tela y una cámara baja simulan un giro.
+- La posición sale de la silueta, el giro de una coincidencia de plantilla contra un cuadro de referencia. El flujo
+  óptico sobre una cabeza deriva y falló en la demo; un punto de pose de cara se deslizó 40 px respecto del gorro.
+- El suavizado es leve a propósito (posición 0,8 cuadros, giro y tamaño 1,6). Más y la etiqueta se atrasa respecto de la
+  cabeza.
+- El arreglo de zona segura es un desplazamiento constante, nunca un límite por cuadro (un límite por cuadro despega la
+  etiqueta).
+- Las instantáneas buscan de forma aproximada durante la entrada: juzga el tiempo de llegada en cuadros del render real.
+- En pantalla: solo las palabras de la persona, sin nombres ni números inventados, sin guiones largos, sin naranjo.
