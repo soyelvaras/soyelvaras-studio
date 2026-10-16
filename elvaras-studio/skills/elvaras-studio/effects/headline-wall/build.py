@@ -82,8 +82,8 @@ ACCENT = '#C9A15B'   # highlighter colour (butter yellow; never orange)
 OUTLETS = ['Tech newsletter', 'Creator briefing', 'Trade magazine', 'Weekly roundup', 'Local paper', 'Marketing blog',
            'Business desk', 'Industry memo']                     # placeholder source labels, must stay generic
 PEOPLE = ['A founder', 'Agency owner', 'A creator', 'Video editor', 'Founder']   # placeholder "who posted it" labels
-CHAT_REPLIES = ['since when', 'no way', 'wait what']             # second bubble on chat cards
-DARK_LABEL = 'Group chat'                                        # small label on the dark cards
+CHAT_REPLIES = ['¿desde cuándo?', 'no puede ser', 'espera, ¿qué?']             # second bubble on chat cards
+DARK_LABEL = 'Chat del grupo'                                        # small label on the dark cards
 FOREGROUND = []      # polygons [(x, y), ...] in reference-frame px of furniture that stands IN FRONT of the wall (a
                      # pillow, a sofa back): cards then pass behind it. Only needed when a card has to cross it;
                      # after editing run `prep.py matte`
