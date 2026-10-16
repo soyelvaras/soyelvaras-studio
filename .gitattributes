@@ -1,0 +1,15 @@
+# Plain git: preview clips stay regular files (no LFS). Scripts keep LF endings.
+*.mp4 binary
+*.webm binary
+*.woff2 binary
+*.ttf binary
+*.jpg binary
+*.png binary
+*.py text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.css text eol=lf
