@@ -5,7 +5,7 @@ Kinds: news, post, dark, search, video, clip, quote, mail, chat.  Variants used 
 bars), video_h (no source row), dark_h (smaller type).
 A headline is plain text with ONE [marked phrase]: the phrase the yellow highlighter swipes.
 """
-INK, CREAM = '#14161C', '#FFF8EF'
+INK, CREAM = '#141615', '#F2ECDF'
 
 # font key -> (file in assets/fonts, css family, css weight, css style)
 FONTS = {

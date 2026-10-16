@@ -29,8 +29,8 @@ F_OUT = 108          # first frame the lights come back: onset of the first word
 #          or by hand ('back' | 'front', centre x, baseline y) in a-roll px, read off work/check_sheet.jpg
 #   size:  'auto' (as big as the place and the safe zone allow) or a font size in px
 KEYWORDS = [
-    ('first', 61, 'auto', 'auto', '#FFF8EF'),
-    ('second', 74, 'auto', 'auto', '#FAE67A'),
+    ('first', 61, 'auto', 'auto', '#F2ECDF'),
+    ('second', 74, 'auto', 'auto', '#C9A15B'),
 ]
 DARK = 0.16          # how dark the room gets outside the pool of light (0.10 = nearly night, 0.30 = dim). Keeps its colour.
 BLUR = 11            # px the room goes out of focus

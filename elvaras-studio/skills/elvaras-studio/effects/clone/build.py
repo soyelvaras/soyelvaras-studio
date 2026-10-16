@@ -65,7 +65,7 @@ CAPS = [
 # Big accent word on the payoff: (word, frame, top y px, frame it clears or None). None instead of the tuple = no word.
 PUNCH = ('that', 115, 1118, None)
 
-ACCENT = '#FAE67A'           # butter yellow (accent words, flash tint)
+ACCENT = '#C9A15B'           # butter yellow (accent words, flash tint)
 VIGNETTE = 0.0               # 0 for a reel slot (the slot must match the a-roll around it); 0.22 for a stand-alone clip
 # ==== END CLIP ====
 
@@ -239,7 +239,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 #fgwrap{{position:absolute;inset:0;z-index:4}}
 #vig{{position:absolute;inset:0;z-index:6;pointer-events:none;
   background:radial-gradient(90% 70% at 50% 42%,rgba(8,10,8,0) 55%,rgba(8,10,8,{VIGNETTE}) 100%)}}
-#flash{{position:absolute;inset:0;z-index:6;pointer-events:none;background:#FFF6D8;mix-blend-mode:soft-light}}
+#flash{{position:absolute;inset:0;z-index:6;pointer-events:none;background:#F2ECDF;mix-blend-mode:soft-light}}
 .cap{{position:absolute;width:1080px;z-index:8;text-align:center;font-family:'Inter Tight';font-weight:800;font-size:84px;
   letter-spacing:-.05em;line-height:.9;color:#fff;text-shadow:0 10px 40px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.3);white-space:nowrap}}
 .cap .w{{display:inline-block;margin:0 .1em;transform-origin:50% 60%}}

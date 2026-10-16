@@ -54,7 +54,7 @@ EDGE_DARK = 0.88              # how far that stretched fill falls off into the d
 FEATHER = 150.0               # px (source) the picture edge melts into the fill; shrinks to 0 as B lands
 CHROMA = 0.020                # chromatic fringe at peak speed (fraction of radius per ln-scale/frame), 0 = off
 CAP_DEPTH = 1.35              # captions sit nearer the camera than the room: they leave / arrive this much faster
-YEL, CREAM = '#FAE67A', '#FFF8EF'
+YEL, CREAM = '#C9A15B', '#F2ECDF'
 FPS = 30
 W, H = 1080, 1920
 SFX_GAIN = 0.75
@@ -269,7 +269,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0c0f}
 .girl .s{font:500 46px Inter;letter-spacing:-.6px;line-height:1.1}
 .girl .e{font-family:'Instrument Serif';font-style:italic;font-weight:400;line-height:.9;color:YEL;margin:0 0 6px;
   text-shadow:0 4px 30px rgba(40,22,14,.6),0 1px 4px rgba(40,22,14,.3)}
-.spark{position:absolute;color:YEL;line-height:1;font-style:normal;text-shadow:0 0 18px rgba(250,230,122,.55)}
+.spark{position:absolute;color:YEL;line-height:1;font-style:normal;text-shadow:0 0 18px rgba(201,161,91,.55)}
 /* dude: tracked caps + heavy serif */
 .dude .s{color:#F2EFE9;font:600 33px Montserrat;text-shadow:0 2px 12px rgba(0,0,0,.65);white-space:nowrap;line-height:1.2}
 .dude .s.spread{display:flex;justify-content:space-between;width:652px;margin:0 auto}
@@ -277,7 +277,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0c0f}
 .dude .s .w{letter-spacing:.32em;margin:0 .14em;transform-origin:50% 50%}
 .dude .s.spread{padding-left:0}
 .dude .s.spread .w{margin:0 -.32em 0 0}
-.dude .e{color:#F7F4EE;font-family:'DM Serif Display';font-weight:400;line-height:1.1;letter-spacing:-.02em;
+.dude .e{color:#F2ECDF;font-family:'DM Serif Display';font-weight:400;line-height:1.1;letter-spacing:-.02em;
   text-shadow:0 12px 40px rgba(0,0,0,.5);margin:-6px 0 2px}
 .dude .mk{display:inline-block;overflow:hidden;padding:0 .02em .14em;margin-bottom:-.14em;vertical-align:bottom}
 .dude .ch{display:inline-block}

@@ -38,7 +38,7 @@ IN_F = 4                     # first frame a tag may appear: frames before it ar
 OUT = None                   # seconds when every tag leaves. None = 9 frames before the slot ends (last frames stay plain)
 BROW = 0.40                  # eyebrow line, as a fraction of head height under the cap top. check.py draws it: move it if it is off
 HEAD_H = None                # head height / head width. None = measured (track.py prints it); set 1.3 to 1.5 if the chin line is off
-TAG_COL, INK, CREAM = '#FAE67A', '#14161C', '#FFF8EF'   # tag, text, text on the dark sub chip
+TAG_COL, INK, CREAM = '#C9A15B', '#141615', '#F2ECDF'   # tag, text, text on the dark sub chip
 GRADE = 'none'               # CSS filter on the picture. 'none' = the reel grades (keep it, the slot must match the a-roll)
 SFX_VOL = 0.75               # sounds at 0.75x the template volumes, always under the speaker's voice
 # ==== END CLIP ====

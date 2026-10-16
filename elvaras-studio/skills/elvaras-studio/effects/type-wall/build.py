@@ -40,7 +40,7 @@ HEAD_GAP = 14       # px between the yellow row and the top of the speaker's hea
 XC = {}             # {row number: x px} to move the spot where a row's word is centred when it swaps. {} = measured: the widest gap the speaker leaves in that row. Row numbers are printed by build.py
 GROUND = ('#22261A', '#14160F', '#0B0C09')    # wall colours: glow behind the speaker's head, middle, corners. Keep it dark and quiet so the letters carry
 INK = '#EEEADF'     # letter colour (outlined rows use the same colour at 60%)
-ACCENT = '#FAE67A'  # colour of the row over the speaker's head from the hit word on (from the start when no phrase has 'hit')
+ACCENT = '#C9A15B'  # colour of the row over the speaker's head from the hit word on (from the start when no phrase has 'hit')
 VOL_IN, VOL_HIT, VOL_SWAP = .28, .08, .16     # sound levels: whoosh as the wall arrives, low hit on the hit word, soft whoosh on each new phrase. 0 = that sound off
 # ==== END CLIP ====
 

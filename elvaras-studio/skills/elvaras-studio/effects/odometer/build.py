@@ -58,7 +58,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FP = shutil.which('ffprobe') or 'ffprobe'
 SLOT = os.path.basename(HERE)
 FPS = 30
-YEL, CREAM, INK = '#FAE67A', '#FFF8EF', '#14161C'
+YEL, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'
 SAFE = (35, 220, 1045, 1470)          # Instagram: top 220, nothing below 1470, 35 px sides (+ right 100 from y 1155)
 EDGE = 10                             # breathing room inside the safe zone
 CAPTIONS = os.environ.get('CAPTIONS', '1') != '0'

@@ -55,10 +55,10 @@ DEFAULT_CAPTIONS = os.path.normpath(os.path.join(HERE, '..', 'captions', 'styles
 DEFAULT_STYLES = os.path.join(HERE, 'data', 'styles.json')
 DEFAULT_PORT = 4747
 PRODUCT = 'Soy Elvaras Studio'
-PARTS = (('hook', 'Hook'), ('middle', 'Middle'), ('end', 'End'))      # the parts of a reel an effect can be kept to
+PARTS = (('hook', 'Gancho'), ('middle', 'Medio'), ('end', 'Final'))      # the parts of a reel an effect can be kept to
 PART_KEYS = tuple(k for k, _ in PARTS)
 # captionStyle "none": no caption style at all. Some overall styles carry their words inside the look itself.
-NO_CAPTIONS = {'key': 'none', 'name': 'No captions', 'label': '', 'line': 'Titles and effects only.',
+NO_CAPTIONS = {'key': 'none', 'name': 'Sin subtítulos', 'label': '', 'line': 'Solo títulos y efectos.',
                'preview': None, 'poster': None, 'none': True}
 
 KEY_RE = re.compile(r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
@@ -157,7 +157,7 @@ def build_catalog(captions_json=DEFAULT_CAPTIONS, mode='server', styles_json=Non
         best = text(s.get('bestFor'))
         captions.append({
             'key': key, 'name': text(s.get('name'), 60) or key,
-            'label': 'Best for' if best else '',
+            'label': 'Ideal para' if best else '',
             'line': best or text(s.get('look')),
             'preview': caption_url(s.get('preview') or ('previews/%s.mp4' % key)),
             'poster': picker_url('previews/posters/captions/%s.jpg' % key),

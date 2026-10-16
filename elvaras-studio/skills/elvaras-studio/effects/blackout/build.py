@@ -55,7 +55,7 @@ WORD_WEIGHT = 900                                # css font-weight of that face
 WORD_ITALIC = False                              # True for an italic face
 WORD_CASE = 'lower'                              # 'lower', 'upper', 'title' or 'as-typed'
 WORD_TRACK = -0.05                               # letter-spacing in em
-WORD_COLOUR = '#FAE67A'                          # colour of the letters
+WORD_COLOUR = '#C9A15B'                          # colour of the letters
 WORD_GLOW = 'auto'                               # soft glow behind the letters: 'auto' = the word's own colour,
                                                  # a colour, or '' = none
 WORD_PLACE = 'auto'  # 'auto' = 'behind', then 'left' / 'right', then 'chest' when there is no room.
@@ -399,7 +399,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#04060C}}
 .pw.back{{z-index:3}}
 #subjw{{z-index:4}}
 .pw.front{{z-index:6}}
-#inkbox{{position:absolute;z-index:8;border:2px solid #FFE600}}
+#inkbox{{position:absolute;z-index:8;border:2px solid #C9A15B}}
 /* the speaker is the only thing lit: darkness closes in from the edges and takes the floor */
 #hvig{{z-index:7;background:radial-gradient({800 * k:.0f}px {960 * k:.0f}px at {hx:.0f}px {neck:.0f}px,rgba(2,4,10,0) 48%,
   rgba(2,4,10,{min(.9, .24 * d):.3f}) 78%,rgba(2,4,10,{min(.9, .52 * d):.3f}) 100%)}}

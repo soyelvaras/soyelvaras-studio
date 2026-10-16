@@ -57,7 +57,7 @@ HEAD_Y = 860             # y the top of the speaker's head is moved down to, so 
 ZOOM = None              # punch-in on the speaker. None = measured (up to 1.25 when the speaker's head is under 190px tall). 1 = none
 RESULT_SIDE = None       # 'L' or 'R': side of the speaker's head the result card lands on. None = the side with more room
 ACCENT = '#1F1E1D'       # button / progress colour: your app's brand colour
-HILITE = '#FAE67A'       # highlighter tag colour (butter yellow)
+HILITE = '#C9A15B'       # highlighter tag colour (butter yellow)
 CAPTION_FIX = {}         # captions come from words.json: fix what Whisper misheard, {'claw': 'Claude'}; '' drops a word
 CAP_Y = None             # y of the caption line in the room band. None = 114px under the chest line
 SCREEN_ZOOM = 1.0        # media: 1 = the picture fills the frame width; more = closer

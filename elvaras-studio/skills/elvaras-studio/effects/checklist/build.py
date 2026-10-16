@@ -43,7 +43,7 @@ CARD_BOX = 'auto'   # 'auto' = largest room the speaker leaves free while the ca
 LAYER = 'auto'      # 'behind' = between the room and the speaker's cutout (the speaker overlaps it), 'front' = over the speaker, 'auto' = behind unless front is clearly larger.
 OVERLAP = 40        # px the card may tuck behind the top of the speaker's head when it sits above the speaker ('behind' only). 0 = keep clear.
 GLASS = 'auto'      # 'auto' = glass when prep.py says the camera is steady, else opaque. Or force 'glass' / 'opaque'.
-ACCENT = '#FAE67A'  # tick, bar and accent-word colour (the house butter yellow). Never orange.
+ACCENT = '#C9A15B'  # tick, bar and accent-word colour (the house butter yellow). Never orange.
 GRADE = ''          # CSS filter on the footage. '' = leave it (the main reel grades the slot). Standalone clip: 'contrast(1.05) saturate(.95) brightness(.99)'
 VIGNETTE = 0        # 0 to .4 edge darkening. 0 inside a reel that has its own vignette. Standalone clip: .30
 PUSH = 1.0          # slow push-in across the slot (1.0 = none). Only above 1.0 (demo: 1.03) on a locked-off shot that does not cut back to plain a-roll.
@@ -52,7 +52,7 @@ KEEP_OUT = []       # [(x0, y0, x1, y1), ...] px rects the main reel uses (its l
 
 FF = shutil.which('ffmpeg') or 'ffmpeg'
 FP = shutil.which('ffprobe') or 'ffprobe'
-CREAM, INK = '#FFF8EF', '#14161C'
+CREAM, INK = '#F2ECDF', '#141615'
 SAFE_ON = bool(os.environ.get('SAFE')) and os.environ.get('SAFE') != '0'
 SFX_ON = os.environ.get('SFX', '1') != '0'
 if os.environ.get('GRADE') == '0':             # GRADE=0: the main reel grades the slot, whatever the CLIP block says

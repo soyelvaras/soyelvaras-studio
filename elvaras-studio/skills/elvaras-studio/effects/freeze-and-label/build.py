@@ -38,9 +38,9 @@ ZOOM = 1.12          # punch-in of the frozen picture, 1.0 = none. Wide shot: up
 DRIFT = 0.03         # slow extra push during the hold so the still breathes. 0 = dead still
 LOOK = 'subtle'      # the frozen room behind the speaker: 'subtle' (soft blur, light dim), 'strong', 'off'. Always in full colour
 NUMBERS = True       # the small 01 / 02 tab on each chip. False = text only
-ACCENT = '#FAE67A'   # dot centre and number tab: a brand colour, never orange
-CHIP = '#FFF8EF'     # chip and line colour (light)
-INK = '#14161C'      # text colour (dark)
+ACCENT = '#C9A15B'   # dot centre and number tab: a brand colour, never orange
+CHIP = '#F2ECDF'     # chip and line colour (light)
+INK = '#141615'      # text colour (dark)
 HEAD = None          # only if build.py says it cannot find the head: (x0, y0, x1, y1) of the head, cap to chin, in px of work/hold.jpg
 # ==== END CLIP ====
 

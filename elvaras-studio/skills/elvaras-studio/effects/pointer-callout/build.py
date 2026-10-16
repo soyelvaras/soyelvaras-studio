@@ -46,7 +46,7 @@ OUT_F = None      # frame by which everything is gone. None = 6 frames before th
 DONE_SAY = ''     # optional spoken word on which every dot pulses once and 'progress' bars complete. '' = off
 SIZE = 'auto'     # 'auto' = as large as the measured open space allows, or a number (1.0 = 44 px text)
 FLOOR = 0.82      # smallest size that still reads on a phone (36 px text). Under it the build stops instead of shrinking
-ACCENT, CREAM, INK = '#FAE67A', '#FFF8EF', '#14161C'   # line / dots / icon tile, card text, card. Brand colours, never orange
+ACCENT, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'   # line / dots / icon tile, card text, card. Brand colours, never orange
 GRADE = 'none'    # CSS filter on the picture. Leave 'none': the reel grades, and anything else also changes frame 0
 # ==== END CLIP ====
 

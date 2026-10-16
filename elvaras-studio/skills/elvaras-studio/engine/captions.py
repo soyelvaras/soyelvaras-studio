@@ -226,7 +226,7 @@ html,body{width:1080px;height:1920px;background:#000;overflow:hidden}
 # ----------------------------------------------------------------------------------------------------------------------
 def arcade(b):
     b.css.append(f'''
-.ar{{top:{Y_CHEST + 82}px;font-family:'Pixelify Sans';font-weight:600;font-size:68px;line-height:76px;color:#fff;
+.ar{{top:{Y_CHEST + 82}px;font-family:'Pixelify Sans';font-weight:600;font-size:68px;line-height:76px;color:#F2ECDF;
   text-shadow:0 4px 0 rgba(0,0,0,.3),0 0 22px rgba(0,0,0,.5)}}
 .ar.big{{top:{Y_CHEST + 150}px;font-weight:700;font-size:140px;line-height:140px}}''')
     wins = windows(chunk(W, 3, 16, solo=('cta',)))
@@ -247,10 +247,10 @@ def arcade(b):
 # ----------------------------------------------------------------------------------------------------------------------
 def lowkey(b):
     b.css.append(f'''
-.lk{{top:{Y_CHEST + 120}px;font-family:'Figtree';font-weight:600;font-size:42px;line-height:52px;color:#fff;
+.lk{{top:{Y_CHEST + 120}px;font-family:'Figtree';font-weight:600;font-size:42px;line-height:52px;color:#F2ECDF;
   text-shadow:0 2px 10px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.35)}}
 .lkh{{position:absolute;left:0;width:1080px;top:246px;display:flex;flex-direction:column;align-items:center}}
-.lkh span{{background:#fff;color:#141414;font-family:'Barlow Condensed';font-weight:500;font-size:52px;line-height:68px;
+.lkh span{{background:#fff;color:#141615;font-family:'Barlow Condensed';font-weight:500;font-size:52px;line-height:68px;
   padding:0 24px 2px;border-radius:17px;margin-top:-7px;letter-spacing:-.005em}}''')
     b.html.append('<div class="lkh">' + ''.join(f'<span>{esc(t)}</span>' for t in TITLE if t) + '</div>')
     for g, t0, t1 in windows(chunk(W, 3, 15)):
@@ -270,7 +270,7 @@ def lowkey(b):
 # ----------------------------------------------------------------------------------------------------------------------
 def fieldnotes(b):
     b.css.append(f'''
-.fn{{position:absolute;font-family:'Newsreader';font-weight:400;font-size:48px;line-height:58px;color:#fff;text-wrap:balance;
+.fn{{position:absolute;font-family:'Newsreader';font-weight:400;font-size:48px;line-height:58px;color:#F2ECDF;text-wrap:balance;
   text-shadow:0 1px 18px rgba(0,0,0,.7),0 0 6px rgba(0,0,0,.6),0 1px 2px rgba(0,0,0,.45)}}
 .fn.b{{left:0;width:1080px;top:{Y_CHEST + 96}px;text-align:center}}''')
     # a wall spot is only used when the clip has open room on that side (layout.json); otherwise the phrase goes to the chest
@@ -292,7 +292,7 @@ def fieldnotes(b):
 # ----------------------------------------------------------------------------------------------------------------------
 def anchor(b):
     b.css.append(f'''
-.an{{top:{Y_CHEST + 40}px;font-family:'Inter Tight';font-weight:800;font-size:60px;line-height:68px;letter-spacing:-.012em;color:#fff;
+.an{{top:{Y_CHEST + 40}px;font-family:'Inter Tight';font-weight:800;font-size:60px;line-height:68px;letter-spacing:-.012em;color:#F2ECDF;
   text-shadow:0 2px 14px rgba(0,0,0,.65),0 0 2px rgba(0,0,0,.4)}}
 .an i{{display:block;font-weight:500;font-style:italic;font-size:44px;line-height:52px;letter-spacing:0}}
 .an.num{{top:{Y_CHEST - 60}px;font-size:230px;line-height:230px;letter-spacing:-.04em;
@@ -324,7 +324,7 @@ def anchor(b):
 # ----------------------------------------------------------------------------------------------------------------------
 def loud(b):
     b.css.append(f'''
-.ld{{font-family:'Arimo';font-weight:700;letter-spacing:-.085em;color:#fff;text-shadow:0 4px 26px rgba(0,0,0,.28)}}
+.ld{{font-family:'Arimo';font-weight:700;letter-spacing:-.085em;color:#F2ECDF;text-shadow:0 4px 26px rgba(0,0,0,.28)}}
 .ld.w{{top:{Y_CHEST - 6}px;line-height:170px;height:170px}}
 .ldt{{position:absolute;left:44px;top:214px;white-space:nowrap;display:flex;align-items:flex-start;gap:26px}}
 #ldn{{font-size:290px;line-height:250px}}
@@ -361,19 +361,19 @@ def loud(b):
 # 06 VANITY: a tall display serif in butter cream, one word at a time, the words that matter flip to yellow italic,
 #            a small icon rides along with the thing being named
 # ----------------------------------------------------------------------------------------------------------------------
-ICON_BURST = ('<svg class="vi" viewBox="-50 -50 100 100"><g stroke="#E9774F" stroke-width="13" stroke-linecap="round">'
+ICON_BURST = ('<svg class="vi" viewBox="-50 -50 100 100"><g stroke="#C9A15B" stroke-width="13" stroke-linecap="round">'
               + ''.join(f'<line x1="0" y1="0" x2="0" y2="-42" transform="rotate({a})"/>' for a in range(0, 360, 45))
               + '</g></svg>')
 ICON_BUBBLE = ('<svg class="vi" viewBox="0 0 100 100"><path d="M50 12c24 0 42 15 42 34S74 80 50 80c-5 0-10-.6-14-1.8L16 90l5-19C12 64 8 56 8 46 8 27 26 12 50 12z" '
-               'fill="#fff"/><circle cx="33" cy="47" r="6" fill="#262626"/><circle cx="50" cy="47" r="6" fill="#262626"/>'
+               'fill="#F2ECDF"/><circle cx="33" cy="47" r="6" fill="#262626"/><circle cx="50" cy="47" r="6" fill="#262626"/>'
                '<circle cx="67" cy="47" r="6" fill="#262626"/></svg>')
 
 
 def vanity(b):
     b.css.append(f'''
-.vn{{top:{Y_CHEST + 30}px;font-family:'Instrument Serif';font-weight:400;font-size:104px;line-height:120px;color:#FFF4BE;
-  -webkit-text-stroke:.7px #FFF4BE;text-shadow:0 3px 0 rgba(70,48,0,.32),0 0 26px rgba(0,0,0,.6)}}
-.vn.em{{font-style:italic;font-size:122px;color:#FFE25F;-webkit-text-stroke:1.1px #FFE25F}}
+.vn{{top:{Y_CHEST + 30}px;font-family:'Instrument Serif';font-weight:400;font-size:104px;line-height:120px;color:#F2ECDF;
+  -webkit-text-stroke:.7px #F2ECDF;text-shadow:0 3px 0 rgba(70,48,0,.32),0 0 26px rgba(0,0,0,.6)}}
+.vn.em{{font-style:italic;font-size:122px;color:#C9A15B;-webkit-text-stroke:1.1px #C9A15B}}
 .vi{{display:inline-block;width:84px;height:84px;vertical-align:-8px;margin-right:18px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.45))}}''')
     for i, w in enumerate(W):
         t1 = W[i + 1]['start'] if i + 1 < len(W) and W[i + 1]['start'] - w['end'] <= .6 else w['end'] + .35
@@ -401,12 +401,12 @@ def bubblegum(b):
     # no room above the head (layout.json says so with Y_ABOVE_HEAD null): the word floats over the chest instead
     y_word = (Y_ABOVE_HEAD if Y_ABOVE_HEAD is not None else Y_CHEST) + 14
     b.css.append(f'''
-.bg{{top:{y_word}px;font-family:'Arimo';font-weight:400;font-size:100px;line-height:104px;letter-spacing:-.065em;color:#FFE0EF;
-  text-shadow:0 0 16px rgba(255,105,180,.85),0 0 3px rgba(240,80,160,.95),0 2px 12px rgba(120,20,70,.35)}}
+.bg{{top:{y_word}px;font-family:'Arimo';font-weight:400;font-size:100px;line-height:104px;letter-spacing:-.065em;color:#F2ECDF;
+  text-shadow:0 0 16px rgba(201,161,91,.85),0 0 3px rgba(201,161,91,.95),0 2px 12px rgba(19,40,31,.35)}}
 #bgt{{position:absolute;left:0;width:1080px;top:228px;text-align:center;font-family:'Elsie Swash Caps';font-weight:900;
-  font-size:66px;line-height:68px;letter-spacing:.01em;color:#F8BBD8;-webkit-text-stroke:2.4px #B4517F;paint-order:stroke fill;
-  text-shadow:0 3px 0 rgba(120,40,85,.55),0 0 18px rgba(0,0,0,.3)}}
-#bgt .st{{display:inline-block;width:38px;height:38px;margin:0 18px;vertical-align:0;color:#FFE9F4;filter:drop-shadow(0 0 6px rgba(255,105,180,.9))}}''')
+  font-size:66px;line-height:68px;letter-spacing:.01em;color:#F2ECDF;-webkit-text-stroke:2.4px #5B3F2C;paint-order:stroke fill;
+  text-shadow:0 3px 0 rgba(19,40,31,.55),0 0 18px rgba(0,0,0,.3)}}
+#bgt .st{{display:inline-block;width:38px;height:38px;margin:0 18px;vertical-align:0;color:#F2ECDF;filter:drop-shadow(0 0 6px rgba(201,161,91,.9))}}''')
     l1, l2 = SWASH
     b.html.append(f'<div id="bgt">{STAR}{esc(l1)}{STAR}{"<br>" + esc(l2) if l2 else ""}</div>')
     b.js.append("tl.fromTo('#bgt',{autoAlpha:0,filter:'blur(14px)',scale:1.06},{autoAlpha:1,filter:'blur(0px)',scale:1,duration:.4,ease:'power2.out',immediateRender:false},0);")
@@ -424,12 +424,12 @@ def bubblegum(b):
 # ----------------------------------------------------------------------------------------------------------------------
 def moodboard(b):
     b.css.append(f'''
-.mb{{position:absolute;left:0;width:1080px;top:{Y_CHEST + 56}px;text-align:center;white-space:nowrap;color:#fff}}
+.mb{{position:absolute;left:0;width:1080px;top:{Y_CHEST + 56}px;text-align:center;white-space:nowrap;color:#F2ECDF}}
 .mb .t{{font-family:'Poppins';font-weight:700;font-size:56px;line-height:66px;letter-spacing:-.012em;text-shadow:0 2px 16px rgba(0,0,0,.5)}}
 .mb .s{{font-family:'Instrument Serif';font-style:italic;font-size:62px;line-height:64px;letter-spacing:-.01em;text-shadow:0 2px 14px rgba(0,0,0,.6)}}
 .mb .s u{{display:inline-block;width:0;text-decoration:none;overflow:visible}}
 .mb .box{{display:inline-block;position:relative}}
-.mb .st{{position:absolute;color:#fff;filter:drop-shadow(0 0 5px rgba(255,255,255,.55))}}''')
+.mb .st{{position:absolute;color:#F2ECDF;filter:drop-shadow(0 0 5px rgba(255,255,255,.55))}}''')
     # two phrases per card, never across a sentence: the first goes bold, the second is typed out in italic
     sents, cur = [], []
     for w in W:
@@ -480,7 +480,7 @@ def moodboard(b):
 def golden(b):
     b.css.append(f'''
 .gh{{top:{Y_LOWER}px;font-family:'Newsreader';font-weight:500;font-style:italic;font-size:62px;line-height:76px;letter-spacing:-.005em;
-  color:#F8CB45;text-shadow:3px 3px 0 rgba(26,15,0,.68),0 0 18px rgba(0,0,0,.35)}}''')
+  color:#C9A15B;text-shadow:3px 3px 0 rgba(26,15,0,.68),0 0 18px rgba(0,0,0,.35)}}''')
     for g, t0, t1 in windows(chunk(W, 6, 28)):
         i_d = b.nid()
         txt = ' '.join(f'&ldquo;{esc(bare(w["text"]))}&rdquo;' if w.get('e') == 'cta' else esc(w['text']) for w in g)
@@ -494,10 +494,10 @@ def golden(b):
 def specsheet(b):
     b.css.append(f'''
 .ss{{top:{Y_CHEST - 30}px;font-family:'Archivo';font-stretch:125%;font-weight:900;font-size:46px;line-height:54px;letter-spacing:.012em;
-  text-transform:uppercase;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.4)}}
+  text-transform:uppercase;color:#F2ECDF;text-shadow:0 2px 12px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.4)}}
 .tag{{position:absolute;left:58px;top:244px;transform-origin:0 50%;transform:perspective(1100px) rotateY(24deg) rotateZ(-6deg);
-  font-family:'Archivo';font-stretch:125%;font-weight:900;text-transform:uppercase;color:#FFEB00;white-space:nowrap;
-  text-shadow:0 0 28px rgba(255,235,0,.5),0 4px 14px rgba(0,0,0,.35)}}
+  font-family:'Archivo';font-stretch:125%;font-weight:900;text-transform:uppercase;color:#C9A15B;white-space:nowrap;
+  text-shadow:0 0 28px rgba(201,161,91,.5),0 4px 14px rgba(0,0,0,.35)}}
 .tag .k{{font-size:34px;line-height:40px;letter-spacing:.02em}}
 .tag .v{{font-size:150px;line-height:136px;letter-spacing:-.02em}}''')
 
@@ -573,11 +573,11 @@ def card_times(cs):
 def bold(b):
     b.cutout = bool(CUTOUT) and not FACELESS
     b.css.append(f'''
-.dw{{position:absolute;left:0;width:1080px;text-align:center;color:#fff;font-family:'Inter Tight';font-weight:900;letter-spacing:-.05em;
+.dw{{position:absolute;left:0;width:1080px;text-align:center;color:#F2ECDF;font-family:'Inter Tight';font-weight:900;letter-spacing:-.05em;
   line-height:.9;text-shadow:0 10px 40px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35);white-space:nowrap;transform-origin:50% 60%}}
 .dw span{{display:inline-block;margin:0 .1em;transform-origin:50% 60%}}
 .dw.sm{{top:{Y_CHEST + 50}px;font-size:84px;font-weight:800;letter-spacing:-.04em}}
-.dw.y{{color:#FAE67A}}''')
+.dw.y{{color:#C9A15B}}''')
     for g, t0, t1 in windows(chunk(W, 3, 16, solo=('num', 'emph', 'cta'))):
         i_d = b.nid()
         if len(g) == 1 and g[0].get('e') in ('num', 'emph', 'cta'):
@@ -612,11 +612,11 @@ def bold(b):
 # ----------------------------------------------------------------------------------------------------------------------
 def coolgirl(b):
     b.css.append(f'''
-.gc{{position:absolute;left:110px;width:860px;top:{Y_CHEST - 40}px;text-align:center;color:#FFF8EF;text-shadow:0 2px 26px rgba(60,30,20,.55)}}
+.gc{{position:absolute;left:110px;width:860px;top:{Y_CHEST - 40}px;text-align:center;color:#F2ECDF;text-shadow:0 2px 26px rgba(60,30,20,.55)}}
 .gc .s{{font-family:'Inter';font-weight:500;font-size:60px;line-height:70px;letter-spacing:-1px;text-wrap:balance}}
-.gc .e{{position:relative;display:inline-block;font-family:'Instrument Serif';font-style:italic;line-height:.92;color:#FAE67A;
+.gc .e{{position:relative;display:inline-block;font-family:'Instrument Serif';font-style:italic;line-height:.92;color:#C9A15B;
   white-space:nowrap;margin:4px 0 10px;transform-origin:50% 60%}}
-.gc .st{{position:absolute;color:#FAE67A;filter:drop-shadow(0 0 8px rgba(250,230,122,.6))}}''')
+.gc .st{{position:absolute;color:#C9A15B;filter:drop-shadow(0 0 8px rgba(201,161,91,.6))}}''')
     for c in card_times(cards(extend_num=True)):
         card = b.nid('g')
         parts = []
@@ -645,10 +645,10 @@ def coolgirl(b):
 # ----------------------------------------------------------------------------------------------------------------------
 def cooldude(b):
     b.css.append(f'''
-.cd{{position:absolute;left:100px;width:880px;top:{Y_CHEST - 70}px;text-align:center;color:#F7F4EE}}
+.cd{{position:absolute;left:100px;width:880px;top:{Y_CHEST - 70}px;text-align:center;color:#F2ECDF}}
 .cd .t{{font-family:'Montserrat';font-weight:500;font-size:34px;line-height:50px;text-transform:uppercase;text-wrap:balance;
   text-shadow:0 2px 12px rgba(0,0,0,.6)}}
-.cd .t span{{display:inline-block;letter-spacing:.32em;margin:0 .1em;transform-origin:50% 50%;color:#F7F4EE}}
+.cd .t span{{display:inline-block;letter-spacing:.32em;margin:0 .1em;transform-origin:50% 50%;color:#F2ECDF}}
 .cd .p{{font-family:'DM Serif Display';line-height:1.12;letter-spacing:-.02em;white-space:nowrap;text-shadow:0 12px 40px rgba(0,0,0,.45)}}
 .cd .mk{{display:inline-block;overflow:hidden;padding:0 .02em .14em;margin-bottom:-.14em;vertical-align:bottom}}
 .cd .ch{{display:inline-block}}''')
@@ -677,11 +677,11 @@ def cooldude(b):
 # 14 KARAOKE: wide caps on a frosted dark plate, the word being said lights up and pops
 # ----------------------------------------------------------------------------------------------------------------------
 def karaoke(b):
-    on, off = '#FAE67A', '#F4EDE0'
+    on, off = '#C9A15B', '#F2ECDF'
     b.css.append(f'''
 .kk{{top:{Y_CHEST + 96}px}}
-.kk .plate{{display:inline-flex;gap:0 26px;padding:20px 36px 22px;border-radius:26px;background:rgba(21,21,23,.62);
-  backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border:1px solid rgba(244,237,224,.12);
+.kk .plate{{display:inline-flex;gap:0 26px;padding:20px 36px 22px;border-radius:26px;background:rgba(19,40,31,.62);
+  backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border:1px solid rgba(242,236,223,.12);
   box-shadow:0 18px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}}
 .kk .w{{display:inline-block;font-family:'Archivo';font-stretch:125%;font-weight:900;font-size:66px;line-height:70px;letter-spacing:.01em;
   text-transform:uppercase;color:{off};text-shadow:0 3px 14px rgba(0,0,0,.5);transform-origin:50% 60%}}''')
@@ -706,13 +706,13 @@ def karaoke(b):
 def signature(b):
     b.css.append(f'''
 .sg{{top:{Y_CHEST + 70}px;font-family:'Archivo';font-stretch:125%;font-weight:900;font-size:48px;line-height:56px;letter-spacing:.03em;
-  text-transform:uppercase;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.4)}}
+  text-transform:uppercase;color:#F2ECDF;text-shadow:0 2px 12px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.4)}}
 .sa{{position:absolute;left:0;width:1080px;top:{Y_CHEST - 76}px;text-align:center;filter:drop-shadow(0 8px 22px rgba(0,0,0,.5))}}
-.sa .scr{{position:relative;z-index:2;font-family:'Marck Script';font-size:128px;line-height:128px;color:#fff;-webkit-text-stroke:2px #fff;
+.sa .scr{{position:relative;z-index:2;font-family:'Marck Script';font-size:128px;line-height:128px;color:#F2ECDF;-webkit-text-stroke:2px #F2ECDF;
   white-space:nowrap;transform:rotate(-5deg);margin-bottom:-34px}}
 .sa .scr span{{display:inline-block}}
 .sa .cps{{font-family:'Archivo';font-style:italic;font-stretch:125%;font-weight:900;line-height:.95;letter-spacing:-.02em;text-transform:uppercase;
-  color:#F5D9BF;white-space:nowrap}}
+  color:#F2ECDF;white-space:nowrap}}
 .sa .cps span{{display:inline-block;transform-origin:50% 60%}}''')
     acc = []                                   # (first index, end index, script words, caps words)
     for i, w in enumerate(W):
@@ -750,10 +750,10 @@ def signature(b):
 def keyword(b):
     b.css.append(f'''
 .kw{{position:absolute;left:70px;right:70px;top:{Y_CHEST - 40}px;text-align:center;font-family:'Inter Tight';font-weight:800;font-size:76px;
-  line-height:1;letter-spacing:-.045em;color:#fff;text-shadow:0 8px 30px rgba(0,0,0,.6),0 2px 6px rgba(0,0,0,.4);white-space:nowrap}}
+  line-height:1;letter-spacing:-.045em;color:#F2ECDF;text-shadow:0 8px 30px rgba(0,0,0,.6),0 2px 6px rgba(0,0,0,.4);white-space:nowrap}}
 .kw.big{{font-size:104px;top:{Y_CHEST - 56}px;font-weight:900}}
 .kw span{{display:inline-block;margin:0 .1em;transform-origin:50% 60%}}
-.kw .y{{color:#FAE67A}}''')
+.kw .y{{color:#C9A15B}}''')
     pop = ({'scale': 1.16, 'filter': 'blur(10px)'}, {'scale': 1, 'filter': 'blur(0px)'}, .16, 'power3.out')
     for g, t0, t1 in windows(chunk(W, 3, 16)):
         i_d = b.nid()
@@ -786,9 +786,9 @@ def stacked(b, cls, small, punch_size, extend=True):
 
 
 SK_CSS = '''
-.sk{{position:absolute;left:110px;width:860px;top:{top}px;text-align:center;color:#fff}}
+.sk{{position:absolute;left:110px;width:860px;top:{top}px;text-align:center;color:#F2ECDF}}
 .sk .s{{text-wrap:balance;text-shadow:0 2px 16px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.35)}}
-.sk .s span{{color:#fff}}
+.sk .s span{{color:#F2ECDF}}
 .sk .e{{display:inline-block;white-space:nowrap;transform-origin:50% 60%}}'''
 
 
@@ -812,7 +812,7 @@ def terminal(b):
 def outline(b):
     b.css.append(SK_CSS.format(top=Y_CHEST - 70) + '''
 .ol .s{font-family:'Bebas Neue';font-size:80px;line-height:80px;letter-spacing:.012em;text-transform:uppercase}
-.ol .e{font-family:'Bebas Neue';line-height:.98;letter-spacing:.02em;text-transform:uppercase;color:transparent;-webkit-text-stroke:3px #fff;
+.ol .e{font-family:'Bebas Neue';line-height:.98;letter-spacing:.02em;text-transform:uppercase;color:transparent;-webkit-text-stroke:3px #F2ECDF;
   filter:drop-shadow(0 4px 14px rgba(0,0,0,.55))}''')
     stacked(b, 'ol', lambda w: bare(w['text']), lambda t: min(170, int(850 / (len(t) * .4))))
 
@@ -898,9 +898,9 @@ def custom(b):
     fam, weight = str(s.get('font') or 'Inter Tight'), int(_num(s.get('weight'), 800))
     size, lh = _num(s.get('size'), 64), _num(s.get('line_height'), 1.12)
     case = s.get('case', 'as-typed')
-    color, accent = s.get('color', '#FFFFFF'), s.get('accent', '#FAE67A')
+    color, accent = s.get('color', '#F2ECDF'), s.get('accent', '#C9A15B')
     lit = s.get('lit', 'none') if s.get('lit', 'none') in LIT else 'none'
-    lit_text = s.get('lit_text', '#151517')
+    lit_text = s.get('lit_text', '#141615')
     entrance = s.get('entrance', 'none') if s.get('entrance', 'none') in ENTRANCES else 'none'
     if s.get('entrance') and s.get('entrance') not in ENTRANCES:
         NOTES.append(f'Custom captions: entrance "{s.get("entrance")}" is not one of {", ".join(ENTRANCES)}; used none.')
@@ -930,7 +930,7 @@ def custom(b):
     plate_css = ''
     if plate:
         blur = _num(plate.get('blur'), 0)
-        plate_css = (f"background:{plate.get('color', 'rgba(21,21,23,.7)')};border-radius:{_num(plate.get('radius'), 20):.0f}px;"
+        plate_css = (f"background:{plate.get('color', 'rgba(19,40,31,.7)')};border-radius:{_num(plate.get('radius'), 20):.0f}px;"
                      f"padding:{pad[0]}px {pad[1]}px;"
                      + (f"backdrop-filter:blur({blur:.0f}px);-webkit-backdrop-filter:blur({blur:.0f}px);" if blur else ''))
     side = {'center': f'left:{margin:.0f}px;width:{1080 - 2 * margin:.0f}px;text-align:center',

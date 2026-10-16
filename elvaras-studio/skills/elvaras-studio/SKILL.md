@@ -27,6 +27,9 @@ publish or hand it to anyone else, and keep its GitHub repo private.
   uses yellow, orange or red as its accent, use dorado. Where it uses black or near black, use bosque or tinta.
 - Clients: "edita esto para <cliente>" uses `brands/clientes/<cliente>/brand.json` instead (copy `_plantilla`).
   Each client also gets its own `my-style` files: keep them as `ST/clients/<cliente>/my-style.{md,json}`.
+- Names: the picker and the data files show Spanish names (Palabra Clave, Zoom Digital, Junto al Fuego...). Each
+  entry keeps its original English name in `en`, which is the name the references and effect notes use. Keys never
+  changed. Talk to him with the Spanish name.
 - Exports: the main render is 9:16 for Instagram. When he asks for the web version, also render 16:9.
 - Preview clips in `captions/previews`, `picker/previews` and `effects/*/example` are placeholders until he
   records his own. Never show them as his work.

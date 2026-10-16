@@ -5,160 +5,160 @@ window.STUDIO_CATALOG = {
   {
    "key": "arcade",
    "name": "Arcade",
-   "label": "Best for",
-   "line": "Tech, AI and tool walkthroughs",
+   "label": "Ideal para",
+   "line": "Tecnología, IA y tutoriales de herramientas",
    "preview": "../captions/previews/arcade.mp4",
    "poster": "previews/posters/captions/arcade.jpg"
   },
   {
    "key": "low-key",
-   "name": "Low Key",
-   "label": "Best for",
-   "line": "Talking straight to camera, story time",
+   "name": "Discreto",
+   "label": "Ideal para",
+   "line": "Hablar directo a cámara, contar historias",
    "preview": "../captions/previews/low-key.mp4",
    "poster": "previews/posters/captions/low-key.jpg"
   },
   {
    "key": "field-notes",
-   "name": "Field Notes",
-   "label": "Best for",
-   "line": "Voiceover, travel, slow reflective pieces",
+   "name": "Bitácora",
+   "label": "Ideal para",
+   "line": "Voz en off, viajes, piezas reflexivas",
    "preview": "../captions/previews/field-notes.mp4",
    "poster": "previews/posters/captions/field-notes.jpg"
   },
   {
    "key": "anchor",
-   "name": "Anchor",
-   "label": "Best for",
-   "line": "News, explainers, breakdowns",
+   "name": "Noticiero",
+   "label": "Ideal para",
+   "line": "Noticias, explicaciones, análisis",
    "preview": "../captions/previews/anchor.mp4",
    "poster": "previews/posters/captions/anchor.jpg"
   },
   {
    "key": "loud-lowercase",
-   "name": "Loud Lowercase",
-   "label": "Best for",
-   "line": "Story hooks, lifestyle",
+   "name": "Minúscula Gigante",
+   "label": "Ideal para",
+   "line": "Ganchos con historia, estilo de vida",
    "preview": "../captions/previews/loud-lowercase.mp4",
    "poster": "previews/posters/captions/loud-lowercase.jpg"
   },
   {
    "key": "vanity",
-   "name": "Vanity",
-   "label": "Best for",
-   "line": "Beauty, fashion, tutorials",
+   "name": "Tocador",
+   "label": "Ideal para",
+   "line": "Belleza, moda, tutoriales",
    "preview": "../captions/previews/vanity.mp4",
    "poster": "previews/posters/captions/vanity.jpg"
   },
   {
    "key": "bubblegum",
-   "name": "Bubblegum",
-   "label": "Best for",
-   "line": "Lifestyle, diary, fun",
+   "name": "Chicle",
+   "label": "Ideal para",
+   "line": "Estilo de vida, diario, contenido divertido",
    "preview": "../captions/previews/bubblegum.mp4",
    "poster": "previews/posters/captions/bubblegum.jpg"
   },
   {
    "key": "moodboard",
    "name": "Moodboard",
-   "label": "Best for",
-   "line": "Aesthetic content and tips lists, faceless or on camera",
+   "label": "Ideal para",
+   "line": "Contenido estético y listas de tips, con o sin cara",
    "preview": "../captions/previews/moodboard.mp4",
    "poster": "previews/posters/captions/moodboard.jpg"
   },
   {
    "key": "golden-hour",
-   "name": "Golden Hour",
-   "label": "Best for",
-   "line": "Cinematic b-roll, brand films",
+   "name": "Hora Dorada",
+   "label": "Ideal para",
+   "line": "B-roll cinematográfico, videos de marca",
    "preview": "../captions/previews/golden-hour.mp4",
    "poster": "previews/posters/captions/golden-hour.jpg"
   },
   {
    "key": "spec-sheet",
-   "name": "Spec Sheet",
-   "label": "Best for",
-   "line": "Gear, reviews, anything with prices",
+   "name": "Ficha Técnica",
+   "label": "Ideal para",
+   "line": "Equipos, reseñas, todo lo que tenga precios",
    "preview": "../captions/previews/spec-sheet.mp4",
    "poster": "previews/posters/captions/spec-sheet.jpg"
   },
   {
    "key": "bold",
-   "name": "Bold",
-   "label": "Best for",
-   "line": "Hooks, opinions, anything with energy",
+   "name": "Contundente",
+   "label": "Ideal para",
+   "line": "Ganchos, opiniones, todo lo que tenga energía",
    "preview": "../captions/previews/bold.mp4",
    "poster": "previews/posters/captions/bold.jpg"
   },
   {
    "key": "cool-girl",
-   "name": "Cool Girl",
-   "label": "Best for",
-   "line": "Lifestyle, soft sell, personal brand",
+   "name": "Relajada",
+   "label": "Ideal para",
+   "line": "Estilo de vida, venta suave, marca personal",
    "preview": "../captions/previews/cool-girl.mp4",
    "poster": "previews/posters/captions/cool-girl.jpg"
   },
   {
    "key": "cool-dude",
-   "name": "Cool Dude",
-   "label": "Best for",
-   "line": "Studio interviews, premium and moody",
+   "name": "Elegante",
+   "label": "Ideal para",
+   "line": "Entrevistas en estudio, contenido premium y sobrio",
    "preview": "../captions/previews/cool-dude.mp4",
    "poster": "previews/posters/captions/cool-dude.jpg"
   },
   {
    "key": "karaoke",
    "name": "Karaoke",
-   "label": "Best for",
-   "line": "Fast talkers, busy backgrounds",
+   "label": "Ideal para",
+   "line": "Personas que hablan rápido, fondos recargados",
    "preview": "../captions/previews/karaoke.mp4",
    "poster": "previews/posters/captions/karaoke.jpg"
   },
   {
    "key": "signature",
-   "name": "Signature",
-   "label": "Best for",
-   "line": "Business, offers, calls to action",
+   "name": "Firma",
+   "label": "Ideal para",
+   "line": "Negocios, ofertas, llamados a la acción",
    "preview": "../captions/previews/signature.mp4",
    "poster": "previews/posters/captions/signature.jpg"
   },
   {
    "key": "keyword",
-   "name": "Keyword",
-   "label": "Best for",
-   "line": "Everyday talking reels, the safe default",
+   "name": "Palabra Clave",
+   "label": "Ideal para",
+   "line": "Reels del día a día, la opción segura",
    "preview": "../captions/previews/keyword.mp4",
    "poster": "previews/posters/captions/keyword.jpg"
   },
   {
    "key": "weight-shift",
-   "name": "Weight Shift",
-   "label": "Best for",
-   "line": "Clean, modern, product and tech",
+   "name": "Contraste",
+   "label": "Ideal para",
+   "line": "Limpio, moderno, producto y tecnología",
    "preview": "../captions/previews/weight-shift.mp4",
    "poster": "previews/posters/captions/weight-shift.jpg"
   },
   {
    "key": "terminal",
    "name": "Terminal",
-   "label": "Best for",
-   "line": "AI, coding and builder content",
+   "label": "Ideal para",
+   "line": "IA, programación y contenido de creadores",
    "preview": "../captions/previews/terminal.mp4",
    "poster": "previews/posters/captions/terminal.jpg"
   },
   {
    "key": "outline",
-   "name": "Outline",
-   "label": "Best for",
-   "line": "Fitness, sport, bold statements",
+   "name": "Contorno",
+   "label": "Ideal para",
+   "line": "Deporte, fitness, frases potentes",
    "preview": "../captions/previews/outline.mp4",
    "poster": "previews/posters/captions/outline.jpg"
   },
   {
    "key": "none",
-   "name": "No captions",
+   "name": "Sin subtítulos",
    "label": "",
-   "line": "Titles and effects only.",
+   "line": "Solo títulos y efectos.",
    "preview": null,
    "poster": null,
    "none": true
@@ -168,112 +168,112 @@ window.STUDIO_CATALOG = {
   {
    "n": 1,
    "key": "orbit",
-   "name": "Orbit",
-   "line": "Your own reels circle around you.",
+   "name": "Órbita",
+   "line": "Tus propios reels giran a tu alrededor.",
    "preview": "previews/effects/orbit.mp4",
    "poster": "previews/posters/effects/orbit.jpg"
   },
   {
    "n": 5,
    "key": "frame-break",
-   "name": "Frame Break",
-   "line": "The video shrinks into a card and you pop out of it.",
+   "name": "Rompe Cuadro",
+   "line": "El video se achica en una tarjeta y tú sales de ella.",
    "preview": "previews/effects/frame-break.mp4",
    "poster": "previews/posters/effects/frame-break.jpg"
   },
   {
    "n": 6,
    "key": "type-wall",
-   "name": "Type Wall",
-   "line": "Giant words march behind you and swap as you talk.",
+   "name": "Muro de Palabras",
+   "line": "Palabras gigantes desfilan detrás de ti y cambian mientras hablas.",
    "preview": "previews/effects/type-wall.mp4",
    "poster": "previews/posters/effects/type-wall.jpg"
   },
   {
    "n": 8,
    "key": "digital-zoom",
-   "name": "Digital Zoom",
-   "line": "A slow creep onto your face, then a hard snap on the key word.",
+   "name": "Zoom Digital",
+   "line": "Un acercamiento lento a tu cara y un golpe seco en la palabra clave.",
    "preview": "previews/effects/digital-zoom.mp4",
    "poster": "previews/posters/effects/digital-zoom.jpg"
   },
   {
    "n": 16,
    "key": "headline-wall",
-   "name": "Headline Wall",
-   "line": "The wall behind you fills with headlines.",
+   "name": "Muro de Titulares",
+   "line": "La pared detrás de ti se llena de titulares.",
    "preview": "previews/effects/headline-wall.mp4",
    "poster": "previews/posters/effects/headline-wall.jpg"
   },
   {
    "n": 17,
    "key": "zoom-through-cut",
-   "name": "Zoom-Through Cut",
-   "line": "The camera dives through you into the next shot.",
+   "name": "Corte en Zoom",
+   "line": "La cámara te atraviesa y entra a la siguiente toma.",
    "preview": "previews/effects/zoom-through-cut.mp4",
    "poster": "previews/posters/effects/zoom-through-cut.jpg"
   },
   {
    "n": 18,
    "key": "clone",
-   "name": "Clone",
-   "line": "More of you pop up beside you, right on your words.",
+   "name": "Clon",
+   "line": "Aparecen más de ti a tu lado, justo en tus palabras.",
    "preview": "previews/effects/clone.mp4",
    "poster": "previews/posters/effects/clone.jpg"
   },
   {
    "n": 2,
    "key": "couch-wall",
-   "name": "Couch Wall",
-   "line": "Your reel covers become a grid on the wall behind you.",
+   "name": "Muro de Portadas",
+   "line": "Las portadas de tus reels forman una grilla en la pared detrás de ti.",
    "preview": "previews/effects/couch-wall.mp4",
    "poster": "previews/posters/effects/couch-wall.jpg"
   },
   {
    "n": 3,
    "key": "ui-world",
-   "name": "UI World",
-   "line": "An app screen fills the frame and you stand in front of it.",
+   "name": "Mundo App",
+   "line": "Una pantalla de app llena el cuadro y tú quedas delante.",
    "preview": "previews/effects/ui-world.mp4",
    "poster": "previews/posters/effects/ui-world.jpg"
   },
   {
    "n": 7,
    "key": "the-stack",
-   "name": "The Stack",
-   "line": "Data cards with racing bars stack above you.",
+   "name": "La Pila",
+   "line": "Tarjetas con datos y barras que corren se apilan sobre ti.",
    "preview": "previews/effects/the-stack.mp4",
    "poster": "previews/posters/effects/the-stack.jpg"
   },
   {
    "n": 9,
    "key": "sticky-text",
-   "name": "Sticky Text",
-   "line": "A tag stuck to your cap or chest that moves with you.",
+   "name": "Etiqueta Pegada",
+   "line": "Una etiqueta pegada a tu gorro o pecho que se mueve contigo.",
    "preview": "previews/effects/sticky-text.mp4",
    "poster": "previews/posters/effects/sticky-text.jpg"
   },
   {
    "n": 11,
    "key": "spotlight",
-   "name": "Spotlight",
-   "line": "The room goes dark, you stay lit, the key words land big.",
+   "name": "Foco",
+   "line": "La sala se oscurece, tú quedas iluminado y las palabras clave caen grandes.",
    "preview": "previews/effects/spotlight.mp4",
    "poster": "previews/posters/effects/spotlight.jpg"
   },
   {
    "n": 13,
    "key": "freeze-and-label",
-   "name": "Freeze and Label",
-   "line": "The picture freezes and labels point at you.",
+   "name": "Congela y Señala",
+   "line": "La imagen se congela y aparecen etiquetas que te apuntan.",
    "preview": "previews/effects/freeze-and-label.mp4",
    "poster": "previews/posters/effects/freeze-and-label.jpg"
   },
   {
    "n": 14,
    "key": "phone-mockup",
-   "name": "Phone Mockup",
-   "line": "A 3D phone flies in beside you, playing a screen.",
+   "name": "Teléfono 3D",
+   "line": "Un teléfono 3D vuela a tu lado mostrando una pantalla.",
    "preview": "previews/effects/phone-mockup.mp4",
    "poster": "previews/posters/effects/phone-mockup.jpg"
   },
@@ -281,95 +281,95 @@ window.STUDIO_CATALOG = {
    "n": 15,
    "key": "checklist",
    "name": "Checklist",
-   "line": "Each step ticks off as you say it.",
+   "line": "Cada paso se marca a medida que lo dices.",
    "preview": "previews/effects/checklist.mp4",
    "poster": "previews/posters/effects/checklist.jpg"
   },
   {
    "n": 21,
    "key": "pointer-callout",
-   "name": "Pointer Callout",
-   "line": "Cards tied to you by lines that follow you around.",
+   "name": "Llamadas",
+   "line": "Tarjetas unidas a ti con líneas que te siguen.",
    "preview": "previews/effects/pointer-callout.mp4",
    "poster": "previews/posters/effects/pointer-callout.jpg"
   },
   {
    "n": 10,
    "key": "odometer",
-   "name": "Odometer",
-   "line": "Numbers roll up digit by digit, like a mileage counter.",
+   "name": "Contador",
+   "line": "Los números suben dígito por dígito, como un cuentakilómetros.",
    "preview": "previews/effects/odometer.mp4",
    "poster": "previews/posters/effects/odometer.jpg"
   },
   {
    "n": 19,
    "key": "before-and-after",
-   "name": "Before and After",
-   "line": "A wipe line turns your raw clip into the edit.",
+   "name": "Antes y Después",
+   "line": "Una línea barre la pantalla y convierte tu clip crudo en la edición.",
    "preview": "previews/effects/before-and-after.mp4",
    "poster": "previews/posters/effects/before-and-after.jpg"
   },
   {
    "n": 20,
    "key": "chart-grow",
-   "name": "Chart Grow",
-   "line": "A chart draws behind you and takes off on your word.",
+   "name": "Gráfico que Crece",
+   "line": "Un gráfico se dibuja detrás de ti y se dispara en tu palabra.",
    "preview": "previews/effects/chart-grow.mp4",
    "poster": "previews/posters/effects/chart-grow.jpg"
   },
   {
    "n": 4,
    "key": "freeze-sticker",
-   "name": "Freeze Sticker",
-   "line": "Your freeze frame becomes a die-cut sticker with handwritten notes.",
+   "name": "Sticker Congelado",
+   "line": "Tu cuadro congelado se vuelve un sticker recortado con notas a mano.",
    "preview": "previews/effects/freeze-sticker.mp4",
    "poster": "previews/posters/effects/freeze-sticker.jpg"
   },
   {
    "n": 12,
    "key": "comment-bubble",
-   "name": "Comment Bubble",
-   "line": "The comment types itself, posts, and your reply with the link lands.",
+   "name": "Comentario",
+   "line": "El comentario se escribe solo, se publica y llega tu respuesta con el link.",
    "preview": "previews/effects/comment-bubble.mp4",
    "poster": "previews/posters/effects/comment-bubble.jpg"
   },
   {
    "n": 26,
    "key": "green-screen",
-   "name": "Green Screen",
-   "line": "You shrink to the bottom and the whole screen becomes what you're talking about.",
+   "name": "Pantalla Verde",
+   "line": "Te achicas abajo y toda la pantalla muestra de lo que hablas.",
    "preview": "previews/effects/green-screen.mp4",
    "poster": "previews/posters/effects/green-screen.jpg"
   },
   {
    "n": 25,
    "key": "knockout-tiles",
-   "name": "Knockout Tiles",
-   "line": "Name tiles slam onto the wall behind you and get knocked out one by one.",
+   "name": "Fichas Fuera",
+   "line": "Fichas con nombres caen en la pared detrás de ti y salen una por una.",
    "preview": "previews/effects/knockout-tiles.mp4",
    "poster": "previews/posters/effects/knockout-tiles.jpg"
   },
   {
    "n": 23,
    "key": "timeline-burn",
-   "name": "Timeline Burn",
-   "line": "An editing timeline builds in front of you, then catches fire on your word.",
+   "name": "Línea en Llamas",
+   "line": "Una línea de tiempo de edición se arma frente a ti y se prende fuego en tu palabra.",
    "preview": "previews/effects/timeline-burn.mp4",
    "poster": "previews/posters/effects/timeline-burn.jpg"
   },
   {
    "n": 22,
    "key": "blackout",
-   "name": "Blackout",
-   "line": "The lights cut on your line and snap back on the next one.",
+   "name": "Apagón",
+   "line": "Las luces se cortan en tu frase y vuelven en la siguiente.",
    "preview": "previews/effects/blackout.mp4",
    "poster": "previews/posters/effects/blackout.jpg"
   },
   {
    "n": 24,
    "key": "pull-back-reveal",
-   "name": "Pull-Back Reveal",
-   "line": "The video shrinks into a card in an app window and you watch it get edited.",
+   "name": "Revelado",
+   "line": "El video se achica en una ventana de app y ves cómo se edita.",
    "preview": "previews/effects/pull-back-reveal.mp4",
    "poster": "previews/posters/effects/pull-back-reveal.jpg"
   }
@@ -378,10 +378,10 @@ window.STUDIO_CATALOG = {
   {
    "n": 1,
    "key": "soft-hours",
-   "name": "Soft Hours",
+   "name": "Horas Suaves",
    "group": "her",
-   "label": "For her",
-   "line": "Cozy and slow. A dim warm room, soft typed captions. Works faceless or on camera.",
+   "label": "Para ella",
+   "line": "Acogedor y lento. Una sala cálida y tenue, subtítulos suaves escritos a máquina. Con o sin cara.",
    "captionStyle": "moodboard",
    "effects": [
     "phone-mockup",
@@ -396,8 +396,8 @@ window.STUDIO_CATALOG = {
    "key": "glam-cam",
    "name": "Glam Cam",
    "group": "her",
-   "label": "For her",
-   "line": "Studio beauty close-up. A jump zoom on every new thought, one serif word at a time.",
+   "label": "Para ella",
+   "line": "Primer plano de belleza en estudio. Un zoom en cada idea nueva, una palabra serif a la vez.",
    "captionStyle": "vanity",
    "effects": [
     "digital-zoom",
@@ -411,10 +411,10 @@ window.STUDIO_CATALOG = {
   {
    "n": 3,
    "key": "color-block",
-   "name": "Color Block",
+   "name": "Bloques de Color",
    "group": "her",
-   "label": "For her",
-   "line": "A day in the life told in pieces, broken up by flat color cards and huge lowercase words.",
+   "label": "Para ella",
+   "line": "Un día en tu vida contado en partes, con tarjetas de color plano y minúsculas enormes.",
    "captionStyle": "loud-lowercase",
    "effects": [
     "phone-mockup",
@@ -427,10 +427,10 @@ window.STUDIO_CATALOG = {
   {
    "n": 4,
    "key": "camera-shy",
-   "name": "Camera Shy",
+   "name": "Tímido de Cámara",
    "group": "her",
-   "label": "For her",
-   "line": "A tips list. Quick cuts, a pinned title, your points typed onto the frame. Works faceless or on camera.",
+   "label": "Para ella",
+   "line": "Una lista de tips. Cortes rápidos, un título fijo y tus puntos escritos en el cuadro. Con o sin cara.",
    "captionStyle": "moodboard",
    "effects": [
     "checklist",
@@ -444,10 +444,10 @@ window.STUDIO_CATALOG = {
   {
    "n": 5,
    "key": "chalk-talk",
-   "name": "Chalk Talk",
+   "name": "Pizarra",
    "group": "him",
-   "label": "For him",
-   "line": "You on a dark studio backdrop, with hand-drawn marker titles and a rounded b-roll card.",
+   "label": "Para él",
+   "line": "Tú sobre un fondo oscuro de estudio, con títulos a plumón y una tarjeta redondeada de b-roll.",
    "captionStyle": "none",
    "effects": [
     "pointer-callout",
@@ -461,10 +461,10 @@ window.STUDIO_CATALOG = {
   {
    "n": 6,
    "key": "fireside",
-   "name": "Fireside",
+   "name": "Junto al Fuego",
    "group": "him",
-   "label": "For him",
-   "line": "One locked-off shot, warm lamp light, no cuts. The words do the work.",
+   "label": "Para él",
+   "line": "Una sola toma fija, luz cálida de lámpara, sin cortes. Las palabras hacen el trabajo.",
    "captionStyle": "golden-hour",
    "effects": [
     "digital-zoom"
@@ -476,10 +476,10 @@ window.STUDIO_CATALOG = {
   {
    "n": 7,
    "key": "raw-tape",
-   "name": "Raw Tape",
+   "name": "Cinta Cruda",
    "group": "him",
-   "label": "For him",
-   "line": "A sit-down left alone. A 4:3 picture, a faded film look, small yellow subtitles.",
+   "label": "Para él",
+   "line": "Una conversación sentada, sin intervenir. Imagen 4:3, look de película gastada, subtítulos pequeños dorados.",
    "captionStyle": "golden-hour",
    "effects": [
     "digital-zoom"
@@ -491,10 +491,10 @@ window.STUDIO_CATALOG = {
   {
    "n": 8,
    "key": "show-and-tell",
-   "name": "Show and Tell",
+   "name": "Muestra y Cuenta",
    "group": "him",
-   "label": "For him",
-   "line": "You in a window at the bottom, a clean light canvas above for labels, cards and the call to action.",
+   "label": "Para él",
+   "line": "Tú en una ventana abajo y un lienzo claro arriba para etiquetas, tarjetas y el llamado a la acción.",
    "captionStyle": "none",
    "effects": [
     "the-stack",
@@ -508,15 +508,15 @@ window.STUDIO_CATALOG = {
  "parts": [
   {
    "key": "hook",
-   "label": "Hook"
+   "label": "Gancho"
   },
   {
    "key": "middle",
-   "label": "Middle"
+   "label": "Medio"
   },
   {
    "key": "end",
-   "label": "End"
+   "label": "Final"
   }
  ]
 };

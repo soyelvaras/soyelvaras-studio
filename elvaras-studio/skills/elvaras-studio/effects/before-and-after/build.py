@@ -40,7 +40,7 @@ OUT = 'auto'                 # when the after look eases off so the slot ends on
 # ==== END CLIP ====
 
 FPS = 30
-YEL, CREAM, INK = '#FAE67A', '#FFF8EF', '#14161C'
+YEL, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'
 OFF_R, OFF_L = 1140, -80                     # line parked off-screen (handle fully out)
 SFX_LEN = {'whoosh-short': .57, 'pop': .72}
 SFX_GAIN = 0.75
@@ -560,7 +560,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .cl .ch{{display:inline-block}}
 .ul{{position:absolute;left:-2%;top:78px;width:104%;height:34px;overflow:visible}}
 .spk{{position:absolute;width:0;height:0}}
-.spk svg{{position:absolute;left:0;top:0;overflow:visible;filter:drop-shadow(0 0 12px rgba(250,230,122,.55)) drop-shadow(0 4px 10px rgba(0,0,0,.3))}}
+.spk svg{{position:absolute;left:0;top:0;overflow:visible;filter:drop-shadow(0 0 12px rgba(201,161,91,.55)) drop-shadow(0 4px 10px rgba(0,0,0,.3))}}
 #wtrail{{position:absolute;left:0;top:0;width:230px;height:1920px;z-index:2;transform-origin:0 50%;
   background:linear-gradient(90deg,rgba(255,248,239,.5) 0%,rgba(255,248,239,.16) 38%,rgba(255,248,239,0) 100%)}}
 #wline{{position:absolute;left:-3px;top:0;width:6px;height:1920px;z-index:3;background:{CREAM};
@@ -572,7 +572,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .tag{{position:absolute;left:0;height:{TAG_H}px;z-index:5;transform-origin:50% 50%}}
 .pill{{width:100%;height:{TAG_H}px;border-radius:29px;font:600 31px/56px Inter;letter-spacing:-.3px;text-align:center;white-space:nowrap}}
 .pill.b{{background:rgba(20,22,28,.8);color:{CREAM};border:1.5px solid rgba(255,248,239,.24);box-shadow:0 12px 30px rgba(0,0,0,.35)}}
-.pill.a{{background:{YEL};color:{INK};line-height:{TAG_H}px;box-shadow:0 12px 30px rgba(0,0,0,.35),0 0 30px rgba(250,230,122,.25)}}
+.pill.a{{background:{YEL};color:{INK};line-height:{TAG_H}px;box-shadow:0 12px 30px rgba(0,0,0,.35),0 0 30px rgba(201,161,91,.25)}}
 '''
 
 if __name__ == '__main__':

@@ -78,7 +78,7 @@ FAR_BLEED_SIDES = True  # far cards may run off the left / right frame edge as t
 PUSH = 1.06          # slow push-in over the whole slot (1 = none; keep under 1.08 on 1080p footage)
 BUMP = 1.032         # camera bump on the accent word (1 = none)
 DIM = 1.0            # how much the room dims as the wall fills (0 = not at all; raise to 1.3 on a white wall)
-ACCENT = '#FAE67A'   # highlighter colour (butter yellow; never orange)
+ACCENT = '#C9A15B'   # highlighter colour (butter yellow; never orange)
 OUTLETS = ['Tech newsletter', 'Creator briefing', 'Trade magazine', 'Weekly roundup', 'Local paper', 'Marketing blog',
            'Business desk', 'Industry memo']                     # placeholder source labels, must stay generic
 PEOPLE = ['A founder', 'Agency owner', 'A creator', 'Video editor', 'Founder']   # placeholder "who posted it" labels
@@ -103,7 +103,7 @@ FPS = 30
 PARALLAX = {'far': 1.000, 'mid': 1.012, 'near': 1.026}     # extra push per depth layer by the end of the slot
 FLIGHT_BLUR = {'far': 0, 'mid': 8, 'near': 10}
 SFX_GAIN = 0.75
-INK = '#14161C'
+INK = '#141615'
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'
               '<div style="position:absolute;left:0;right:0;top:0;height:220px;background:rgba(255,0,0,.28)"></div>'
               '<div style="position:absolute;left:0;right:0;top:1470px;bottom:0;background:rgba(255,0,0,.28)"></div>'

@@ -33,7 +33,7 @@ BACKDROP = 'page'  # what is behind the sticker: 'page' = plain colour page (PAG
                    # blurred and dimmed (frozen, not live, so the speaker does not move behind their own sticker)
 PAGE = '#3A5BE6'   # page colour: pick one that sets the clothes and skin off. Never orange, never a grey
 INK = '#FFFFFF'    # handwriting colour
-ACCENT = '#FAE67A'  # colour of *starred* words, the stamp and the ticks (butter yellow; never orange)
+ACCENT = '#C9A15B'  # colour of *starred* words, the stamp and the ticks (butter yellow; never orange)
 SIZE = 'auto'      # 'auto' = measured from the head and the frame edges. A number = scale of the speaker (0.6 to 1.3)
 PLACE = (0, 0)     # nudge the sticker (x, y) in screen px after the automatic placing. Look at work/check.jpg
 TILT = 'auto'      # degrees. 'auto' = 4, leaning away from a side where the frame cuts the speaker. 0 = straight

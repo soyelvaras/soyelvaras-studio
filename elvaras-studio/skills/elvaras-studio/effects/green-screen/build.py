@@ -86,7 +86,7 @@ IMAGE_EXT = ('.png', '.jpg', '.jpeg', '.webp')
 ITEM_DEFAULTS = dict(file='', at=None, start=0.0, mode='auto', side=None, size=None, reframe=None, focus=(.5, .5),
                      credit=None)
 SFX_GAIN = 0.75
-YEL = '#FAE67A'
+YEL = '#C9A15B'
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'
               '<div style="position:absolute;left:0;right:0;top:0;height:220px;background:rgba(255,0,0,.28)"></div>'
               '<div style="position:absolute;left:0;right:0;top:1470px;bottom:0;background:rgba(255,0,0,.28)"></div>'

@@ -56,7 +56,7 @@ SEAT = 1.0            # strength of the soft dark gradient that seats the thread
 WORD_FONT = ('Inter Tight', 800, 'InterTight-800-normal.woff2')   # the keyword (typed and posted) and the chip label
 TEXT_FONT = ('Inter', 600, 'Inter-600-normal.woff2')              # the reply line and the commenter name
 UPPER = False         # True = reply line, chip label and name in capitals (the keyword is in capitals already)
-ACCENT_COL, LIGHT_COL, DARK_COL = '#FAE67A', '#FFF8EF', '#14161C'   # accent (ring, caret, chip), light (bubble, words), dark (words on light)
+ACCENT_COL, LIGHT_COL, DARK_COL = '#C9A15B', '#F2ECDF', '#141615'   # accent (ring, caret, chip), light (bubble, words), dark (words on light)
 # ==== END CLIP ====
 
 FF = shutil.which('ffmpeg') or 'ffmpeg'
@@ -486,17 +486,17 @@ UI_CSS = '''
 /* ---- comment field */
 #field{position:absolute;border-radius:58px;background:rgba(22,24,31,.96);
   box-shadow:0 30px 70px rgba(0,0,0,.52),0 6px 18px rgba(0,0,0,.32),inset 0 0 0 2px rgba(255,255,255,.15),inset 0 3px 0 rgba(255,255,255,.07)}
-#fring{position:absolute;left:-3px;top:-3px;right:-3px;bottom:-3px;border-radius:61px;border:3px solid __YEL__;box-shadow:0 0 36px rgba(250,230,122,.30),inset 0 0 18px rgba(250,230,122,.10)}
+#fring{position:absolute;left:-3px;top:-3px;right:-3px;bottom:-3px;border-radius:61px;border:3px solid __YEL__;box-shadow:0 0 36px rgba(201,161,91,.30),inset 0 0 18px rgba(201,161,91,.10)}
 #fav{position:absolute;left:20px;top:20px;width:76px;height:76px;border-radius:50%;overflow:hidden}
 #fav svg,#cav svg,#rav svg{display:block}
 #ph{position:absolute;top:0;height:116px;font:__PW__ 40px '__TF__';line-height:116px;color:rgba(255,248,239,.5);letter-spacing:-.6px;white-space:nowrap__UP__}
 #typed{position:absolute;top:0;height:116px;display:flex;align-items:center}
 .k{display:inline-block;text-align:center;font:__WW__ 62px '__WF__';line-height:116px;color:__CREAM__;transform-origin:50% 70%}
-#caret{position:absolute;top:30px;width:5px;height:56px;border-radius:3px;background:__YEL__;box-shadow:0 0 14px rgba(250,230,122,.55)}
+#caret{position:absolute;top:30px;width:5px;height:56px;border-radius:3px;background:__YEL__;box-shadow:0 0 14px rgba(201,161,91,.55)}
 #send{position:absolute;right:16px;top:16px;width:84px;height:84px}
 #sendoff,#sendon{position:absolute;left:0;top:0;width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 #sendoff{background:rgba(255,255,255,.11)}
-#sendon{background:__YEL__;box-shadow:0 8px 26px rgba(250,230,122,.38)}
+#sendon{background:__YEL__;box-shadow:0 8px 26px rgba(201,161,91,.38)}
 #tap{position:absolute;width:118px;height:118px;border-radius:50%;background:rgba(255,255,255,.46);border:3px solid rgba(255,255,255,.92);
   box-shadow:0 10px 28px rgba(0,0,0,.38),inset 0 0 22px rgba(255,255,255,.35)}
 #tapring{position:absolute;width:84px;height:84px;border-radius:50%;border:4px solid __YEL__}
@@ -532,7 +532,7 @@ UI_CSS = '''
 #skel{position:absolute;left:0;top:0;width:100%;height:80px;border-radius:40px;background:rgba(255,255,255,.10);box-shadow:inset 0 0 0 2px rgba(255,255,255,.08)}
 #chipring{position:absolute;left:0;top:0;width:100%;height:80px;border-radius:40px;border:3px solid __YEL__}
 #chip{position:relative;height:80px;padding:0 30px 0 22px;border-radius:40px;background:__YEL__;display:flex;align-items:center;gap:10px;
-  overflow:hidden;box-shadow:0 10px 30px rgba(250,230,122,.30)}
+  overflow:hidden;box-shadow:0 10px 30px rgba(201,161,91,.30)}
 #chip span{font:__WW__ 37px '__WF__';color:__INK__;letter-spacing:-.2px__UP__}
 #shine{position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(105deg,rgba(255,255,255,0) 36%,rgba(255,255,255,.85) 50%,rgba(255,255,255,0) 64%)}
 '''.replace('__YEL__', YEL).replace('__CREAM__', CREAM).replace('__INK__', INK)

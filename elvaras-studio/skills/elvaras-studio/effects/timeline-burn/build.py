@@ -32,10 +32,10 @@ FONT = 'JetBrains Mono'   # typeface of every word on the timeline (track labels
                           # fonts in assets/fonts/fonts.css, or the reel's own font once it is added to that file
 WEIGHT = 500              # font weight (must exist for FONT in fonts.css)
 CASE = 'upper'            # 'upper', 'lower' or 'as-typed'
-TEXT = '#F7F4EE'          # colour of the words, the ruler ticks and the playhead ('#RRGGBB')
+TEXT = '#F2ECDF'          # colour of the words, the ruler ticks and the playhead ('#RRGGBB')
 LABEL_PX = 20             # size of the track labels (design px: on screen it is this times PANEL_W / 954)
 NAME_PX = 20              # size of clip names, when a track has any
-ACCENT = '#FAE67A'        # the one accent: trim handle and the playhead as it heats up. Use the reel's accent colour
+ACCENT = '#C9A15B'        # the one accent: trim handle and the playhead as it heats up. Use the reel's accent colour
 PANEL = 'rgba(14,15,18,.92)'           # the timeline's glass
 PANEL_EDGE = 'rgba(170,190,235,.26)'   # its hairline border
 PALETTE = {               # clip colours (top, bottom of each clip). A track picks one by name in TRACKS, or gives its
@@ -399,7 +399,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .lab{position:absolute;left:0;width:70px;height:58px;line-height:58px;text-align:center;white-space:nowrap;
   color:rgba([[TEXT_RGB]],.66)}
 .shard{position:absolute;left:0;top:0;width:954px;height:[[PH]]px}
-.srim{position:absolute;left:0;top:0;width:954px;height:[[PH]]px;background-color:#FFF3C4}
+.srim{position:absolute;left:0;top:0;width:954px;height:[[PH]]px;background-color:#C9A15B}
 .sbody{position:absolute;left:0;top:0;width:954px;height:[[PH]]px}
 .schar{position:absolute;left:0;top:0;width:954px;height:[[PH]]px;background-color:#0B0909;opacity:0}
 #tracks{position:absolute;left:98px;top:120px;width:872px;height:[[TRH]]px}
@@ -426,11 +426,11 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .burn{position:absolute;left:0;top:0;width:0;height:50px;opacity:0}
 .bglow{position:absolute;left:-96px;top:0;width:96px;height:50px;
   background:linear-gradient(90deg,rgba(255,150,50,0),rgba(255,170,60,.55) 60%,rgba(255,226,140,.95))}
-.brim{position:absolute;left:-8px;top:0;width:40px;height:50px;background:linear-gradient(90deg,#FFFBEA,#FFF3C4 8px,#FAE67A 16px,#FF8A2B 30px)}
+.brim{position:absolute;left:-8px;top:0;width:40px;height:50px;background:linear-gradient(90deg,#F2ECDF,#C9A15B 8px,#C9A15B 16px,#FF8A2B 30px)}
 .bchar{position:absolute;left:0;top:0;height:50px}
 #frags{position:absolute;left:0;top:0;width:872px;height:[[TRH]]px}
 .frag{position:absolute;height:50px;opacity:0}
-.frim{position:absolute;left:0;top:0;width:100%;height:100%;background-color:#FFE08A}
+.frim{position:absolute;left:0;top:0;width:100%;height:100%;background-color:#C9A15B}
 .fchar{position:absolute;left:0;top:0;width:100%;height:100%}
 #ph{position:absolute;left:0;top:-38px;width:0;height:[[PHH]]px}
 #phl{position:absolute;left:-1.5px;top:12px;width:3px;height:[[PHL]]px;border-radius:2px;background-color:[[TEXT]];
@@ -456,20 +456,20 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .flm{position:absolute;opacity:0;transform-origin:50% 92%;
   background:
     radial-gradient(ellipse 13% 44% at 54% 44%,rgba(255,240,190,.80) 0,rgba(255,176,70,.50) 48%,rgba(255,130,40,0) 100%),
-    radial-gradient(ellipse 27% 38% at 50% 66%,rgba(255,252,236,.96) 0,rgba(250,230,122,.86) 28%,rgba(255,146,46,.55) 62%,rgba(229,72,45,0) 100%),
+    radial-gradient(ellipse 27% 38% at 50% 66%,rgba(255,252,236,.96) 0,rgba(201,161,91,.86) 28%,rgba(255,146,46,.55) 62%,rgba(229,72,45,0) 100%),
     radial-gradient(ellipse 50% 24% at 50% 82%,rgba(255,150,50,.62) 0,rgba(229,72,45,.30) 55%,rgba(229,72,45,0) 100%)}
 #firewash{position:absolute;left:0;top:0;width:520px;height:330px;opacity:0;
   background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(255,170,70,.50),rgba(255,96,36,.22) 50%,rgba(255,96,36,0) 100%)}
 .em{position:absolute;border-radius:50%;opacity:0}
-.e1{background:radial-gradient(circle,#FFFFFF 0,#FFF3C4 40%,#FAE67A 75%);
+.e1{background:radial-gradient(circle,#FFFFFF 0,#C9A15B 40%,#C9A15B 75%);
   box-shadow:0 0 6px 2px rgba(255,200,90,.95),0 0 16px 5px rgba(255,110,40,.60)}
-.e2{background:radial-gradient(circle,#FFF3C4 0,#FAE67A 45%,#FF9A3D 90%);
+.e2{background:radial-gradient(circle,#C9A15B 0,#C9A15B 45%,#FF9A3D 90%);
   box-shadow:0 0 5px 2px rgba(255,150,50,.90),0 0 14px 4px rgba(229,72,45,.55)}
-.e3{background:radial-gradient(circle,#FAE67A 0,#FF8A2B 55%,#E5484D 100%);
+.e3{background:radial-gradient(circle,#C9A15B 0,#FF8A2B 55%,#E5484D 100%);
   box-shadow:0 0 5px 1px rgba(255,110,40,.85),0 0 12px 3px rgba(200,40,30,.50)}
 .ash{position:absolute;opacity:0}
 .stk{position:absolute;height:2.5px;border-radius:2px;opacity:0;
-  background:linear-gradient(90deg,rgba(255,150,50,0),#FAE67A 55%,#FFFFFF);
+  background:linear-gradient(90deg,rgba(255,150,50,0),#C9A15B 55%,#FFFFFF);
   box-shadow:0 0 6px 1px rgba(255,170,70,.85)}
 .pop{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;opacity:0;
   background:radial-gradient(circle,#FFFFFF 0,rgba(255,243,196,.95) 22%,rgba(255,150,50,.55) 50%,rgba(255,120,40,0) 72%)}
@@ -488,7 +488,7 @@ BODY = r'''
           <div id="clips"></div>
           <div id="frags"></div>
           <div id="ph"><div id="phg"></div><div id="phl"></div><div id="phh"></div></div>
-          <div id="cur"><svg width="26" height="30" viewBox="0 0 26 30"><path d="M2 2 L2 23 L7.6 18.2 L11.4 27 L15.2 25.3 L11.5 16.8 L19 16.6 Z" fill="#F7F4EE" stroke="#0E0F12" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <div id="cur"><svg width="26" height="30" viewBox="0 0 26 30"><path d="M2 2 L2 23 L7.6 18.2 L11.4 27 L15.2 25.3 L11.5 16.8 L19 16.6 Z" fill="#F2ECDF" stroke="#0E0F12" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
         </div>
         <div id="panelfx">
           <div id="flash"></div>
@@ -831,7 +831,7 @@ tl.to('#ph', { x: 566, duration: Hh(1.60) - A(0.30), ease: 'none' }, A(0.30));
   for (let j = 1; j < K.length; j++)
     tl.to('#ph', { x: K[j][1], duration: (K[j][0] - K[j - 1][0]) * HK, ease: 'none' }, Hh(K[j - 1][0]));
 })();
-tl.to('#phl', { backgroundColor: '#FFF3C4', boxShadow: '0 0 16px 3px rgba(255,190,90,.95)', duration: 0.6 * HK, ease: 'power1.in' }, Hh(1.72));
+tl.to('#phl', { backgroundColor: '#C9A15B', boxShadow: '0 0 16px 3px rgba(255,190,90,.95)', duration: 0.6 * HK, ease: 'power1.in' }, Hh(1.72));
 tl.to('#phh', { backgroundColor: CFG.accent, duration: 0.6 * HK, ease: 'power1.in' }, Hh(1.72));
 tl.to('#phg', { opacity: 1, duration: 0.6 * HK, ease: 'power2.in' }, Hh(1.76));
 

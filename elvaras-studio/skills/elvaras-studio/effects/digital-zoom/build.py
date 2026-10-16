@@ -98,7 +98,7 @@ CHIN_GAP = 40          # px a caption line must stay under the chin
 DRIFT = {'creep': .022, 'snap': .035, 'pull': 0}   # default slow push after a landing (log-scale per second)
 WHOOSH_FILE, WHOOSH_CREST = 'whoosh-short', .16     # stock template sound; its loudest point is 0.16s in
 SFX_GAIN = 0.75
-YEL = '#FAE67A'
+YEL = '#C9A15B'
 
 
 def probe(path, entries):
@@ -433,7 +433,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 #vigin{{z-index:2;background:radial-gradient(80% 54% at 50% 36%,rgba(0,0,0,0) 50%,rgba(0,0,0,.30) 100%),
   linear-gradient(180deg,rgba(0,0,0,0) 52%,rgba(0,0,0,.16) 80%,rgba(0,0,0,.20) 100%)}}
 #grad{{z-index:2;background:linear-gradient(180deg,rgba(0,0,0,.16) 0%,rgba(0,0,0,0) 15%,rgba(0,0,0,0) 54%,rgba(0,0,0,.20) 100%)}}
-#flash{{z-index:3;background:#FFF8EF;mix-blend-mode:soft-light}}
+#flash{{z-index:3;background:#F2ECDF;mix-blend-mode:soft-light}}
 .grp{{position:absolute;inset:0;z-index:8}}
 .line{{position:absolute;left:0;right:0;text-align:center;white-space:nowrap;color:#fff;font-family:'Inter Tight';font-weight:900;
   letter-spacing:-.05em;line-height:.9;text-shadow:0 10px 40px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.38)}}

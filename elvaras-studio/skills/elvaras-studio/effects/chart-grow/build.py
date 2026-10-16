@@ -34,8 +34,8 @@ SIT = 'auto'              # 'auto' (measured), 'behind' (full width, flat part r
 IN_FRAME = 3              # first frame anything shows. Frames before it are the untouched picture
 OUT_FRAME = 'auto'        # frame by which everything is gone again ('auto' = 4 before the end). None = the slot ends on a cut and the chart holds
 DRAW_START = 'auto'       # when the flat part starts drawing: 'auto' (0.4 s after IN_FRAME), a spoken word, or a frame number
-ACCENT = '#FAE67A'        # colour of the kick. Any brand colour that is not orange and not grey
-LINE = '#FFF8EF'          # colour of the flat part, grid and labels (a warm or cool off-white)
+ACCENT = '#C9A15B'        # colour of the kick. Any brand colour that is not orange and not grey
+LINE = '#F2ECDF'          # colour of the flat part, grid and labels (a warm or cool off-white)
 DIM = 'auto'              # how far the room falls back behind the chart, 0 to 0.7. 'auto' = from the measured wall brightness
 LOCK = 'auto'             # 'auto' = glued to the wall when measure.py found camera movement, pinned on a still camera. 0 / 1 to force
 PUNCH = 1.0               # push-in on the kick (1.04 = 4%). Off by default; it eases back out before OUT_FRAME
@@ -47,7 +47,7 @@ FPS = 30
 FF = shutil.which('ffmpeg') or 'ffmpeg'
 FP = shutil.which('ffprobe') or 'ffprobe'
 SLOT = os.path.basename(HERE)
-INK = '#14161C'
+INK = '#141615'
 SAFE_L, SAFE_R, SAFE_T, SAFE_B = 35, 1045, 220, 1470      # right edge is 980 from y 1155 down
 if not os.path.exists('work/measure.json'):
     sys.exit('run measure.py first (work/measure.json is missing)')

@@ -39,7 +39,7 @@ STYLE = dict(
     cap_size=62,                   # px on screen
     cap_tracking=-0.04,            # letter spacing, em
     cap_color='#FFFFFF',
-    cap_mark='#FAE67A',            # colour of the words listed in CAP_MARK (the reel's accent; never orange)
+    cap_mark='#C9A15B',            # colour of the words listed in CAP_MARK (the reel's accent; never orange)
     cap_words=3,                   # most words shown at once
     cap_y=None,                    # y of the top of the caption line. None = just above the timeline strip
     width_factor=1.0,              # raise to 1.1 when another typeface runs wider and a text touches its edge
@@ -53,7 +53,7 @@ STYLE = dict(
     accent='#3D6FE0',              # "working" colour: progress, playhead, tag pill, unit badge (never orange)
     accent_text='#FFFFFF',         # text on the accent colour
     done='#3F8F5A',                # "done" colour: ticks, the finished timeline
-    highlight='#FAE67A',           # slab behind the highlighted name
+    highlight='#C9A15B',           # slab behind the highlighted name
     track='#DDD4C3',               # timeline blocks before they fill
     dots='#D8D3C8',                # the three window buttons (plain on purpose)
     radius=36,                     # window corner radius, px

@@ -65,7 +65,7 @@ CAPS = 'auto'             # the effect's own caption words: 'auto' (from words.j
 CAP_PUNCH = []            # spoken words shown big in the accent colour on their own line, e.g. the tapped word
 CAP_FIX = {}              # respell what Whisper misheard: {'heard': 'Meant'}
 CAP_Y = 1300              # top of the caption line (stay between 1260 and 1340)
-ACCENT = '#FAE67A'        # accent colour: tapped button, ticks, rings, punch word. Never orange
+ACCENT = '#C9A15B'        # accent colour: tapped button, ticks, rings, punch word. Never orange
 GRADE = 'none'            # CSS filter on the footage for the WHOLE slot. Leave 'none': the reel grades, and a grade here
                           # would show on the first and last frame
 # ==== END CLIP ====
@@ -75,7 +75,7 @@ SLOT = os.path.basename(HERE)
 ENV = os.environ.get
 N = M.clip()['frames']
 DUR = N / 30
-CREAM, INK, YEL = '#FFF8EF', '#14161C', ACCENT
+CREAM, INK, YEL = '#F2ECDF', '#141615', ACCENT
 RGB = ','.join(str(int(ACCENT.lstrip('#')[i:i + 2], 16)) for i in (0, 2, 4))
 SFX_LEN = {'whoosh-short': .57, 'pop': .72, 'sparkle': 1.8, 'click': .3, 'click-soft': .37}
 SFX_GAIN = 0.75
