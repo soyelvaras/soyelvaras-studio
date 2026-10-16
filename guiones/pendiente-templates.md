@@ -26,14 +26,14 @@ código (HTML y CSS) dentro del `build.py` de su efecto. Cambiar el look es camb
 | Página base de cada reel | `engine/template/` |
 | Colores y tipografías de marca | `brands/soyelvaras/brand.json` |
 
-## Primera prueba: cierre del Comentario
+## Resuelto: cierre del Comentario (16-10-2026)
 
-Maquetas en `~/reel-edits/efectos-cta/fx/alt-cierre/`:
-- `actual.jpg`: el hilo de app de siempre.
-- `alt-a.png`: Nota a mano ("comenta" en serif itálica, EDIT en Bebas dorado con círculo a mano, "y te lo comparto"
-  manuscrito con flecha).
-- `alt-b.png`: Sello Soy Elvaras (boleto crema con COMENTA LA PALABRA / EDIT / "y te lo comparto", y el sello V de la
-  marca).
+El hilo de app genérico se reemplazó por cinco versiones propias, todas como secuencia de mensajes con adjunto:
+1 Mensaje directo, 2 Notificaciones, 3 Fijado + video, 4 Papel + foto, 5 Link con vista previa. Se eligen en el Studio
+Picker con cinco puntitos bajo la tarjeta y se guardan en `effectVariants`. Colores, letras, nombre de marca, inicial y
+sitio son variables en `effects/comment-bubble/build.py`, así que sirven para cualquier marca de cliente.
 
-Cuando elija, la elegida pasa a `effects/comment-bubble/build.py` como estilo por defecto y las otras quedan como
-opción.
+## Pendiente
+
+Repetir lo mismo (alternativas propias y elegibles) con el resto de la tabla, empezando por titulares, llamadas y
+tarjeta del teléfono.

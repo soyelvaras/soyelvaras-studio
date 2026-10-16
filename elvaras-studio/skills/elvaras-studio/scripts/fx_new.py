@@ -185,6 +185,17 @@ def main():
     # ---------------------------------------------------------------- 1 + 2: effect files, fonts, sounds, template
     copy_tree(src_dir, slot, a.force, skip=('example', 'slot.json'))
     shutil.copyfile(os.path.join(src_dir, 'slot.json'), os.path.join(slot, 'slot.json'))
+    # an effect that comes in versions (Comentario): the version picked in the Studio Picker goes on the VARIANT line
+    pick_v = (fxlib.read(skillenv.path_arg(a.picks) if a.picks else skillenv.picks_file(), {}) or {}).get('effectVariants') or {}
+    bpy = os.path.join(slot, 'build.py')
+    if isinstance(pick_v.get(key), int) and os.path.exists(bpy):
+        with open(bpy, encoding='utf-8') as f:
+            src_py = f.read()
+        new_py, hits = re.subn(r'^VARIANT = \d+', f'VARIANT = {pick_v[key]}', src_py, count=1, flags=re.M)
+        if hits:
+            with open(bpy, 'w', encoding='utf-8', newline='') as f:
+                f.write(new_py)
+            print(f'version: {pick_v[key]} (from the Studio Picker)')
     buyer = meta.get('buyer_folder')        # material only the buyer has (their own reel covers, ...): never shipped
     buyer_note = ''
     if buyer:

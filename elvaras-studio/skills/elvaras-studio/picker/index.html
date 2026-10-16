@@ -244,6 +244,21 @@ main { padding-bottom: 56px; }
 .part:focus-visible { outline-color: var(--ink); outline-offset: 2px; }
 @media (hover: hover) { .card:hover .parts { transform: translateY(-3px); } }
 
+/* Versions of one effect: five dots under the card, below Hook / Middle / End. */
+.vars { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 3; display: none; align-items: center; justify-content: center; gap: 10px; height: 26px; }
+.card.picked .vars { display: flex; }
+.card.picked.hasvars .plate { padding-bottom: 56px; }
+.byparts .card.picked .parts ~ .vars { bottom: 8px; }
+.byparts .card.picked.hasvars .parts { bottom: 58px; }
+.byparts .card.picked.hasvars .plate { padding-bottom: 98px; }
+.var { position: relative; width: 14px; height: 14px; padding: 0; border-radius: 50%; border: 1.5px solid var(--ink); background: transparent; cursor: pointer;
+  transition: background-color .15s ease, transform .15s ease; }
+.var::after { content: ''; position: absolute; inset: -8px -5px; }
+.var[aria-pressed="true"] { background: var(--ink); transform: scale(1.18); }
+.var:focus-visible { outline-color: var(--ink); outline-offset: 3px; }
+.vname { position: absolute; left: 0; right: 0; bottom: 28px; text-align: center; font-family: var(--mono); font-stretch: 80%; font-size: 10px;
+  font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(20, 22, 21, .75); pointer-events: none; }
+
 .oops { margin-top: 40px; padding: 22px; border-radius: 8px; background: var(--cream); color: var(--ink); max-width: 34em; }
 .oops b { font-family: var(--title); font-weight: 400; font-size: 34px; text-transform: uppercase; display: block; line-height: 1; margin-bottom: 8px; }
 
@@ -418,6 +433,7 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
     mode: 'custom', style: null, captionStyle: null, effects: {},
     partsOn: false,                               // the "different parts of my video" switch
     parts: {},                                    // effect key -> { hook: true, middle: false, end: false }: the parts tapped for it. None tapped = anywhere
+    variants: {},                                 // effect key -> the version picked (1..n) for effects that come in versions
     before: null,                                 // the captions and effects from before an overall style was picked
     tweak: false                                  // an overall style is picked and its captions/effects are open
   };
@@ -565,6 +581,26 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
       card.appendChild(row);
     }
 
+    if (kind === 'effect' && item.variants && item.variants.length > 1) {   // versions of this effect: one dot each
+      card.classList.add('hasvars');
+      var vrow = el('div', 'vars');
+      vrow.setAttribute('role', 'group');
+      vrow.setAttribute('aria-label', 'Versión de ' + item.name);
+      var vname = el('span', 'vname');
+      vrow.appendChild(vname);
+      item.variants.forEach(function (vv) {
+        var d = el('button', 'var');
+        d.type = 'button';
+        d.dataset.n = String(vv.n);
+        d.title = vv.n + '. ' + vv.name;
+        d.setAttribute('aria-label', 'Versión ' + vv.n + ': ' + vv.name);
+        d.setAttribute('aria-pressed', 'false');
+        d.addEventListener('click', function () { setVariant(item.key, vv.n, card); });
+        vrow.appendChild(d);
+      });
+      card.appendChild(vrow);
+    }
+
     if (v) {
       var ov = el('div', 'ov');
       var snd = el('button', 'vbtn snd');
@@ -646,8 +682,28 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
   function anyPart(key) { var m = partsOf(key); return PARTS.some(function (p) { return m[p.key]; }); }
 
   function setEffect(key, on) {
-    if (on) { if (!S.effects[key]) { S.effects[key] = true; S.parts[key] = noParts(); } }
+    if (on) { if (!S.effects[key]) { S.effects[key] = true; S.parts[key] = noParts(); if (hasVariants(key)) S.variants[key] = S.variants[key] || 1; } }
     else { delete S.effects[key]; delete S.parts[key]; }
+  }
+
+  /* Effects that come in versions: the dot picks one and the card shows that version's clip. */
+  function hasVariants(key) { var e = by.effect[key]; return !!(e && e.variants && e.variants.length > 1); }
+  function variantOf(key) { return S.variants[key] || 1; }
+  function showVariant(card, key) {
+    var e = by.effect[key], n = variantOf(key), vv = e.variants[n - 1];
+    if (!vv) return;
+    var vid = videoOf(card), img = card.querySelector('.clip img');
+    if (img && vv.poster && img.getAttribute('src') !== vv.poster) img.src = vv.poster;
+    if (vid && vv.preview && vid.getAttribute('src') !== vv.preview) { vid.src = vv.preview; vid.load(); }
+    var nm = card.querySelector('.vname');
+    if (nm) nm.textContent = S.effects[key] ? n + '. ' + vv.name : '';
+  }
+  function setVariant(key, n, card) {
+    S.variants[key] = n;
+    showVariant(card, key);
+    say('');
+    sync();
+    if (!reduce) play(card);
   }
 
   function choose(kind, key) {
@@ -695,9 +751,14 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
       if (!st || !st.ready) return null;
       style = st.key;
     }
-    return { mode: style ? 'preset' : 'custom', style: style, captionStyle: S.captionStyle, effects: effectKeys(), effectSections: sections() };
+    return { mode: style ? 'preset' : 'custom', style: style, captionStyle: S.captionStyle, effects: effectKeys(), effectSections: sections(), effectVariants: variants() };
   }
-  function sig(p) { return p ? JSON.stringify([p.mode, p.style, p.captionStyle, p.effects, p.effectSections]) : ''; }
+  function variants() {
+    var out = {};
+    effectKeys().forEach(function (k) { if (hasVariants(k)) out[k] = variantOf(k); });
+    return out;
+  }
+  function sig(p) { return p ? JSON.stringify([p.mode, p.style, p.captionStyle, p.effects, p.effectSections, p.effectVariants || {}]) : ''; }
 
   function summary() {
     var st = by.style[S.style], cap = by.caption[S.captionStyle], n = effectKeys().length, out = [];
@@ -720,7 +781,8 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
     var fx = p.effectSections
       ? 'effects by part: ' + PARTS.map(function (pt) { return pt.key + ' = ' + (p.effectSections[pt.key].join(', ') || 'none'); }).join('; ')
       : 'effects = ' + (p.effects.join(', ') || 'none');
-    return 'Use these picks: ' + (p.mode === 'preset' ? 'style = ' + p.style + '; ' : '') + 'captions = ' + p.captionStyle + '; ' + fx;
+    var vs = Object.keys(p.effectVariants || {}).map(function (k) { return k + ' ' + p.effectVariants[k]; }).join(', ');
+    return 'Use these picks: ' + (p.mode === 'preset' ? 'style = ' + p.style + '; ' : '') + 'captions = ' + p.captionStyle + '; ' + fx + (vs ? '; versions: ' + vs : '');
   }
 
   function sync() {
@@ -733,6 +795,11 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
         c.classList.toggle('picked', on);
         var m = on ? partsOf(k) : null, btns = c.querySelectorAll('.part');
         for (var b = 0; b < btns.length; b++) btns[b].setAttribute('aria-pressed', m && m[btns[b].dataset.part] ? 'true' : 'false');
+        if (hasVariants(k)) {
+          var dots = c.querySelectorAll('.var');
+          for (var q = 0; q < dots.length; q++) dots[q].setAttribute('aria-pressed', on && +dots[q].dataset.n === variantOf(k) ? 'true' : 'false');
+          showVariant(c, k);
+        }
       }
     }
     /* pick-one grids take one tab stop: the picked card, or the first one */
@@ -774,7 +841,7 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
     $('save').classList.toggle('is-saved', saved);
     $('save-t').textContent = saved ? 'Guardado' : 'Guardar';
 
-    if (FILE) { try { localStorage.setItem(STORE, JSON.stringify({ mode: S.mode, style: S.style, captionStyle: S.captionStyle, effects: effectKeys(), effectSections: sections() })); } catch (e) {} }
+    if (FILE) { try { localStorage.setItem(STORE, JSON.stringify({ mode: S.mode, style: S.style, captionStyle: S.captionStyle, effects: effectKeys(), effectSections: sections(), effectVariants: variants() })); } catch (e) {} }
   }
 
   function setMode(mode) {
@@ -830,7 +897,9 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
   function apply(picks) {
     if (!picks) return;
     if (by.caption[picks.captionStyle]) S.captionStyle = picks.captionStyle;
-    S.effects = {}; S.parts = {};
+    S.effects = {}; S.parts = {}; S.variants = {};
+    var pv = picks.effectVariants || {};
+    Object.keys(pv).forEach(function (k) { if (hasVariants(k) && pv[k] >= 1 && pv[k] <= by.effect[k].variants.length) S.variants[k] = pv[k]; });
     (picks.effects || []).forEach(function (k) { if (by.effect[k]) setEffect(k, true); });
     var sec = picks.effectSections;                // absent in picks saved before parts existed: effects land anywhere
     S.partsOn = !!sec && typeof sec === 'object';

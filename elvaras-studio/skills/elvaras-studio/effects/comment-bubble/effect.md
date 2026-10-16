@@ -1,10 +1,26 @@
 # comment-bubble (Comentario)
 
 **Qué hace:** un campo de comentario sube bajo la barbilla de la persona, la palabra se escribe sola en la palabra
-dicha, se toca enviar, el comentario se publica como burbuja con un corazón del creador, y luego llega una burbuja de
-respuesta con un botón de link.
+dicha, se toca enviar y luego se arma uno de cinco cierres, siempre como secuencia de mensajes: el comentario
+publicado, el creador escribiendo, la respuesta y algo adjunto.
 **Función:** llamado a la acción. **Frases que lo activan:** "muestra el comentario escribiéndose cuando digo comenta
 VIDEO", "burbuja de comentario en el llamado", "escribe la palabra y responde con el link".
+
+## Las cinco versiones (`VARIANT`)
+| n | nombre | cómo se ve |
+|---|---|---|
+| 1 | Mensaje directo | tu burbuja a la derecha con "Visto", la respuesta a la izquierda con un video adjunto |
+| 2 | Notificaciones | dos avisos del celular: "Comentaste EDIT" y "Te respondió", con la miniatura del video |
+| 3 | Fijado + video | el comentario fijado en papel y la respuesta en video en un círculo con anillo |
+| 4 | Papel + foto | burbujas de papel ladeadas y una foto instantánea del video con nota a mano |
+| 5 | Link con vista previa | el comentario, una línea de hilo y la respuesta con la vista previa del sitio de la marca |
+
+Se elige en el Studio Picker con los cinco puntitos bajo la tarjeta (debajo de Gancho / Medio / Final). `fx_new.py`
+escribe la versión guardada (`effectVariants` en las picks) en la línea `VARIANT`. Todos los colores y letras salen
+de `ACCENT_COL`, `LIGHT_COL`, `DARK_COL`, `DEEP_COL`, `TEXT_FONT`, `PUNCH_FONT`, `SERIF_FONT`: para la marca de un
+cliente se cambian esas líneas, más `BRAND_NAME`, `BRAND_MARK` y `LINK_DOMAIN`. `THUMB` es la imagen del adjunto
+(`'auto'` = un cuadro del clip). Ningún texto dice algo que la persona no dijo: `REPLY_TEXT` y `ATTACH_TITLE` son sus
+palabras.
 
 ## Toma que necesita, y dónde falla
 - Una frase con la forma "(solo) comenta PALABRA y te mando COSA" (o "comment KEYWORD and I'll send you THING"), más

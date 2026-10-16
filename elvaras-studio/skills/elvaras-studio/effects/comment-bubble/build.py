@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """comment-bubble (CTA): a comment field slides up under their chin, the keyword types itself on the spoken word, the
-send arrow is tapped, the comment posts as a bubble with a creator heart, then a reply bubble lands with a link chip.
+send arrow is tapped, then one of five closings builds itself (VARIANT): the posted comment, the creator typing, the reply
+and something attached. 1 Mensaje directo, 2 Notificaciones, 3 Fijado + video, 4 Papel + foto, 5 Link con vista previa.
 
 Run from the slot folder (see effect.md for the full run order):
     PY measure.py        chin + onsets -> work/measure.json
@@ -17,10 +18,18 @@ import sys
 
 # ==== CLIP (edit this) ====
 # -- on-screen text (no em dashes, never "free" / "course", nothing the speaker does not say or imply in the clip)
+VARIANT = 1                        # the closing: 1 Mensaje directo, 2 Notificaciones, 3 Fijado + video, 4 Papel + foto,
+                                   # 5 Link con vista previa. fx_new.py fills it from the Studio Picker
 KEYWORD = 'ADS'                    # the word the speaker asks people to comment, in caps
-REPLY_TEXT = 'Te mandé el link'    # creator reply; keep it under ~20 characters
-CHIP_TEXT = 'Abrir link'           # label on the link chip; under ~14 characters
+REPLY_TEXT = 'Aquí te lo comparto' # creator reply, the speaker's own words; keep it under ~22 characters
 USER_NAME = 'tú'                   # generic commenter name, never a real person
+PLACEHOLDER = 'Comenta aquí...'    # grey text in the empty comment field
+ATTACH_TITLE = 'Cómo lo hago'      # title on the attachment: what the speaker sends, in their words
+ATTACH_SUB = 'Video · toca para verlo'   # second line on the attachment (closing 1)
+LINK_DOMAIN = 'soyelvaras.cl'      # the brand's own site on the link preview (closing 5). '' = none. Never someone else's
+BRAND_NAME = 'Soy Elvaras'         # who replies, as the notifications show it (closing 2). The buyer's or client's brand
+BRAND_MARK = 'V'                   # one letter for the brand tile on the notifications (closing 2)
+THUMB = 'auto'                     # picture on the attachment: 'auto' = a frame of the clip, or a file in the slot ('assets/x.jpg')
 # -- times in seconds from the slot start. Run measure.py: it prints Whisper's start and the audio onset for every
 #    word. Use the audio onset minus one frame (0.03) so the visual leads the voice by a frame.
 T_IN = 0.50       # field slides up: about 0.4s before "comment" (on the words leading into it)
@@ -54,9 +63,12 @@ SEAT = 1.0            # strength of the soft dark gradient that seats the thread
 #    Karaoke, for example: WORD_FONT = TEXT_FONT = ('Archivo', 900, 'Archivo-900-normal.woff2'), UPPER = True.
 #    A wider typeface makes the thread wider: build.py shrinks it to the safe zone, lower SCALE if it gets small.
 WORD_FONT = ('Inter Tight', 800, 'InterTight-800-normal.woff2')   # the keyword (typed and posted) and the chip label
-TEXT_FONT = ('Inter', 600, 'Inter-600-normal.woff2')              # the reply line and the commenter name
+TEXT_FONT = ('Work Sans', 500, 'WorkSans-100-900-normal.woff2')   # the reply, names and every small line
 UPPER = False         # True = reply line, chip label and name in capitals (the keyword is in capitals already)
-ACCENT_COL, LIGHT_COL, DARK_COL = '#C9A15B', '#F2ECDF', '#141615'   # accent (ring, caret, chip), light (bubble, words), dark (words on light)
+ACCENT_COL, LIGHT_COL, DARK_COL = '#C9A15B', '#F2ECDF', '#141615'   # accent (ring, caret, highlights), light (paper, words), dark (words on light)
+DEEP_COL = '#13281F'  # the brand's deep colour (pinned label, paper reply, brand tile)
+PUNCH_FONT = ('Bebas Neue', 400, 'BebasNeue-400-normal.woff2')          # the posted keyword
+SERIF_FONT = ('Instrument Serif', 400, 'InstrumentSerif-400-italic.woff2')   # the reply in closings 3 and 4 (italic)
 # ==== END CLIP ====
 
 FF = shutil.which('ffmpeg') or 'ffmpeg'
@@ -75,6 +87,8 @@ DUR_ATTR = f'{NFRAMES / 30 - 0.0004:.4f}'
 YEL, CREAM, INK = ACCENT_COL, LIGHT_COL, DARK_COL
 WF, WW, TF, TW = WORD_FONT[0], WORD_FONT[1], TEXT_FONT[0], TEXT_FONT[1]
 RESTYLED = (WORD_FONT[2], TEXT_FONT[2]) != ('InterTight-800-normal.woff2', 'Inter-600-normal.woff2')
+CHIP_TEXT = ''          # (the old link chip, still used to size the field)
+VARIANT = int(VARIANT) if str(VARIANT).isdigit() and 1 <= int(VARIANT) <= 5 else 1
 
 
 def U(s):
@@ -257,75 +271,237 @@ def reply_avatar(L):
     return '<img src="assets/reply_avatar.jpg" alt="" />'
 
 
+# ------------------------------------------------------------------ the five closings (VARIANT 1..5)
+# Every closing is a message sequence: the posted comment, then the creator's reply with something attached. Each one is
+# drawn in a box of design px (VARIANTS[v]['box']) that is scaled to fit between the chin and the safe line. All colours
+# and faces come from the CLIP block, so a client's brand only changes those lines.
+VARIANT_NAMES = {1: 'Mensaje directo', 2: 'Notificaciones', 3: 'Fijado + video', 4: 'Papel + foto', 5: 'Link con vista previa'}
+VBOX = {1: (960, 500), 2: (920, 370), 3: (640, 450), 4: (860, 470), 5: (700, 410)}
+
+
+def vlayout():
+    """box size, scale, place and plate lift for the chosen closing"""
+    w, h = VBOX[VARIANT]
+    chin, cx, head_w, per = measured()
+    pmax = PUSH_MAX if PUSH == 'auto' else float(PUSH)
+    s = min(1.0, (1080 - 2 * MARGIN_L) / w)
+    while s >= .6:
+        top = BOTTOM - h * s
+        need = top - CHIN_GAP
+        push = 1.0 if chin <= need else (1920 - need) / (1920 - chin)
+        if push <= pmax + 1e-6:
+            bx = min(max(cx - w * s / 2, MARGIN_L), 1080 - MARGIN_L - w * s)
+            return dict(s=s, w=w, h=h, x0=bx, y0=top, tw=w * s, th=h * s, push=push, chin=chin,
+                        chin_eff=1920 - (1920 - chin) * push, cx=cx, head_w=head_w, per=per)
+        s = round(s - .02, 2)
+    sys.exit('the closing does not fit under their chin even at 0.6 scale: raise PUSH_MAX or pick another shot')
+
+
+def attach_thumb():
+    """the attachment picture: THUMB, or a frame of the clip itself"""
+    if THUMB != 'auto' and os.path.exists(THUMB):
+        return THUMB
+    f = max(0, NFRAMES - 8)
+    subprocess.run([FF, '-v', 'error', '-y', '-i', 'assets/aroll.mp4', '-vf',
+                    f'select=eq(n\\,{f}),scale=360:640:force_original_aspect_ratio=increase,crop=360:640',
+                    '-frames:v', '1', '-q:v', '3', 'assets/attach.jpg'], check=True)
+    return 'assets/attach.jpg'
+
+
+def esc(t):
+    return t.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+
+
+def variant_parts(av_html, thumb):
+    """(html, css) for VARIANT, positions in design px inside the box"""
+    kw, rp, who, nm = esc(KEYWORD), esc(U(REPLY_TEXT)), esc(U(USER_NAME)), esc(BRAND_NAME)
+    at, sub, dom, mk = esc(ATTACH_TITLE), esc(ATTACH_SUB), esc(LINK_DOMAIN), esc(BRAND_MARK)
+    gen = '<div class="vgen"></div>'
+    play = '<i class="vplay"></i>'
+    th = f'<div class="vthumb" style="background-image:url({thumb})">{play}</div>'
+    if VARIANT == 1:      # direct message: your bubble right, reply + attached video left
+        html = f'''
+      <div id="vu1" class="v" style="right:60px;top:2px"><span class="vmuted">{who}</span></div>
+      <div id="vu" class="v vpunch" style="right:50px;top:46px;background:var(--accent);color:var(--ink);font-size:100px;line-height:1;padding:20px 48px 12px;border-radius:52px 52px 14px 52px">{kw}</div>
+      <div id="vu2" class="v" style="right:58px;top:178px"><span class="vmuted" style="font-size:24px">Visto</span></div>
+      <div id="vav" class="v vav" style="left:2px;top:222px;width:84px;height:84px">{av_html}</div>
+      <div id="vdots" class="v vdots" style="left:110px;top:220px"><i></i><i></i><i></i></div>
+      <div id="vr" class="v vui" style="left:110px;top:216px;font-size:40px;font-weight:500;padding:22px 34px;border-radius:44px 44px 44px 12px;color:var(--paper)">{rp}</div>
+      <div id="va" class="v vui" style="left:110px;top:312px;width:560px;height:180px;border-radius:28px;overflow:hidden;display:flex">
+        <div style="width:140px;height:180px;flex:none;position:relative">{th}</div>
+        <div style="padding:36px 28px"><b style="display:block;color:var(--paper);font-size:38px;font-weight:700">{at}</b>
+          <span style="display:block;color:var(--accent);font-size:28px;margin-top:10px;font-weight:600">{sub}</span></div></div>'''
+    elif VARIANT == 2:    # phone notifications: "you commented", then "they replied" with the video
+        n = ('background:rgba(30,32,36,.92);border-radius:40px;padding:24px 30px;display:flex;gap:24px;align-items:center;'
+             'box-shadow:0 26px 60px rgba(0,0,0,.5),0 6px 16px rgba(0,0,0,.3)')
+        ic = f'<div class="vic">{mk}</div>'
+        hd = f'<div class="vmuted" style="font-size:24px;letter-spacing:.08em;text-transform:uppercase">{nm} · ahora</div>'
+        html = f'''
+      <div id="vu" class="v" style="left:0;top:10px;width:920px;{n}">{ic}<div>{hd}
+        <div style="color:var(--paper);font-size:36px;font-weight:500;margin-top:6px">Comentaste <b style="color:var(--accent);font-weight:800">{kw}</b></div></div></div>
+      <div id="vr" class="v" style="left:0;top:176px;width:900px;{n}">{ic}<div>{hd}
+        <div style="color:var(--paper);font-size:36px;font-weight:500;margin-top:6px">Te respondió:<br>{rp}</div></div>
+        <div id="va" style="width:104px;height:136px;border-radius:16px;overflow:hidden;flex:none;margin-left:auto;position:relative">{th}</div></div>'''
+    elif VARIANT == 3:    # pinned comment + video reply
+        html = f'''
+      <div id="vu" class="v" style="left:0;top:0;width:600px;background:var(--paper);border-radius:34px;padding:20px 30px 22px">
+        <div style="color:var(--deep);font-size:24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:10px;align-items:center">
+          <svg width="22" height="30" viewBox="0 0 22 30"><path d="M4 2h14l-3 9 5 6H2l5-6z M11 17v12" fill="currentColor" stroke="currentColor" stroke-width="2"/></svg>Fijado</div>
+        <div style="display:flex;align-items:center;gap:20px;margin-top:10px">{gen}<div>
+          <div style="color:rgba(20,22,28,.55);font-size:28px;font-weight:600">{who}</div>
+          <div class="vpunch" style="font-size:92px;line-height:.9;color:var(--ink)">{kw}</div></div></div></div>
+      <svg id="vline" class="v" style="left:70px;top:170px" width="60" height="96"><path d="M8 0 V 56 Q 8 84 44 84" fill="none" stroke="rgba(242,236,223,.55)" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+      <div id="vr" class="v" style="left:30px;top:254px;display:flex;align-items:center;gap:28px">
+        <div id="va" style="width:190px;height:190px;border-radius:50%;padding:8px;background:conic-gradient(var(--accent) 0 72%,rgba(255,255,255,.25) 72%)">
+          <div style="width:100%;height:100%;border-radius:50%;overflow:hidden;position:relative">{th}</div></div>
+        <div><b class="vmuted" style="display:block;font-size:28px;letter-spacing:.06em;text-transform:uppercase">Respondió con video</b>
+          <span class="vserif" style="display:block;color:var(--paper);font-size:62px;line-height:1.02;margin-top:6px;white-space:normal;width:330px">{rp}</span></div></div>'''
+    elif VARIANT == 4:    # paper bubbles + a photo of the video
+        html = f'''
+      <div id="vu" class="v" style="left:430px;top:4px;background:var(--paper);color:var(--deep);border-radius:40px 40px 10px 40px;padding:16px 40px 8px;transform:rotate(-3deg)">
+        <small style="display:block;font-size:24px;font-weight:700;letter-spacing:.2em;opacity:.8">{who.upper()} COMENTASTE</small>
+        <b class="vpunch" style="display:block;font-size:112px;line-height:.95;font-weight:400">{kw}</b></div>
+      <div id="vr" class="v vserif" style="left:0;top:210px;background:var(--deep);color:var(--paper);border-radius:40px 40px 40px 10px;padding:20px 34px;font-size:56px;transform:rotate(1.5deg);box-shadow:inset 0 0 0 2px var(--accent)">{rp}</div>
+      <div id="va" class="v" style="left:530px;top:174px;background:#fff;padding:14px 14px 56px;transform:rotate(5deg);width:230px">
+        <div style="width:202px;height:200px;position:relative">{th}</div>
+        <div class="vhand" style="position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:38px;color:var(--ink)">{at.lower()}</div></div>'''
+    else:                 # comment + reply with a link preview
+        html = f'''
+      <div id="vu" class="v" style="left:0;top:0;display:flex;align-items:center;gap:20px">{gen}
+        <div style="background:rgba(255,255,255,.95);border-radius:40px;padding:12px 34px 8px">
+          <small style="display:block;color:rgba(20,22,28,.55);font-size:24px;font-weight:600">{who}</small>
+          <b class="vpunch" style="font-size:80px;line-height:1;color:var(--ink);font-weight:400">{kw}</b></div></div>
+      <svg id="vline" class="v" style="left:36px;top:82px" width="70" height="120"><path d="M6 0 V 80 Q 6 106 60 106" fill="none" stroke="rgba(242,236,223,.55)" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+      <div id="vr" class="v vui" style="left:100px;top:154px;width:600px;border-radius:34px;overflow:hidden">
+        <div style="padding:20px 26px 16px;color:var(--paper);font-size:38px;font-weight:500;display:flex;align-items:center;gap:18px">
+          <div class="vav" style="width:60px;height:60px;flex:none">{av_html}</div>{rp}</div>
+        <div id="va" style="display:flex;background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.08)">
+          <div style="width:170px;height:150px;flex:none;position:relative">{th}</div>
+          <div style="padding:28px 24px"><b style="display:block;color:var(--paper);font-size:34px;font-weight:700">{at}</b>
+            <span style="display:block;color:var(--accent);font-size:26px;font-weight:600;margin-top:8px">{dom}</span></div></div></div>'''
+    css = f'''
+#vbox{{position:absolute;transform-origin:0 0;z-index:11;font-family:'{TF}';
+  --accent:{YEL};--paper:{CREAM};--ink:{INK};--deep:{DEEP_COL};--muted:rgba(242,236,223,.62)}}
+#vbox .v{{position:absolute;white-space:nowrap}}
+#vbox .vui{{background:rgba(17,19,23,.95)}}
+#vbox .v,#vbox .vui{{box-shadow:0 26px 60px rgba(0,0,0,.5),0 6px 16px rgba(0,0,0,.3)}}
+#vu1,#vu2,#vline,#vdots{{box-shadow:none!important}}
+#vbox .vmuted{{color:var(--muted);font-size:28px;font-weight:600}}
+#vbox .vpunch{{font-family:'{PUNCH_FONT[0]}';font-weight:{PUNCH_FONT[1]}}}
+#vbox .vserif{{font-family:'{SERIF_FONT[0]}';font-style:italic;font-weight:{SERIF_FONT[1]}}}
+#vbox .vhand{{font-family:'Caveat';font-weight:600}}
+#vbox .vav{{border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px var(--accent)}}
+#vbox .vav img,#vbox .vav svg{{width:100%;height:100%;object-fit:cover;display:block}}
+#vbox .vgen{{width:72px;height:72px;border-radius:50%;flex:none;background:#cfc9bd;position:relative;overflow:hidden}}
+#vbox .vgen:after{{content:'';position:absolute;left:28%;top:20%;width:44%;height:44%;border-radius:50%;background:#f4f1ea}}
+#vbox .vthumb{{position:absolute;inset:0;background-size:cover;background-position:center 30%}}
+#vbox .vplay{{position:absolute;left:50%;top:50%;width:0;height:0;transform:translate(-35%,-50%);border-left:30px solid #fff;
+  border-top:19px solid transparent;border-bottom:19px solid transparent;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}}
+#vbox .vic{{width:84px;height:84px;border-radius:22px;background:var(--deep);flex:none;display:flex;align-items:center;justify-content:center;
+  color:var(--accent);font-family:'{SERIF_FONT[0]}';font-style:italic;font-size:58px;box-shadow:inset 0 0 0 3px var(--accent)}}
+#vbox .vdots{{width:130px;height:72px;border-radius:36px 36px 36px 12px;background:rgba(20,22,28,.95);display:flex;align-items:center;justify-content:center;gap:11px}}
+#vbox .vdots i{{width:14px;height:14px;border-radius:50%;background:rgba(255,248,239,.85)}}'''
+    return html, css
+
+
+def variant_tweens(T, sfx, tp):
+    """the closing builds in four beats: comment (tp), typing (T_DOTS), reply (T_REPLY), attachment (T_LINK). When the
+    speaker says them back to back the beats keep their order: each one waits for the one before to land."""
+    TD = max(T_DOTS, tp + .18)
+    TR = max(T_REPLY, TD + .16)
+    TL = max(T_LINK, TR + .2)
+
+    def pop(sel, t, frm, d=.42, ease='back.out(1.7)'):
+        T(f"gsap.set('{sel}',{{autoAlpha:0}});")
+        T(f"tl.fromTo('{sel}',{{autoAlpha:0,{frm}}},{{autoAlpha:1,x:0,y:0,scale:1,duration:{d},ease:'{ease}',immediateRender:false}},{t:.3f});")
+    rot = {'#vu': -3 if VARIANT == 4 else 0, '#vr': 1.5 if VARIANT == 4 else 0, '#va': 5 if VARIANT == 4 else 0}
+    def popr(sel, t, frm, extra_rot, d=.46):
+        T(f"gsap.set('{sel}',{{autoAlpha:0}});")
+        T(f"tl.fromTo('{sel}',{{autoAlpha:0,{frm},rotation:{rot[sel] + extra_rot}}},{{autoAlpha:1,x:0,y:0,scale:1,rotation:{rot[sel]},duration:{d},ease:'back.out(1.6)',immediateRender:false}},{t:.3f});")
+    # 1. the comment
+    if VARIANT == 2:
+        pop('#vu', tp, "y:-40,scale:.96", .5, 'expo.out')
+    elif VARIANT == 4:
+        popr('#vu', tp, "y:40,scale:.6", -9)
+    else:
+        pop('#vu', tp, "y:40,scale:.7")
+    if VARIANT == 1:
+        pop('#vu1', tp + .05, "y:10", .3, 'power2.out')
+        pop('#vu2', TD, "y:6", .3, 'power2.out')
+    sfx.append(('pop', tp + .06, .20))
+    # 2. typing / the thread line
+    if VARIANT == 1:
+        pop('#vav', TD, "scale:0", .32, 'back.out(2.2)')
+        pop('#vdots', TD + .03, "scale:.4", .2, 'back.out(2)')
+        for j in range(3):
+            for rep in range(max(1, int((TR - TD - .1) / .42) + 1)):
+                T(f"tl.to('#vdots i:nth-child({j + 1})',{{y:-10,duration:.09,ease:'power2.out',yoyo:true,repeat:1}},{TD + .07 + j * .05 + rep * .42:.3f});")
+        T(f"tl.set('#vdots',{{autoAlpha:0}},{TR:.3f});")
+    if VARIANT in (3, 5):
+        T(f"tl.to('#vline path',{{strokeDashoffset:0,duration:.26,ease:'power2.out'}},{TD:.3f});")
+    # 3. the reply
+    if VARIANT == 2:
+        pop('#vr', TR, "y:-40,scale:.96", .5, 'expo.out')
+    elif VARIANT == 4:
+        popr('#vr', TR, "x:-40,scale:.6", 6)
+    else:
+        pop('#vr', TR, "x:-30,scale:.6")
+    sfx.append(('whoosh-short', TR + .04, .20))
+    # 4. the attachment
+    if VARIANT == 4:
+        popr('#va', TL, "y:-90,scale:.8", 18, .55)
+    elif VARIANT == 3:
+        pop('#va', TL - .25 if TL - .25 > TR else TR, "scale:0", .46, 'back.out(2)')
+    else:
+        pop('#va', TL, "y:24,scale:.85", .42, 'back.out(2.2)')
+    sfx.append(('click-soft', TL, .45))
+    end = T_OUT if T_OUT is not None else DUR
+    t = TL + .7
+    k = 0
+    while t + .5 < end and k < 3:      # a soft "tap me" on the play button while the closing holds
+        T(f"tl.to('#vbox .vplay',{{scale:1.25,duration:.16,ease:'power2.out',yoyo:true,repeat:1}},{t:.3f});")
+        t += 1.1
+        k += 1
+    if T_OUT is not None:
+        T(f"tl.to('#vbox',{{autoAlpha:0,y:18,filter:'blur(6px)',duration:.22,ease:'power2.in'}},{T_OUT:.3f});")
+        T(f"tl.to('#seat',{{autoAlpha:0,duration:.3,ease:'power1.in'}},{T_OUT:.3f});")
+
+
 # ------------------------------------------------------------------ the effect
-def comment_bubble(L):
-    """returns (html, tweens, sfx) for the layout L. html sits above the footage, tweens go into the timeline `tl`."""
-    s, mode = L['s'], L['mode']
-    P = lambda v: round(v * s, 2)                  # design px -> frame px
+def comment_bubble(L, V):
+    """returns (html, tweens, sfx). L = the field's layout, V = the closing's box. The field types the keyword, then the
+    chosen closing (VARIANT) builds itself in four beats."""
+    s = L['s']
+    P = lambda v: round(v * s, 2)                  # design px -> frame px (the field)
     J, sfx = [], []
     T = J.append
-    x0, y0 = L['x0'], L['y0']
-    row2_y = y0 + P(R1 + ROW_GAP)
-    rise = L['fy'] - y0                            # the posted bubble starts where the field was
-    stack = mode == 'stack'
-    rav_top = 20 if stack else (R2_INLINE - RAV) / 2
-    dots_top = 24
-    av1x = x0 + P(AV1 / 2)                         # comment avatar centre x
-    mid2 = row2_y + P(rav_top + RAV / 2)           # creator avatar centre y
-    y_a = y0 + P(R1 / 2 + AV1 / 2 + 10)
-    rad = P(28)
-    elbow = f'M{av1x:.1f} {y_a:.1f} V{mid2 - rad:.1f} Q{av1x:.1f} {mid2:.1f} {av1x + rad:.1f} {mid2:.1f} H{x0 + P(INDENT - 8):.1f}'
-    elbow_len = round((mid2 - rad - y_a) + rad * 1.6 + (P(INDENT - 8) - P(AV1 / 2) - rad) + 12)
-
     keys = ''.join(f'<span id="k{i}" class="k" style="width:{P(key_w(c))}px">{c}</span>' for i, c in enumerate(KEYWORD))
-    burst = ''.join(f'<i id="hp{i}" class="hp"></i>' for i in range(6))
     send_cx = L['fw'] - P(16 + SEND / 2)           # send button centre, field-relative
+    vhtml, vcss = variant_parts(reply_avatar(L), attach_thumb())
     html = f'''
   <div id="seat"></div>
   <div id="cbui">
     <div id="field" style="left:{L['fx']:.1f}px;top:{L['fy']:.1f}px;width:{L['fw']:.1f}px;height:{P(FIELD_H)}px">
       <div id="fring"></div>
       <div id="fav">{person(P(76), 'f')}</div>
-      <div id="ph" style="left:{P(FIELD_TEXT_X + 14)}px">Comenta aquí...</div>
+      <div id="ph" style="left:{P(FIELD_TEXT_X + 14)}px">{esc(PLACEHOLDER)}</div>
       <div id="typed" style="left:{P(FIELD_TEXT_X)}px">{keys}</div>
       <div id="caret" style="left:{P(FIELD_TEXT_X - 1)}px"></div>
       <div id="send"><div id="sendoff">{arrow_up('rgba(255,255,255,.55)', P(42))}</div><div id="sendon">{arrow_up(INK, P(42))}</div></div>
       <div id="tapring" style="left:{send_cx:.1f}px;top:{P(FIELD_H / 2)}px"></div>
       <div id="tap" style="left:{send_cx:.1f}px;top:{P(FIELD_H / 2)}px"></div>
     </div>
-
-    <svg id="elbow" width="1080" height="1920" viewBox="0 0 1080 1920"><path id="elbowp" d="{elbow}" fill="none"
-      stroke="rgba(255,248,239,.62)" stroke-width="{P(4)}" stroke-linecap="round" stroke-dasharray="{elbow_len}" stroke-dashoffset="{elbow_len}"/></svg>
-
-    <div id="crow" style="left:{x0:.1f}px;top:{y0:.1f}px;height:{P(R1)}px">
-      <div id="cav">{person(P(AV1), 'c')}</div>
-      <div id="cbub"><span class="who">{USER_NAME}</span><span class="kw">{KEYWORD}</span>
-        <div id="heart"><div id="heartin">{heart(P(34))}</div>{burst}</div>
-      </div>
-    </div>
-
-    <div id="rrow" style="left:{x0 + P(INDENT):.1f}px;top:{row2_y:.1f}px;height:{P(L['r2'])}px">
-      <div id="rav" style="top:{P(rav_top)}px">{reply_avatar(L)}</div>
-      <div id="dots" style="top:{P(dots_top)}px"><i id="d0"></i><i id="d1"></i><i id="d2"></i></div>
-      <div id="rbub" class="{mode}"><span id="rtxt">{REPLY_TEXT}</span>
-        <div id="chipwrap"><div id="skel"></div><div id="chipring"></div>
-          <div id="chip">{link(P(CHIP_ICON))}<span>{CHIP_TEXT}</span><div id="shine"></div></div></div>
-      </div>
-    </div>
+  </div>
+  <div id="vbox" style="left:{V['x0']:.1f}px;top:{V['y0']:.1f}px;width:{V['w']}px;height:{V['h']}px;transform:scale({V['s']:.4f})">{vhtml}
   </div>'''
 
     # ---- initial states
     T("gsap.set('#seat',{autoAlpha:0});")
     T(f"gsap.set('#field',{{autoAlpha:0,y:{P(84)},scale:.94,filter:'blur(10px)',transformOrigin:'50% 50%'}});")
     T("gsap.set(['#fav','#send'],{scale:.5,autoAlpha:0});")
-    T("gsap.set(['#ph','#fring','#caret','#sendon','#tap','#tapring','#crow','#dots','#rbub','#rtxt','#chip','#chipring','.hp'],{autoAlpha:0});")
+    T("gsap.set(['#ph','#fring','#caret','#sendon','#tap','#tapring'],{autoAlpha:0});")
     T(f"gsap.set('.k',{{autoAlpha:0,scale:.4,y:{P(14)}}});")
     T(f"gsap.set('#tap',{{xPercent:-50,yPercent:-50,scale:1.25,x:{P(10)},y:{P(18)}}});gsap.set('#tapring',{{xPercent:-50,yPercent:-50}});")
-    T(f"gsap.set('#crow',{{y:{rise * .72:.1f},scale:.84,transformOrigin:'12% 50%'}});")
-    T("gsap.set('#heart',{scale:0});gsap.set('#heartin',{scale:1.6});")
-    T("gsap.set('#rav',{scale:0});gsap.set('#dots',{scale:.4,transformOrigin:'0% 70%'});")
-    T(f"gsap.set('#rbub',{{scale:.45,transformOrigin:'0% {'30%' if stack else '62%'}'}});gsap.set('#rtxt',{{x:{P(-16)}}});")
-    T("gsap.set('#chip',{scale:.6});gsap.set('#shine',{xPercent:-110});")
 
     # ---- 1. field slides up
     T(f"tl.to('#seat',{{autoAlpha:1,duration:.6,ease:'power1.out'}},{T_IN:.3f});")
@@ -375,66 +551,12 @@ def comment_bubble(L):
     T(f"tl.set('#caret',{{autoAlpha:0}},{T_SEND:.3f});")
     sfx.append(('click', T_SEND, .70))
 
-    # ---- 5. the comment posts: the dark field lets go, the cream bubble jumps up out of it
+    # ---- 5. the field lets go, the closing takes over
     tp = T_SEND + .07
-    # (field is gone before the bubble is solid, otherwise the keyword reads twice for a frame)
     T(f"tl.to('#field',{{y:{P(16)},scale:.96,autoAlpha:0,filter:'blur(8px)',duration:.12,ease:'power2.in'}},{tp:.3f});")
     T(f"tl.set('#field',{{autoAlpha:0}},{tp + .125:.3f});")
-    T(f"tl.set(['#typed','#fav'],{{autoAlpha:0}},{tp + .07:.3f});")
-    T(f"tl.to('#crow',{{autoAlpha:1,duration:.07,ease:'none'}},{tp + .07:.3f});")
-    T(f"tl.to('#crow',{{y:0,scale:1,duration:.46,ease:'back.out(1.6)'}},{tp + .07:.3f});")
-    sfx.append(('pop', tp + .06, .20))
-    th = tp + .19                                   # creator heart on the bubble
-    T(f"tl.to('#heart',{{scale:1,duration:.34,ease:'back.out(3.2)'}},{th:.3f});")
-    T(f"tl.to('#heartin',{{scale:1,duration:.4,ease:'back.out(2.2)'}},{th + .02:.3f});")
-    for i in range(6):
-        a = math.radians(i * 60 - 80)
-        T(f"tl.fromTo('#hp{i}',{{x:0,y:0,scale:1,autoAlpha:1}},{{x:{P(46) * math.cos(a):.1f},y:{P(46) * math.sin(a):.1f},scale:.2,"
-          f"autoAlpha:0,duration:.44,ease:'power2.out',immediateRender:false}},{th + .05:.3f});")
-
-    # ---- 6. next phrase: creator is typing
-    # (the thread line is drawn in frame space: wait until the comment row has finished rising or it floats above it)
-    T(f"tl.to('#elbowp',{{strokeDashoffset:0,duration:.22,ease:'power2.out'}},{max(T_DOTS - .08, tp + .07 + .17):.3f});")
-    T(f"tl.to('#rav',{{scale:1,duration:.32,ease:'back.out(2.2)'}},{T_DOTS:.3f});")
-    # (the intro must END before the hide below: a running tl.to(autoAlpha:1) beats a tl.set(autoAlpha:0))
-    T(f"tl.to('#dots',{{autoAlpha:1,scale:1,duration:{max(.04, min(.2, T_REPLY - T_DOTS - .05)):.3f},ease:'back.out(2)'}},{T_DOTS + .03:.3f});")
-    for j in range(3):
-        for rep in range(max(1, int((T_REPLY - T_DOTS - .1) / .42) + 1)):
-            T(f"tl.to('#d{j}',{{y:{P(-10)},duration:.09,ease:'power2.out',yoyo:true,repeat:1}},{T_DOTS + .07 + j * .05 + rep * .42:.3f});")
-
-    # ---- 7. "send": reply bubble lands
-    T(f"tl.set('#dots',{{autoAlpha:0}},{T_REPLY:.3f});")
-    T(f"tl.to('#rbub',{{autoAlpha:1,duration:.04,ease:'none'}},{T_REPLY:.3f});")
-    T(f"tl.to('#rbub',{{scale:1,duration:.4,ease:'back.out(1.7)'}},{T_REPLY:.3f});")
-    T(f"tl.to('#rtxt',{{autoAlpha:1,duration:.1,ease:'none'}},{T_REPLY + .03:.3f});")
-    T(f"tl.to('#rtxt',{{x:0,duration:.3,ease:'power3.out'}},{T_REPLY + .03:.3f});")
-    for rep in range(max(1, int((T_LINK - T_REPLY - .1) / .34))):     # the empty chip breathes until the link lands
-        T(f"tl.to('#skel',{{backgroundColor:'rgba(255,255,255,.24)',duration:.14,ease:'sine.inOut',yoyo:true,repeat:1}},{T_REPLY + .1 + rep * .34:.3f});")
-    sfx.append(('whoosh-short', T_REPLY + .04, .20))
-
-    # ---- 8. the thing the speaker sends: the chip resolves
-    T(f"tl.to('#chip',{{autoAlpha:1,duration:.06,ease:'none'}},{T_LINK:.3f});")
-    T(f"tl.to('#chip',{{scale:1,duration:.4,ease:'back.out(2.4)'}},{T_LINK:.3f});")
-    T(f"tl.set('#skel',{{visibility:'hidden'}},{T_LINK + .1:.3f});")
-    end = T_OUT if T_OUT is not None else DUR
-    shine = min(.55, end - (T_LINK + .14) - .08)     # the sweep must be over before the thread ends: a slot that stops
-    if shine >= .2:                                  # soon after the chip would freeze a white band on its last frame
-        T(f"tl.to('#shine',{{xPercent:110,duration:{shine:.3f},ease:'power2.inOut'}},{T_LINK + .14:.3f});")
-    tpulse = T_LINK + .5
-    k = 0
-    while tpulse + .62 < end and k < 3:              # a "tap me" pulse, repeated while the thread holds
-        T(f"tl.set('#chipring',{{autoAlpha:.85,scaleX:1,scaleY:1}},{tpulse:.3f});")
-        T(f"tl.to('#chipring',{{autoAlpha:0,scaleX:1.14,scaleY:1.42,duration:.6,ease:'power2.out'}},{tpulse:.3f});")
-        T(f"tl.to('#chip',{{scale:1.05,duration:.14,ease:'power2.out'}},{tpulse:.3f});")
-        T(f"tl.to('#chip',{{scale:1,duration:.36,ease:'back.out(2)'}},{tpulse + .145:.3f});")
-        tpulse += 1.1
-        k += 1
-
-    # ---- 9. optional exit, so the slot hands back to the a-roll cleanly
-    if T_OUT is not None:
-        T(f"tl.to(['#crow','#rrow','#elbow'],{{autoAlpha:0,y:{P(18)},filter:'blur(6px)',duration:.22,ease:'power2.in'}},{T_OUT:.3f});")
-        T(f"tl.to('#seat',{{autoAlpha:0,duration:.3,ease:'power1.in'}},{T_OUT:.3f});")
-    return html, J, sfx
+    variant_tweens(T, sfx, tp + .05)
+    return html, J, sfx, vcss
 
 
 def plate(L):
@@ -581,8 +703,8 @@ def sanity(L):
         msgs.append('T_OUT must leave 0.6s after T_LINK and 0.25s before the slot ends')
     if DUR - T_LINK < 1.0:
         msgs.append(f'only {DUR - T_LINK:.2f}s of footage after the chip lands: give the slot at least 1.5s after T_LINK')
-    if L['s'] < SCALE - .001:
-        msgs.append(f'scale reduced to {L["s"]:.2f} (asked {SCALE}): the band under their chin is {BOTTOM - L["chin_eff"]:.0f}px even after the lift')
+    if L['s'] < .8:
+        msgs.append(f'the closing is drawn at {L["s"]:.2f} of its size: the band under their chin is {BOTTOM - L["chin_eff"]:.0f}px even after the lift')
     if L['push'] > 1.001 and T_OUT is None:
         msgs.append(f'plate is lifted x{L["push"]:.3f} and stays lifted on the last frame: end the slot on a cut, or set T_OUT')
     for m in msgs:
@@ -591,10 +713,11 @@ def sanity(L):
 
 def build():
     L = layout()
-    html, tweens, sfx = comment_bubble(L)
-    tweens = plate(L) + tweens
+    V = vlayout()
+    html, tweens, sfx, vcss = comment_bubble(L, V)
+    tweens = plate(V) + tweens
     nl = '\n'
-    css = BASE_CSS + seat_css(L) + scale_css(UI_CSS, L['s'])
+    css = BASE_CSS + seat_css(V) + scale_css(UI_CSS, L['s']) + vcss
     doc = f'''<!doctype html>
 <html lang="en" data-resolution="portrait">
 <head>
@@ -612,7 +735,7 @@ def build():
     <video id="bgv" class="full" src="assets/aroll.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{DUR_ATTR}" data-track-index="0"></video>
   </div>
 {html}
-{safe_guide(L) if os.environ.get('SAFE') else ''}
+{safe_guide(V) if os.environ.get('SAFE') else ''}
 </div>
 <script>
 const tl = gsap.timeline({{ paused: true }});
@@ -626,16 +749,16 @@ window.__timelines["main"] = tl;
 '''
     open('index.html', 'w').write(doc)
     os.makedirs('work', exist_ok=True)
-    json.dump({'frames': NFRAMES, 'scale': L['s'], 'mode': L['mode'], 'push': round(L['push'], 4), 'chin': L['chin'],
-               'chin_eff': round(L['chin_eff'], 1), 'x0': round(L['x0'], 1), 'y0': round(L['y0'], 1), 'tw': round(L['tw'], 1),
-               'th': round(L['th'], 1), 'field': [round(L['fx'], 1), round(L['fy'], 1), round(L['fw'], 1)],
+    json.dump({'frames': NFRAMES, 'variant': VARIANT, 'scale': V['s'], 'mode': VARIANT_NAMES[VARIANT], 'push': round(V['push'], 4),
+               'chin': V['chin'], 'chin_eff': round(V['chin_eff'], 1), 'x0': round(V['x0'], 1), 'y0': round(V['y0'], 1),
+               'tw': round(V['tw'], 1), 'th': round(V['th'], 1), 'field': [round(L['fx'], 1), round(L['fy'], 1), round(L['fw'], 1)],
                'beats': {'T_IN': T_IN, 'T_FOCUS': T_FOCUS, 'T_TYPE': T_TYPE, 'last_key': T_TYPE + (len(KEYWORD) - 1) * KEY_GAP,
                          'T_SEND': T_SEND, 'T_DOTS': T_DOTS, 'T_REPLY': T_REPLY, 'T_LINK': T_LINK, 'T_OUT': T_OUT}},
               open('work/layout.json', 'w'), indent=1)      # check.py reads this
     print(f'wrote index.html  {NFRAMES} frames ({DUR:.2f}s)  safe guide {"ON (do not render)" if os.environ.get("SAFE") else "off"}  sfx {"on" if SFX_ON else "off"}')
-    print(f'layout: scale {L["s"]:.2f}  reply {L["mode"]}  thread x {L["x0"]:.0f}..{L["x0"] + L["tw"]:.0f}  y {L["y0"]:.0f}..{L["y0"] + L["th"]:.0f}'
-          f'  chin {L["chin"]:.0f}' + (f' -> {L["chin_eff"]:.0f} after x{L["push"]:.3f} lift' if L['push'] > 1.001 else '  (plate untouched)'))
-    sanity(L)
+    print(f'closing {VARIANT} ({VARIANT_NAMES[VARIANT]}): scale {V["s"]:.2f}  x {V["x0"]:.0f}..{V["x0"] + V["tw"]:.0f}  y {V["y0"]:.0f}..{V["y0"] + V["th"]:.0f}'
+          f'  chin {V["chin"]:.0f}' + (f' -> {V["chin_eff"]:.0f} after x{V["push"]:.3f} lift' if V['push'] > 1.001 else '  (plate untouched)'))
+    sanity(V)
     print(f'render: npx --yes hyperframes@0.8.34 render -o renders/{SLOT}.mp4 --quality high')
 
 

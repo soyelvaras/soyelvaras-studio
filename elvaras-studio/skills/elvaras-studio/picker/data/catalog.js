@@ -171,7 +171,8 @@ window.STUDIO_CATALOG = {
    "name": "Órbita",
    "line": "Tus propios reels giran a tu alrededor.",
    "preview": "previews/effects/orbit.mp4",
-   "poster": "previews/posters/effects/orbit.jpg"
+   "poster": "previews/posters/effects/orbit.jpg",
+   "variants": []
   },
   {
    "n": 5,
@@ -179,7 +180,8 @@ window.STUDIO_CATALOG = {
    "name": "Rompe Cuadro",
    "line": "El video se achica en una tarjeta y tú sales de ella.",
    "preview": "previews/effects/frame-break.mp4",
-   "poster": "previews/posters/effects/frame-break.jpg"
+   "poster": "previews/posters/effects/frame-break.jpg",
+   "variants": []
   },
   {
    "n": 6,
@@ -187,7 +189,8 @@ window.STUDIO_CATALOG = {
    "name": "Muro de Palabras",
    "line": "Palabras gigantes desfilan detrás de ti y cambian mientras hablas.",
    "preview": "previews/effects/type-wall.mp4",
-   "poster": "previews/posters/effects/type-wall.jpg"
+   "poster": "previews/posters/effects/type-wall.jpg",
+   "variants": []
   },
   {
    "n": 8,
@@ -195,7 +198,8 @@ window.STUDIO_CATALOG = {
    "name": "Zoom Digital",
    "line": "Un acercamiento lento a tu cara y un golpe seco en la palabra clave.",
    "preview": "previews/effects/digital-zoom.mp4",
-   "poster": "previews/posters/effects/digital-zoom.jpg"
+   "poster": "previews/posters/effects/digital-zoom.jpg",
+   "variants": []
   },
   {
    "n": 16,
@@ -203,7 +207,8 @@ window.STUDIO_CATALOG = {
    "name": "Muro de Titulares",
    "line": "La pared detrás de ti se llena de titulares.",
    "preview": "previews/effects/headline-wall.mp4",
-   "poster": "previews/posters/effects/headline-wall.jpg"
+   "poster": "previews/posters/effects/headline-wall.jpg",
+   "variants": []
   },
   {
    "n": 17,
@@ -211,7 +216,8 @@ window.STUDIO_CATALOG = {
    "name": "Corte en Zoom",
    "line": "La cámara te atraviesa y entra a la siguiente toma.",
    "preview": "previews/effects/zoom-through-cut.mp4",
-   "poster": "previews/posters/effects/zoom-through-cut.jpg"
+   "poster": "previews/posters/effects/zoom-through-cut.jpg",
+   "variants": []
   },
   {
    "n": 18,
@@ -219,7 +225,8 @@ window.STUDIO_CATALOG = {
    "name": "Clon",
    "line": "Aparecen más de ti a tu lado, justo en tus palabras.",
    "preview": "previews/effects/clone.mp4",
-   "poster": "previews/posters/effects/clone.jpg"
+   "poster": "previews/posters/effects/clone.jpg",
+   "variants": []
   },
   {
    "n": 2,
@@ -227,7 +234,8 @@ window.STUDIO_CATALOG = {
    "name": "Muro de Portadas",
    "line": "Las portadas de tus reels forman una grilla en la pared detrás de ti.",
    "preview": "previews/effects/couch-wall.mp4",
-   "poster": "previews/posters/effects/couch-wall.jpg"
+   "poster": "previews/posters/effects/couch-wall.jpg",
+   "variants": []
   },
   {
    "n": 3,
@@ -235,7 +243,8 @@ window.STUDIO_CATALOG = {
    "name": "Mundo App",
    "line": "Una pantalla de app llena el cuadro y tú quedas delante.",
    "preview": "previews/effects/ui-world.mp4",
-   "poster": "previews/posters/effects/ui-world.jpg"
+   "poster": "previews/posters/effects/ui-world.jpg",
+   "variants": []
   },
   {
    "n": 7,
@@ -243,7 +252,8 @@ window.STUDIO_CATALOG = {
    "name": "La Pila",
    "line": "Tarjetas con datos y barras que corren se apilan sobre ti.",
    "preview": "previews/effects/the-stack.mp4",
-   "poster": "previews/posters/effects/the-stack.jpg"
+   "poster": "previews/posters/effects/the-stack.jpg",
+   "variants": []
   },
   {
    "n": 9,
@@ -251,7 +261,8 @@ window.STUDIO_CATALOG = {
    "name": "Etiqueta Pegada",
    "line": "Una etiqueta pegada a tu gorro o pecho que se mueve contigo.",
    "preview": "previews/effects/sticky-text.mp4",
-   "poster": "previews/posters/effects/sticky-text.jpg"
+   "poster": "previews/posters/effects/sticky-text.jpg",
+   "variants": []
   },
   {
    "n": 11,
@@ -259,7 +270,8 @@ window.STUDIO_CATALOG = {
    "name": "Foco",
    "line": "La sala se oscurece, tú quedas iluminado y las palabras clave caen grandes.",
    "preview": "previews/effects/spotlight.mp4",
-   "poster": "previews/posters/effects/spotlight.jpg"
+   "poster": "previews/posters/effects/spotlight.jpg",
+   "variants": []
   },
   {
    "n": 13,
@@ -267,7 +279,8 @@ window.STUDIO_CATALOG = {
    "name": "Congela y Señala",
    "line": "La imagen se congela y aparecen etiquetas que te apuntan.",
    "preview": "previews/effects/freeze-and-label.mp4",
-   "poster": "previews/posters/effects/freeze-and-label.jpg"
+   "poster": "previews/posters/effects/freeze-and-label.jpg",
+   "variants": []
   },
   {
    "n": 14,
@@ -275,7 +288,8 @@ window.STUDIO_CATALOG = {
    "name": "Teléfono 3D",
    "line": "Un teléfono 3D vuela a tu lado mostrando una pantalla.",
    "preview": "previews/effects/phone-mockup.mp4",
-   "poster": "previews/posters/effects/phone-mockup.jpg"
+   "poster": "previews/posters/effects/phone-mockup.jpg",
+   "variants": []
   },
   {
    "n": 15,
@@ -283,7 +297,8 @@ window.STUDIO_CATALOG = {
    "name": "Checklist",
    "line": "Cada paso se marca a medida que lo dices.",
    "preview": "previews/effects/checklist.mp4",
-   "poster": "previews/posters/effects/checklist.jpg"
+   "poster": "previews/posters/effects/checklist.jpg",
+   "variants": []
   },
   {
    "n": 21,
@@ -291,7 +306,8 @@ window.STUDIO_CATALOG = {
    "name": "Llamadas",
    "line": "Tarjetas unidas a ti con líneas que te siguen.",
    "preview": "previews/effects/pointer-callout.mp4",
-   "poster": "previews/posters/effects/pointer-callout.jpg"
+   "poster": "previews/posters/effects/pointer-callout.jpg",
+   "variants": []
   },
   {
    "n": 10,
@@ -299,7 +315,8 @@ window.STUDIO_CATALOG = {
    "name": "Contador",
    "line": "Los números suben dígito por dígito, como un cuentakilómetros.",
    "preview": "previews/effects/odometer.mp4",
-   "poster": "previews/posters/effects/odometer.jpg"
+   "poster": "previews/posters/effects/odometer.jpg",
+   "variants": []
   },
   {
    "n": 19,
@@ -307,7 +324,8 @@ window.STUDIO_CATALOG = {
    "name": "Antes y Después",
    "line": "Una línea barre la pantalla y convierte tu clip crudo en la edición.",
    "preview": "previews/effects/before-and-after.mp4",
-   "poster": "previews/posters/effects/before-and-after.jpg"
+   "poster": "previews/posters/effects/before-and-after.jpg",
+   "variants": []
   },
   {
    "n": 20,
@@ -315,7 +333,8 @@ window.STUDIO_CATALOG = {
    "name": "Gráfico que Crece",
    "line": "Un gráfico se dibuja detrás de ti y se dispara en tu palabra.",
    "preview": "previews/effects/chart-grow.mp4",
-   "poster": "previews/posters/effects/chart-grow.jpg"
+   "poster": "previews/posters/effects/chart-grow.jpg",
+   "variants": []
   },
   {
    "n": 4,
@@ -323,15 +342,48 @@ window.STUDIO_CATALOG = {
    "name": "Sticker Congelado",
    "line": "Tu cuadro congelado se vuelve un sticker recortado con notas a mano.",
    "preview": "previews/effects/freeze-sticker.mp4",
-   "poster": "previews/posters/effects/freeze-sticker.jpg"
+   "poster": "previews/posters/effects/freeze-sticker.jpg",
+   "variants": []
   },
   {
    "n": 12,
    "key": "comment-bubble",
    "name": "Comentario",
-   "line": "El comentario se escribe solo, se publica y llega tu respuesta con el link.",
-   "preview": "previews/effects/comment-bubble.mp4",
-   "poster": "previews/posters/effects/comment-bubble.jpg"
+   "line": "El comentario se escribe solo, se publica y llega tu respuesta con algo adjunto. Cinco versiones.",
+   "preview": "previews/effects/comment-bubble-1.mp4",
+   "poster": "previews/posters/effects/comment-bubble-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Mensaje directo",
+     "preview": "previews/effects/comment-bubble-1.mp4",
+     "poster": "previews/posters/effects/comment-bubble-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Notificaciones",
+     "preview": "previews/effects/comment-bubble-2.mp4",
+     "poster": "previews/posters/effects/comment-bubble-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Fijado + video",
+     "preview": "previews/effects/comment-bubble-3.mp4",
+     "poster": "previews/posters/effects/comment-bubble-3.jpg"
+    },
+    {
+     "n": 4,
+     "name": "Papel + foto",
+     "preview": "previews/effects/comment-bubble-4.mp4",
+     "poster": "previews/posters/effects/comment-bubble-4.jpg"
+    },
+    {
+     "n": 5,
+     "name": "Link con vista previa",
+     "preview": "previews/effects/comment-bubble-5.mp4",
+     "poster": "previews/posters/effects/comment-bubble-5.jpg"
+    }
+   ]
   },
   {
    "n": 26,
@@ -339,7 +391,8 @@ window.STUDIO_CATALOG = {
    "name": "Pantalla Verde",
    "line": "Te achicas abajo y toda la pantalla muestra de lo que hablas.",
    "preview": "previews/effects/green-screen.mp4",
-   "poster": "previews/posters/effects/green-screen.jpg"
+   "poster": "previews/posters/effects/green-screen.jpg",
+   "variants": []
   },
   {
    "n": 25,
@@ -347,7 +400,8 @@ window.STUDIO_CATALOG = {
    "name": "Fichas Fuera",
    "line": "Fichas con nombres caen en la pared detrás de ti y salen una por una.",
    "preview": "previews/effects/knockout-tiles.mp4",
-   "poster": "previews/posters/effects/knockout-tiles.jpg"
+   "poster": "previews/posters/effects/knockout-tiles.jpg",
+   "variants": []
   },
   {
    "n": 23,
@@ -355,7 +409,8 @@ window.STUDIO_CATALOG = {
    "name": "Línea en Llamas",
    "line": "Una línea de tiempo de edición se arma frente a ti y se prende fuego en tu palabra.",
    "preview": "previews/effects/timeline-burn.mp4",
-   "poster": "previews/posters/effects/timeline-burn.jpg"
+   "poster": "previews/posters/effects/timeline-burn.jpg",
+   "variants": []
   },
   {
    "n": 22,
@@ -363,7 +418,8 @@ window.STUDIO_CATALOG = {
    "name": "Apagón",
    "line": "Las luces se cortan en tu frase y vuelven en la siguiente.",
    "preview": "previews/effects/blackout.mp4",
-   "poster": "previews/posters/effects/blackout.jpg"
+   "poster": "previews/posters/effects/blackout.jpg",
+   "variants": []
   },
   {
    "n": 24,
@@ -371,7 +427,8 @@ window.STUDIO_CATALOG = {
    "name": "Revelado",
    "line": "El video se achica en una ventana de app y ves cómo se edita.",
    "preview": "previews/effects/pull-back-reveal.mp4",
-   "poster": "previews/posters/effects/pull-back-reveal.jpg"
+   "poster": "previews/posters/effects/pull-back-reveal.jpg",
+   "variants": []
   }
  ],
  "styles": [

@@ -29,7 +29,11 @@ Picks file:
     {"mode": "preset" | "custom", "style": "<key>" | null, "captionStyle": "<key>" | "none",
      "effects": ["<key>", ...],
      "effectSections": null | {"hook": ["<key>", ...], "middle": [...], "end": [...]},
+     "effectVariants": {"<key>": <n>, ...},
      "updated": "<ISO time>"}
+
+effectVariants: for a picked effect that comes in versions (the catalog lists its "variants"), the version
+the buyer chose, 1 to the number of versions. fx_new.py writes it into the slot's VARIANT line.
 
 captionStyle "none" means no caption style: titles and effects only.
 mode "preset" keeps the overall style the buyer picked; captionStyle and effects start as that style's own
@@ -175,11 +179,17 @@ def build_catalog(captions_json=DEFAULT_CAPTIONS, mode='server', styles_json=Non
         if not isinstance(key, str) or not KEY_RE.match(key) or key in seen:
             continue
         seen.add(key)
+        variants = []
+        for i, v in enumerate(e.get('variants') or []):     # an effect that comes in versions: one clip each
+            if isinstance(v, dict):
+                variants.append({'n': i + 1, 'name': text(v.get('name'), 40) or str(i + 1),
+                                 'preview': picker_url(v.get('preview')), 'poster': picker_url(v.get('poster'))})
         effects.append({                                   # "job" stays in the data file; the page never shows it
             'n': e.get('n'), 'key': key, 'name': text(e.get('name'), 60) or key,
             'line': text(e.get('line')),
             'preview': picker_url(e.get('preview', 'previews/effects/%s.mp4' % key)),    # null = plain card on purpose
             'poster': picker_url(e.get('poster') or ('previews/posters/effects/%s.jpg' % key)),
+            'variants': variants,
         })
     effect_keys = {e['key'] for e in effects}
 
@@ -216,7 +226,30 @@ def build_catalog(captions_json=DEFAULT_CAPTIONS, mode='server', styles_json=Non
 # ---------------------------------------------------------------------------------------------------------
 def empty_picks():
     return {'mode': 'custom', 'style': None, 'captionStyle': None, 'effects': [], 'effectSections': None,
-            'updated': None}
+            'effectVariants': {}, 'updated': None}
+
+
+def clean_variants(raw, effects, catalog, strict):
+    """effectVariants: {effect key: version number} for picked effects that come in versions. A picked effect with
+    versions and no number gets version 1."""
+    counts = {e['key']: len(e.get('variants') or []) for e in catalog['effects']}
+    out = {}
+    if raw is not None and not isinstance(raw, dict):
+        return ({}, 'effectVariants must be an object.') if strict else ({}, None)
+    for k, n in (raw or {}).items():
+        if k not in effects or not counts.get(k):
+            if strict:
+                return {}, 'A version was given for an effect that is not picked or has no versions: ' + str(k)[:40]
+            continue
+        if not isinstance(n, int) or isinstance(n, bool) or not 1 <= n <= counts[k]:
+            if strict:
+                return {}, 'Version of %s must be 1 to %d.' % (k, counts[k])
+            continue
+        out[k] = n
+    for k in effects:
+        if counts.get(k) and k not in out:
+            out[k] = 1
+    return out, None
 
 
 def clean_sections(raw, effects, strict):
@@ -284,8 +317,11 @@ def check_picks(raw, catalog):
     sections, error = clean_sections(raw.get('effectSections'), effects, strict=True)
     if error:
         return None, error
+    variants, error = clean_variants(raw.get('effectVariants'), effects, catalog, strict=True)
+    if error:
+        return None, error
     return {'mode': mode, 'style': style, 'captionStyle': cap, 'effects': effects, 'effectSections': sections,
-            'updated': datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()}, None
+            'effectVariants': variants, 'updated': datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()}, None
 
 
 def load_picks(path, catalog):
@@ -303,6 +339,7 @@ def load_picks(path, catalog):
         chosen = {k for k in raw['effects'] if isinstance(k, str)}
         picks['effects'] = [k for k in effects_order if k in chosen]
     picks['effectSections'] = clean_sections(raw.get('effectSections'), picks['effects'], strict=False)[0]
+    picks['effectVariants'] = clean_variants(raw.get('effectVariants'), picks['effects'], catalog, strict=False)[0]
     if raw.get('mode') == 'preset' and raw.get('style') in styles and styles[raw['style']]['ready']:
         picks['mode'], picks['style'] = 'preset', raw['style']
     if isinstance(raw.get('updated'), str):
@@ -561,10 +598,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self.fail(500, 'Could not write the picks file.')
             self.server.seen()
             parts = picks['effectSections']
-            say('STATUS picks SAVED %s mode=%s style=%s captions=%s effects=%s parts=%s' % (
+            say('STATUS picks SAVED %s mode=%s style=%s captions=%s effects=%s parts=%s versions=%s' % (
                 self.server.config, picks['mode'], picks['style'] or 'none', picks['captionStyle'],
                 ','.join(picks['effects']) or 'none',
-                ';'.join('%s:%s' % (p, ','.join(parts[p]) or 'none') for p in PART_KEYS) if parts else 'off'))
+                ';'.join('%s:%s' % (p, ','.join(parts[p]) or 'none') for p in PART_KEYS) if parts else 'off',
+                ','.join('%s:%d' % kv for kv in picks['effectVariants'].items()) or 'none'))
             return self.send_json(200, {'ok': True, 'picks': picks})
         if path == '/api/bye':
             try:

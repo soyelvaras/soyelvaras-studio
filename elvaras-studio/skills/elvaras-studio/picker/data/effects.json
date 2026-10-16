@@ -192,9 +192,42 @@
    "key": "comment-bubble",
    "name": "Comentario",
    "job": "Llamado",
-   "line": "El comentario se escribe solo, se publica y llega tu respuesta con el link.",
-   "preview": "previews/effects/comment-bubble.mp4",
-   "en": "Comment Bubble"
+   "line": "El comentario se escribe solo, se publica y llega tu respuesta con algo adjunto. Cinco versiones.",
+   "preview": "previews/effects/comment-bubble-1.mp4",
+   "en": "Comment Bubble",
+   "poster": "previews/posters/effects/comment-bubble-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Mensaje directo",
+     "preview": "previews/effects/comment-bubble-1.mp4",
+     "poster": "previews/posters/effects/comment-bubble-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Notificaciones",
+     "preview": "previews/effects/comment-bubble-2.mp4",
+     "poster": "previews/posters/effects/comment-bubble-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Fijado + video",
+     "preview": "previews/effects/comment-bubble-3.mp4",
+     "poster": "previews/posters/effects/comment-bubble-3.jpg"
+    },
+    {
+     "n": 4,
+     "name": "Papel + foto",
+     "preview": "previews/effects/comment-bubble-4.mp4",
+     "poster": "previews/posters/effects/comment-bubble-4.jpg"
+    },
+    {
+     "n": 5,
+     "name": "Link con vista previa",
+     "preview": "previews/effects/comment-bubble-5.mp4",
+     "poster": "previews/posters/effects/comment-bubble-5.jpg"
+    }
+   ]
   },
   {
    "n": 26,
