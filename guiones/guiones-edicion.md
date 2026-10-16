@@ -29,6 +29,75 @@ Las reglas que salen de ahí, para tus 4 videos:
 - **Un solo dolor por video** y **una sola palabra para comentar**.
 - **Autocrítica creíble:** "no sé editar", "no soy técnico". Le baja la barrera al dueño de pyme.
 
+## Banco de ganchos (fórmulas de los videos originales)
+
+Estas son las 6 fórmulas que usaron los videos de referencia, con versiones para tus reels de edición. Se copia
+la **estructura** del gancho, no la frase.
+
+**Cómo se dicen:**
+- **Sin saludo.** La primera palabra ya es el gancho.
+- **Dentro de los primeros 1,5 s.**
+- El cuadro 1 ya muestra algo: el texto del gancho en pantalla, el clip crudo o la caja de chat. El hero corre
+  sin sonido, así que el texto tiene que funcionar solo.
+- **El giro llega antes del segundo 3:** el "pero", el "porque" o la prueba.
+
+### Fórmula 1 · "Todos hablan de X, pero…" (contra la corriente)
+*Del video "Dos looks" (14,43%) y del de los 7 efectos.* Nombra la tendencia, apunta contra lo que todos venden y
+cierra con la solución simple.
+- "Todos hablan de que la IA edita videos, pero nadie te muestra cómo queda con clips de verdad."
+- "Todos te dicen que para publicar necesitas un editor, y no tiene sentido. Lo único que necesitas es una
+  palabra."
+- "Todos venden cursos para aprender CapCut. Yo dejé de abrirlo."
+- "Todos hablan de que Claude edita videos. Estos son los efectos que le pone a los míos."
+
+### Fórmula 2 · "Lo siento, pero…" (disculpa falsa y frase fuerte)
+*Del video "lo siento, editores".* Suena a disculpa, pero dice algo que incomoda.
+- "Lo siento, pero pagar por editar cada reel ya no tiene sentido."
+- "Lo siento, pero si tu empresa espera tres días por un video, vas tarde."
+- "Lamento decirlo, pero aprender a editar ya no es requisito para publicar."
+- "Lo siento, pero tu marca no se ve desactualizada por falta de presupuesto."
+
+### Fórmula 3 · "¿Y si pudieras…?" (qué pasaría si, con un tiempo concreto y sin herramienta)
+*Del teaser "escribe esto en Claude".* Una acción mínima, un tiempo exacto y sin la herramienta que el público
+odia.
+- "¿Y si escribieras una sola palabra en Claude y en [TU TIEMPO REAL] tus clips crudos fueran un reel
+  terminado?"
+- "¿Y si tu próximo reel se editara solo mientras tú atiendes a un cliente?"
+- "¿Y si le mostraras a Claude 3 videos que te gustan y editara los tuyos igual?"
+- "¿Qué harías con las horas que hoy se te van editando un video?"
+
+### Fórmula 4 · "Este video lo editó Claude, y…" (prueba)
+*Del video "rompió internet".* El propio video es la prueba. La versión fuerte necesita un resultado real; la
+versión sin cifra funciona desde el día uno.
+- "Este video lo editó Claude. Yo solo escribí una palabra."
+- "Este reel lo grabé lleno de errores. Míralo ahora."
+- "No toqué ningún programa de edición para hacer este video."
+- *(Con cifra real)* "Este video editado por Claude llegó a [TU CIFRA] personas, y no sé editar."
+
+### Fórmula 5 · Novedad y número (lista)
+*Del video de los "mods".* Algo nuevo, y enseguida un número concreto.
+- "Claude ya edita videos, y estas son las 3 cosas que hace mejor que yo."
+- "Ya no edito mis reels. Estas son las 4 cosas que hace Claude por mí."
+- "3 cosas que Claude hace con mis clips que antes me tomaban una tarde."
+
+### Fórmula 6 · Arrancar con la lista (sin gancho hablado)
+*Del video de los 17 efectos, el de 27,1%.* No hay frase de gancho: el gancho es el ritmo. Desde el primer
+segundo vas nombrando efectos, uno por segundo, con el título fijo en pantalla.
+- En pantalla: "26 efectos que Claude le pone a mis videos".
+- Dices: "Órbita. Zoom Digital. Foco. Checklist. Clon…"
+
+### Para cuál video sirve cada fórmula
+
+| Video | Gancho principal | Para probar contra el principal |
+|---|---|---|
+| **E1** Una palabra | F3: "¿Y si escribieras una sola palabra en Claude y en [TU TIEMPO REAL] tus clips crudos fueran un reel terminado?" | F4: "Este reel lo grabé lleno de errores. Míralo ahora." · F1: "Todos hablan de que la IA edita videos, pero nadie te muestra cómo queda con clips de verdad." |
+| **E2** Lo siento | F2: "Lo siento, pero pagar por editar cada reel ya no tiene sentido." | F2: "Lo siento, pero si tu empresa espera tres días por un video, vas tarde." · F1: "Todos venden cursos para aprender CapCut. Yo dejé de abrirlo." |
+| **E3** Menú | F6: arrancar nombrando efectos | F1: "Todos hablan de que Claude edita videos. Estos son los efectos que le pone a los míos." |
+| **E4** 3 links | F3: "¿Y si le mostraras a Claude 3 videos que te gustan y editara los tuyos igual?" | F2: "Lo siento, pero tu marca no se ve desactualizada por falta de presupuesto." · F4: "Le pasé a Claude 3 reels que me encantaban. Mira cómo quedaron los míos." |
+
+**Graba los 3 ganchos de cada video, uno tras otro, antes del resto del guion.** Cuesta 30 segundos más y nos
+deja publicar dos versiones del mismo reel para ver cuál retiene más.
+
 ## Qué ofreces en el llamado a la acción
 
 El Studio no se comparte (licencia de uso personal), así que el llamado lleva a algo tuyo. Propuesta:
@@ -49,10 +118,10 @@ crudos, ritmo rápido.
 **Duración:** 30 a 35 s. **Subtítulos:** Noticiero (mayúsculas anchas sobre placa bosque).
 **Toma:** sentado, plano medio y un plano cercano. Una sola locación.
 
-**Ganchos alternativos** (graba los tres y probamos):
-- "Grabé este video con errores y lo edité escribiendo una sola palabra."
-- "Si tienes una empresa y no publicas porque editar te quita horas, mira esto."
-- "Mi editor ahora es una palabra."
+**Ganchos** (fila E1 del banco de ganchos):
+- Principal: "¿Y si escribieras una sola palabra en Claude y en [TU TIEMPO REAL] tus clips crudos fueran un reel terminado?"
+- Para probar: "Este reel lo grabé lleno de errores. Míralo ahora."
+- Para probar: "Todos hablan de que la IA edita videos, pero nadie te muestra cómo queda con clips de verdad."
 
 | Tiempo | Dices | En pantalla |
 |---|---|---|
@@ -75,10 +144,10 @@ por IA", notas a mano y lo que ya no necesitas, tachado.
 **Duración:** 25 a 30 s. **Subtítulos:** Contundente (palabras gigantes en dorado).
 **Toma:** sillón. Alterna un plano abierto bajo con un plano cercano.
 
-**Ganchos alternativos:**
-- "Lo siento, pero pagar por editar cada video ya no tiene sentido."
-- "Le pagaba a alguien por cada reel. Ya no."
-- "Tu empresa no necesita un editor. Necesita esto."
+**Ganchos** (fila E2 del banco de ganchos):
+- Principal: "Lo siento, pero pagar por editar cada reel ya no tiene sentido."
+- Para probar: "Lo siento, pero si tu empresa espera tres días por un video, vas tarde."
+- Para probar: "Todos venden cursos para aprender CapCut. Yo dejé de abrirlo."
 
 | Tiempo | Dices | En pantalla |
 |---|---|---|
@@ -104,8 +173,9 @@ para que el teléfono calce.
 **Requisito:** se graba **después** de los videos de showcase, porque dentro del teléfono va un clip **tuyo** por
 cada efecto.
 
-**Ganchos alternativos:** aquí el gancho es el ritmo. Arrancas nombrando efectos desde el primer segundo, sin
-saludo.
+**Ganchos** (fila E3 del banco de ganchos):
+- Principal: arrancar nombrando efectos desde el primer segundo, sin saludo (fórmula 6).
+- Para probar: "Todos hablan de que Claude edita videos. Estos son los efectos que le pone a los míos."
 
 | Tiempo | Dices | En pantalla |
 |---|---|---|
@@ -124,10 +194,10 @@ competencia.
 **Duración:** 25 a 30 s. **Subtítulos:** Contundente al inicio, luego Relajada y Elegante.
 **Toma:** tres lugares distintos, uno por look. Plano medio o abierto.
 
-**Ganchos alternativos:**
-- "Tu competencia no tiene mejor servicio. Tiene mejores videos."
-- "Te dicen que para verte premium necesitas una agencia. Mira esto."
-- "Le mostré a Claude 3 videos que me gustaban y editó los míos igual."
+**Ganchos** (fila E4 del banco de ganchos):
+- Principal: "¿Y si le mostraras a Claude 3 videos que te gustan y editara los tuyos igual?"
+- Para probar: "Lo siento, pero tu marca no se ve desactualizada por falta de presupuesto."
+- Para probar: "Le pasé a Claude 3 reels que me encantaban. Mira cómo quedaron los míos."
 
 | Tiempo | Dices | En pantalla | Lugar |
 |---|---|---|---|
