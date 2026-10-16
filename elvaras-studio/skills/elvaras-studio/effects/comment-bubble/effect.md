@@ -1,70 +1,104 @@
-# comment-bubble
+# comment-bubble (Comentario)
 
-**What it does:** a comment field slides up under the speaker's chin, the keyword types itself on the spoken word, send is tapped, the comment posts as a bubble with a creator heart, then a reply bubble lands with a link chip.
-**Job:** CTA. **Trigger phrases:** "show the comment being typed when I say comment VIDEO", "comment bubble on the CTA", "type the keyword and reply with the link".
+**Qué hace:** un campo de comentario sube bajo la barbilla de la persona, la palabra se escribe sola en la palabra
+dicha, se toca enviar, el comentario se publica como burbuja con un corazón del creador, y luego llega una burbuja de
+respuesta con un botón de link.
+**Función:** llamado a la acción. **Frases que lo activan:** "muestra el comentario escribiéndose cuando digo comenta
+VIDEO", "burbuja de comentario en el llamado", "escribe la palabra y responde con el link".
 
-## Footage it needs, and where it fails
-- A line shaped like "(just) comment KEYWORD and I'll send you THING", plus at least 1.5s of the same shot after THING.
-- Face-on talking head with the TOP OF HIS HEAD in frame. Works close-up and wide; the camera can be handheld.
-- Close-up selfie (chin below y ~1050): no room for 1.3x. The thread shrinks to about 1.0 and the plate lifts up to 12% from the bottom edge (like a keyboard opening). The lift is still on at the last frame: end the slot on a cut, or set `T_OUT`.
-- Wide shot: full 1.3x in the lower third, reply stacked (text above the chip), plate untouched. It covers the speaker's lap and whatever the speaker's hands do below y ~1050.
-- Fails or needs `CHIN_Y` by hand: head cropped by the top of the frame, profile shots, hood / long hair (no head taper), two people, a hand on the speaker's face for most of the slot. The thread is fixed in frame: if the speaker stands up or walks, pick another take.
-- Fast talkers: under 0.3s between the keyword and "send" makes the post, heart, dots and reply pile up. It still reads, but give it a look.
+## Toma que necesita, y dónde falla
+- Una frase con la forma "(solo) comenta PALABRA y te mando COSA" (o "comment KEYWORD and I'll send you THING"), más
+  al menos 1,5 s de la misma toma después de COSA.
+- Persona de frente hablando a cámara con LO ALTO DE LA CABEZA en cuadro. Funciona en plano cercano y abierto; la
+  cámara puede ir en mano.
+- Selfie cercana (barbilla bajo y ~1050): no hay espacio para 1,3x. El hilo se achica a cerca de 1,0 y la imagen sube
+  hasta 12% desde el borde inferior (como cuando se abre un teclado). La subida sigue en el último cuadro: termina el
+  espacio en un corte, o pon `T_OUT`.
+- Plano abierto: 1,3x completo en el tercio inferior, respuesta apilada (texto sobre el botón), imagen sin tocar. Tapa
+  el regazo de la persona y lo que hagan sus manos bajo y ~1050.
+- Falla o necesita `CHIN_Y` a mano: cabeza cortada por el borde superior, tomas de perfil, capucha / pelo largo (sin
+  forma de cabeza), dos personas, una mano en la cara durante casi todo el espacio, o un recorte que mezcla a la persona
+  con la silla (entonces también `X_CENTER` y `AVATAR_BOX` a mano). El hilo queda fijo en el cuadro: si la persona se
+  levanta o camina, elige otra toma.
+- Gente que habla rápido: menos de 0,3 s entre la palabra y "mando" amontona la publicación, el corazón, los puntos y la
+  respuesta. Igual se lee, pero míralo.
 
-## Slot inputs
-`assets/aroll.mp4`, `words.json`, `clip.json`. `assets/subject.webm` is used ONLY by measure.py (chin, head centre, avatar crop), never layered: with `fx_new.py --no-cutout` set `CHIN_Y`, `X_CENTER`, `AVATAR_BOX` by hand. `aroll_hi`: not used. No extra Python packages.
+## Entradas del espacio
+`assets/aroll.mp4`, `words.json`, `clip.json`. `assets/subject.webm` lo usa SOLO measure.py (barbilla, centro de la
+cabeza, recorte del avatar), nunca como capa: con `fx_new.py --no-cutout` pon `CHIN_Y`, `X_CENTER` y `AVATAR_BOX` a
+mano. `aroll_hi`: no se usa. Sin paquetes extra de Python.
 
-## CLIP block (top of build.py)
-| Field | What it is | How to get it |
+## Bloque CLIP (inicio de build.py)
+| Campo | Qué es | Cómo obtenerlo |
 |---|---|---|
-| `KEYWORD` | word to comment, caps | from the line; measure.py prints it |
-| `REPLY_TEXT`, `CHIP_TEXT` | creator reply and yellow chip label | under ~20 / ~14 characters; only things the speaker says or implies |
-| `USER_NAME` | generic commenter | keep `you` |
-| `T_IN` .. `T_LINK`, `KEY_GAP` | beat times in seconds from the slot start | paste the "suggested CLIP times" from measure.py, then check each against its onset table |
-| `T_OUT` | thread leaves and the plate settles back | `None` if the slot ends on a cut; else >= `T_LINK` + 0.6 and <= end - 0.25 |
-| `SCALE` | thread size (1.0 = original demo) | leave 1.3; build.py shrinks it if the band under the chin is too small and says so |
-| `CHIN_Y`, `CHIN_GAP` | chin line override, clear px under it | `None` = measured; override if work/measure_check.jpg is wrong |
-| `DROP` | `'auto'` = as low as the safe zone allows; number = px under the chin | `'auto'` unless the buyer wants it hugging the chin on a wide shot |
-| `X_CENTER` | thread centre x | `None` = under the speaker's head |
-| `PUSH`, `PUSH_MAX` | plate lift (`'auto'` up to `PUSH_MAX`, or `1` = never) | `1` when the slot must match its neighbours frame for frame |
-| `AVATAR_FRAME`, `AVATAR_BOX` | frame / square crop for the creator avatar | pick the frame from work/avatar_check.jpg (eyes open); box only if the auto crop misses |
-| `GRADE`, `SEAT` | css filter on the plate; strength of the dark gradient behind the thread | `GRADE` = the reel's grade; `SEAT` 0 to 1.5 |
-| `WORD_FONT`, `TEXT_FONT` | typeface of the keyword and chip / of the reply and name: (css family, weight, file in assets/fonts) | from the reel's caption style (the type facts table in effects/INDEX.md). Karaoke: both `('Archivo', 900, 'Archivo-900-normal.woff2')` |
-| `UPPER` | reply, chip and name in capitals | `True` when the buyer's captions are in capitals |
-| `ACCENT_COL`, `LIGHT_COL`, `DARK_COL` | accent (ring, caret, chip), light (bubble, words), dark (words on light) | the buyer's caption colours |
+| `KEYWORD` | palabra para comentar, en mayúsculas | de la frase; measure.py la imprime (reconoce "comenta" y "comment") |
+| `REPLY_TEXT`, `CHIP_TEXT` | respuesta del creador y etiqueta del botón | menos de ~20 / ~14 caracteres; solo cosas que la persona dice o da a entender. Por defecto "Te mandé el link" / "Abrir link" |
+| `USER_NAME` | quien comenta, genérico | deja `tú` |
+| `T_IN` .. `T_LINK`, `KEY_GAP` | tiempos de cada momento en segundos desde el inicio del espacio | pega los "suggested CLIP times" de measure.py, luego revisa cada uno contra su tabla de inicios |
+| `T_OUT` | el hilo se va y la imagen vuelve a su lugar | `None` si el espacio termina en un corte; si no, >= `T_LINK` + 0,6 y <= final - 0,25 |
+| `SCALE` | tamaño del hilo (1,0 = demo original) | deja 1,3; build.py lo achica si la franja bajo la barbilla es muy pequeña y lo dice |
+| `CHIN_Y`, `CHIN_GAP` | línea de la barbilla a mano, px libres bajo ella | `None` = medida; cámbiala si work/measure_check.jpg está mal |
+| `DROP` | `'auto'` = lo más abajo que permite la zona segura; número = px bajo la barbilla | `'auto'` salvo que el usuario lo quiera pegado a la barbilla en un plano abierto |
+| `X_CENTER` | x del centro del hilo | `None` = bajo la cabeza de la persona |
+| `PUSH`, `PUSH_MAX` | subida de la imagen (`'auto'` hasta `PUSH_MAX`, o `1` = nunca) | `1` cuando el espacio debe calzar cuadro a cuadro con sus vecinos |
+| `AVATAR_FRAME`, `AVATAR_BOX` | cuadro / recorte cuadrado para el avatar del creador | elige el cuadro en work/avatar_check.jpg (ojos abiertos); caja solo si el recorte automático falla |
+| `GRADE`, `SEAT` | filtro css sobre la imagen; fuerza del degradado oscuro detrás del hilo | `GRADE` = el color del reel; `SEAT` 0 a 1,5 |
+| `WORD_FONT`, `TEXT_FONT` | tipografía de la palabra y el botón / de la respuesta y el nombre: (familia css, grosor, archivo en assets/fonts) | del estilo de subtítulos del reel (la tabla tipográfica en effects/INDEX.md). Palabra Clave: `('Inter Tight', 800, ...)` y `('Inter Tight', 700, ...)` |
+| `UPPER` | respuesta, botón y nombre en mayúsculas | `True` cuando los subtítulos del usuario van en mayúsculas |
+| `ACCENT_COL`, `LIGHT_COL`, `DARK_COL` | acento (anillo, cursor, botón), claro (burbuja, palabras), oscuro (palabras sobre claro) | los colores de subtítulos del usuario (dorado, crema, tinta por defecto) |
 
-The buyer's style wins: in a reel the thread's words follow the reel's caption style. Set the four rows above before
-the first build. A wider typeface makes the thread wider; it is scaled to the safe zone, so lower `SCALE` only if
-the words get small.
+Gana el estilo del usuario: en un reel las palabras del hilo siguen el estilo de subtítulos del reel. Pon las cuatro
+filas de arriba antes del primer armado. Una tipografía más ancha ensancha el hilo; se escala a la zona segura, así que
+baja `SCALE` solo si las palabras quedan pequeñas.
 
-## Switches
-`SAFE=1` safe zone in red + the chin line in cyan (snapshots only). `SFX=0` no sounds (3 key ticks, tap click, pop, soft whoosh, all 0.75x template). `CAPTIONS=0` accepted, does nothing: the effect has no captions. Drop the reel's own captions for these frames, the thread sits where they would go.
+## Interruptores
+`SAFE=1` zona segura en rojo + la línea de la barbilla en cian (solo instantáneas). `SFX=0` sin sonidos (3 teclas, el
+clic del toque, pop, whoosh suave, todos a 0,75x de la plantilla). `CAPTIONS=0` se acepta y no hace nada: el efecto no
+tiene subtítulos. Saca los subtítulos propios del reel en estos cuadros, el hilo va donde irían ellos.
 
-## Run order (PY and SK as in SKILL.md, <slot> = the slot folder; no cd, no shell variables)
+## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
-PY "SK/scripts/fx_run.py" "<slot>" measure.py      # onsets + suggested times; LOOK at work/measure_check.jpg and work/avatar_check.jpg
-# edit: the CLIP block in build.py (texts, the suggested times, AVATAR_FRAME)
+PY "SK/scripts/fx_run.py" "<slot>" measure.py      # inicios + tiempos sugeridos; MIRA work/measure_check.jpg y work/avatar_check.jpg
+# editar: el bloque CLIP en build.py (textos, los tiempos sugeridos, AVATAR_FRAME)
 PY "SK/scripts/fx_run.py" "<slot>" build.py SAFE=1
 PY "SK/scripts/fx_run.py" "<slot>" hf lint
-PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <T_IN+.3,T_TYPE+.1,T_SEND,T_SEND+.2,T_DOTS+.1,T_REPLY+.15,T_LINK+.2,end-.05>
-PY "SK/scripts/fx_run.py" "<slot>" build.py      # must print 0
+PY "SK/scripts/fx_run.py" "<slot>" hf snapshot --at <T_IN+.3,T_TYPE+.1,T_SEND,T_SEND+.2,T_DOTS+.1,T_REPLY+.15,T_LINK+.2,final-.05>
+PY "SK/scripts/fx_run.py" "<slot>" build.py      # tiene que imprimir 0
 PY "SK/scripts/fx_run.py" "<slot>" hf render
-PY "SK/scripts/fx_run.py" "<slot>" check.py      # frame count + work/check/full.jpg and band.jpg from the FINAL mp4
+PY "SK/scripts/fx_run.py" "<slot>" check.py      # cantidad de cuadros + work/check/full.jpg y band.jpg desde el mp4 FINAL
 ```
-`fx_new.py` prints these commands with the real paths filled in and saves them as `RUN.txt` in the slot. `hf render` names the file itself, refuses to run while the red guide is on, and checks the frame count. Last step in a reel: `PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
-build.py prints the layout it chose (scale, inline or stacked reply, thread box, chin, lift) and warns when it shrank the thread, lifted the plate, or a time is out of order. About 10 minutes per new clip, most of it the cutout in fx_new.py.
+`fx_new.py` imprime estos comandos con las rutas reales y los guarda como `RUN.txt` en el espacio. `hf render` nombra el
+archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de cuadros. Último paso en un reel:
+`PY "SK/scripts/fx_add.py" "<project>" "<slot>"`.
+build.py imprime la composición que eligió (escala, respuesta en línea o apilada, caja del hilo, barbilla, subida) y
+avisa cuando achicó el hilo, subió la imagen o un tiempo está fuera de orden. Unos 10 minutos por clip nuevo en Mac, la
+mayor parte el recorte en fx_new.py.
 
-## What to look at in the final frames
-- First letter appears on the frame the keyword starts (or one before); the tap is in the breath after it; reply on "send"; chip on the thing the speaker sends.
-- Cyan chin line on or under the speaker's real chin on every frame, thread top below it. Face never covered.
-- Nothing readable past the red safe lines (reply bubble right edge <= 980 below y 1155).
-- "posting" frame: keyword shows once, not twice. Typing dots gone the moment the reply appears.
-- Close-ups: the lift is smooth, no black edge at the bottom, avatar crop is the speaker's face (not a hand or the wall).
+## Qué mirar en los cuadros finales
+- La primera letra aparece en el cuadro en que empieza la palabra (o uno antes); el toque cae en la respiración
+  después de ella; la respuesta en "mando"; el botón en la cosa que se manda.
+- Línea cian de la barbilla sobre o bajo la barbilla real en cada cuadro, el borde superior del hilo debajo de ella.
+  La cara nunca tapada.
+- Nada legible pasado las líneas rojas de seguridad (borde derecho de la burbuja de respuesta <= 980 bajo y 1155).
+- Cuadro de "publicando": la palabra aparece una vez, no dos. Los puntos de escritura se van en cuanto aparece la
+  respuesta.
+- El texto de fondo del campo ("Agrega un comentario...") desaparece en la primera letra.
+- Planos cercanos: la subida es suave, sin borde negro abajo, el recorte del avatar es la cara de la persona (no una
+  mano ni la pared).
 
-## Traps
-- Whisper word starts were 0.1 to 0.6s early on the test clips, and it puts words inside silences. Use measure.py's audio onsets (`--env` prints the envelope); start each visual one frame before the onset.
-- Stock sounds have silent lead-ins (click 48ms, pop / whoosh ~118ms): `SFX_LEAD` already compensates, keep it if you swap files.
-- Chin = head top + 1.5 x head width from the cutout. Good to about 35px on a speaker wearing a cap; other people, hats or hair change the ratio (`CHIN_K` in measure.py). The check sheet is the truth.
-- Reply text and chip are measured with PIL from the slot's fonts. Run build.py with the venv python, or widths are estimates and the bubble can cross the safe line.
-- Changing `REPLY_TEXT` / `CHIP_TEXT` length can flip inline to stacked and move the whole thread: rebuild with `SAFE=1` and look again.
-- Lint rules that bit: an `inset:0` element with a later opacity tween, two tweens of one property touching at the same timestamp, a `tl.set(autoAlpha:0)` under a still-running `tl.to(autoAlpha:1)`.
+## Trampas
+- Los inicios de palabra de Whisper estuvieron 0,1 a 0,6 s antes en los clips de prueba, y pone palabras dentro de
+  silencios. Usa los inicios de audio de measure.py (`--env` imprime la envolvente); empieza cada imagen un cuadro
+  antes del inicio.
+- Los sonidos de stock tienen silencio inicial (click 48 ms, pop / whoosh ~118 ms): `SFX_LEAD` ya lo compensa,
+  mantenlo si cambias los archivos.
+- Barbilla = lo alto de la cabeza + 1,5 x ancho de la cabeza desde el recorte. Precisa a unos 35 px en una persona con
+  gorro; otras personas, sombreros o pelo cambian la proporción (`CHIN_K` en measure.py). La hoja de revisión es la
+  verdad.
+- El texto de la respuesta y el botón se miden con PIL desde las tipografías del espacio. Ejecuta build.py con el
+  Python del entorno, o los anchos son estimaciones y la burbuja puede cruzar la línea segura.
+- Cambiar el largo de `REPLY_TEXT` / `CHIP_TEXT` puede pasar de en línea a apilada y mover todo el hilo: vuelve a armar
+  con `SAFE=1` y mira de nuevo.
+- Reglas de lint que molestaron: un elemento `inset:0` con una animación de opacidad posterior, dos animaciones de una
+  misma propiedad que se tocan en el mismo tiempo, un `tl.set(autoAlpha:0)` bajo un `tl.to(autoAlpha:1)` que sigue
+  corriendo (por eso el texto de fondo termina de aparecer antes de la primera letra).
