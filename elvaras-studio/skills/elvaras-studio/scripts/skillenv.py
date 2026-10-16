@@ -247,6 +247,23 @@ def sfx_dir(state=None, skill_dir=SKILL_DIR):
     return os.path.join(state or state_dir(), 'sfx')
 
 
+def speech_language(skill_dir=SKILL_DIR):
+    """Spoken language of the reels, from brands/soyelvaras/brand.json ("es" by default). SOYELVARAS_LANG overrides."""
+    v = os.environ.get('SOYELVARAS_LANG')
+    if v:
+        return v
+    try:
+        with open(os.path.join(skill_dir, 'brands', 'soyelvaras', 'brand.json'), encoding='utf-8') as fh:
+            return json.load(fh).get('language') or 'es'
+    except (OSError, ValueError):
+        return 'es'
+
+
+def speech_model(size, language=None):
+    """Whisper model name for a language: the English-only '<size>.en' only when the reels are in English."""
+    return f'{size}.en' if (language or speech_language()) == 'en' else size
+
+
 def models_dir(state=None):
     """Where the optional clean-cutout model is downloaded (setup.py --matting)."""
     return os.path.join(state or state_dir(), 'models')

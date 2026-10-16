@@ -105,8 +105,13 @@ def head_top_at(t):
     return HEAD_TOP
 
 
-WEAK ={'the', 'a', 'an', 'to', 'of', 'and', 'that', 'for', 'can', 'in', 'on', 'with', 'is', 'my', 'your', 'then'}
-PRONOUNS = {'i', 'you', 'we', 'he', 'she', 'they', 'it'}
+WEAK ={'the', 'a', 'an', 'to', 'of', 'and', 'that', 'for', 'can', 'in', 'on', 'with', 'is', 'my', 'your', 'then',
+       # Spanish: articles, prepositions and linkers never end a caption phrase
+       'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'al', 'y', 'e', 'o', 'u', 'que', 'para',
+       'por', 'en', 'con', 'es', 'mi', 'mis', 'tu', 'tus', 'su', 'sus', 'se', 'lo', 'le', 'les', 'me', 'te', 'nos',
+       'pero', 'como', 'si', 'sin', 'muy', 'más'}
+PRONOUNS = {'i', 'you', 'we', 'he', 'she', 'they', 'it',
+            'yo', 'tú', 'usted', 'él', 'ella', 'nosotros', 'ustedes', 'ellos', 'ellas'}
 
 
 def counted(i):

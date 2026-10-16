@@ -18,9 +18,9 @@ import sys
 # ==== CLIP (edit this) ====
 # -- on-screen text (no em dashes, never "free" / "course", nothing the speaker does not say or imply in the clip)
 KEYWORD = 'ADS'                    # the word the speaker asks people to comment, in caps
-REPLY_TEXT = 'Sent you the link'   # creator reply; keep it under ~20 characters
-CHIP_TEXT = 'Open link'            # label on the yellow link chip; under ~14 characters
-USER_NAME = 'you'                  # generic commenter name, never a real person
+REPLY_TEXT = 'Te mandé el link'    # creator reply; keep it under ~20 characters
+CHIP_TEXT = 'Abrir link'           # label on the link chip; under ~14 characters
+USER_NAME = 'tú'                   # generic commenter name, never a real person
 # -- times in seconds from the slot start. Run measure.py: it prints Whisper's start and the audio onset for every
 #    word. Use the audio onset minus one frame (0.03) so the visual leads the voice by a frame.
 T_IN = 0.50       # field slides up: about 0.4s before "comment" (on the words leading into it)
@@ -286,7 +286,7 @@ def comment_bubble(L):
     <div id="field" style="left:{L['fx']:.1f}px;top:{L['fy']:.1f}px;width:{L['fw']:.1f}px;height:{P(FIELD_H)}px">
       <div id="fring"></div>
       <div id="fav">{person(P(76), 'f')}</div>
-      <div id="ph" style="left:{P(FIELD_TEXT_X + 14)}px">Add a comment...</div>
+      <div id="ph" style="left:{P(FIELD_TEXT_X + 14)}px">Agrega un comentario...</div>
       <div id="typed" style="left:{P(FIELD_TEXT_X)}px">{keys}</div>
       <div id="caret" style="left:{P(FIELD_TEXT_X - 1)}px"></div>
       <div id="send"><div id="sendoff">{arrow_up('rgba(255,255,255,.55)', P(42))}</div><div id="sendon">{arrow_up(INK, P(42))}</div></div>

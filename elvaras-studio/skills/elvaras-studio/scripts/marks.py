@@ -5,7 +5,7 @@ Usage:  PY marks.py <project_dir> [--dry]        (--dry prints the guess and cha
 
 The marks (the "e" field of a word) tell every caption style which words to treat differently:
   num   a number worth showing big          digits ("21", "$500", "10x") and number words ("seven", "twenty")
-  cta   the comment keyword                 the word right after "comment" (skipping "the word", "below" ...)
+  cta   the comment keyword                 the word right after "comment" / "comenta" (skipping "the word", "la palabra" ...)
   key   a name or brand                     a capitalised word that does not start a sentence ("Claude", "Instagram")
   emph  the word the line leans on          never guessed: that one is a judgement call, add it by hand
 
@@ -26,8 +26,15 @@ import skillenv  # noqa: E402
 NUMBER_WORDS = {'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen',
                 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'thirty', 'forty',
                 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'hundred', 'thousand', 'million', 'billion', 'zero',
-                'double', 'triple', 'half'}                       # "one" is left out: it is usually not a number
-SKIP_AFTER_COMMENT = {'the', 'word', 'a', 'below', 'down', 'this', 'just', 'me', 'with'}
+                'double', 'triple', 'half',
+                # Spanish ("uno"/"una" left out for the same reason as "one")
+                'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece',
+                'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte', 'treinta',
+                'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa', 'cien', 'ciento', 'cientos',
+                'mil', 'millón', 'millones', 'doble', 'triple', 'mitad'}   # "one" is left out: it is usually not a number
+SKIP_AFTER_COMMENT = {'the', 'word', 'a', 'below', 'down', 'this', 'just', 'me', 'with',
+                      'la', 'el', 'palabra', 'abajo', 'aquí', 'acá', 'solo', 'sólo', 'en', 'los', 'comentarios', 'nomás'}
+COMMENT_WORDS = {'comment', 'comenta', 'comentá', 'comentame', 'coméntame', 'comente', 'escribe', 'escríbeme'}
 NOT_NAMES = {'i', "i'm", "i'll", "i've", "i'd", 'ok', 'okay'}
 
 
@@ -49,8 +56,9 @@ def guess(words):
             punch_in_sentence = punch_in_sentence or w['e'] in ('num', 'emph', 'cta')
             continue
         prev = [bare(x['text']).lower() for x in words[max(0, i - 3):i]]
-        after_comment = 'comment' in prev and all(p in SKIP_AFTER_COMMENT or p == 'comment' for p in prev[prev.index('comment'):])
-        if after_comment and low not in SKIP_AFTER_COMMENT and low != 'comment' and t:
+        hit = [k for k, p in enumerate(prev) if p in COMMENT_WORDS]
+        after_comment = bool(hit) and all(p in SKIP_AFTER_COMMENT or p in COMMENT_WORDS for p in prev[hit[-1]:])
+        if after_comment and low not in SKIP_AFTER_COMMENT and low not in COMMENT_WORDS and t:
             out.append((i, 'cta', 'the word after "comment"'))
             punch_in_sentence = True
         elif re.search(r'\d', t) or low in NUMBER_WORDS:

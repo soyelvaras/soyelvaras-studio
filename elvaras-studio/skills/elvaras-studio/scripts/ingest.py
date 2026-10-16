@@ -76,12 +76,13 @@ def main():
 
     # device='cpu': the default 'auto' picks CUDA on any PC with an NVIDIA card and then dies on the first clip with
     # "Library cublas64_12.dll is not found" unless the CUDA toolkit happens to be installed
-    m = WhisperModel('small.en', device='cpu', compute_type='int8')
+    LANG = skillenv.speech_language()
+    m = WhisperModel(skillenv.speech_model('small', LANG), device='cpu', compute_type='int8')
     lines = []
     for cid, f in sources.items():
         wav = os.path.join(work, f'{cid}.wav')
         subprocess.run([FF, '-loglevel', 'error', '-y', '-i', f, '-vn', '-ac', '1', '-ar', '16000', wav], check=True)
-        segs, _ = m.transcribe(wav, word_timestamps=True, vad_filter=False)
+        segs, _ = m.transcribe(wav, word_timestamps=True, vad_filter=False, language=LANG)
         words = []
         lines.append(f'===== {cid}  {os.path.basename(f)}')
         for s in segs:

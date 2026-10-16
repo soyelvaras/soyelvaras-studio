@@ -83,7 +83,7 @@ res['onsets'] = ons
 
 # paste-ready times, if the line has the usual shape "... comment KEYWORD and I'll send you the THING"
 low = [o['text'].lower().strip('.,!?') for o in ons]
-ic = next((i for i, w in enumerate(low) if w.startswith('comment')), None)
+ic = next((i for i, w in enumerate(low) if w.startswith(('comment', 'coment', 'escrib'))), None)   # en + es
 if ic is not None and ic + 1 < len(ons):
     kw = ons[ic + 1]
     letters = sum(ch.isalnum() for ch in kw['text'])
@@ -92,13 +92,13 @@ if ic is not None and ic + 1 < len(ons):
     kw_end = max(word_end(db, words[ic + 1]['end']), kw['onset'] + .15)
     gap = round(min(.11, max(.05, (kw_end - t_type - .1) / max(1, letters - 1))), 3)
     t_send = round(max(kw_end, t_type + (letters - 1) * gap + .1), 2)
-    isend = next((i for i in range(ic + 2, len(ons)) if low[i].startswith('send')), None)
+    isend = next((i for i in range(ic + 2, len(ons)) if low[i].startswith(('send', 'mand', 'envi', 'enví', 'enseñ', 'pas'))), None)
     t_reply = round((ons[isend]['onset'] if isend is not None else t_send + .5) - .03, 2)
     t_reply = max(t_reply, round(t_send + .32, 2))             # the post needs 0.3s before the reply can land
     t_dots = round(min(max(t_send + .2, t_reply - .2), t_reply - .12), 2)
     ilink = None
     if isend is not None:
-        ilink = next((i for i in range(isend + 1, len(ons)) if low[i] not in ('you', 'the', 'a', 'my', 'it', 'over')), None)
+        ilink = next((i for i in range(isend + 1, len(ons)) if low[i] not in ('you', 'the', 'a', 'my', 'it', 'over', 'te', 'el', 'la', 'los', 'las', 'un', 'una', 'mi', 'lo', 'cómo', 'como')), None)
     t_link = round((ons[ilink]['onset'] - .03) if ilink is not None else t_reply + .35, 2)
     t_link = max(t_link, round(t_reply + .28, 2))
     print('\nsuggested CLIP times (check them against the table above, then paste):')
