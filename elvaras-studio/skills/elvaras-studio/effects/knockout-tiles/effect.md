@@ -8,6 +8,17 @@ tachando).
 **Frases que lo activan:** "pon estos tres nombres en la pared detrás de mí y saca cada uno cuando lo digo",
 "táchalos detrás de mí", "apila los recibos y muestra cuánto suman".
 
+## Las tres versiones (`VARIANT`)
+| n | nombre | cómo se ve |
+|---|---|---|
+| 1 | Etiqueta de precio | etiqueta de papel con hilo y agujero, nombre en mayúsculas; sale tachada |
+| 2 | Post-it a mano | papel con cinta y nombre escrito a mano; sale con una X |
+| 3 | Ventana que se cierra | ventana de programa con barra y botón de cerrar; se raja en dos y las mitades caen |
+
+Se elige en el Studio Picker con los tres puntitos bajo la tarjeta; `fx_new.py` escribe la versión guardada en la línea
+`VARIANT`. Colores y letras salen del bloque `STYLE` (`paper`, `paper_ink`, `deep`, `strike`, `name_font`, `hand_font`,
+`ui_font`), así que sirven para la marca de cualquier cliente.
+
 ## Primer paso: solo nombres y montos propios de la persona
 Cada ficha es un nombre que la persona dice en este clip o que te dio el usuario. Cada monto en un recibo es uno que
 dijo o entregó; el total lo suma el armado, nunca se escribe a mano. Nunca inventes un nombre, un precio o una

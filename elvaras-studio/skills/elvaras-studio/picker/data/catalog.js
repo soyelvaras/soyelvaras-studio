@@ -398,10 +398,29 @@ window.STUDIO_CATALOG = {
    "n": 25,
    "key": "knockout-tiles",
    "name": "Fichas Fuera",
-   "line": "Fichas con nombres caen en la pared detrás de ti y salen una por una.",
-   "preview": "previews/effects/knockout-tiles.mp4",
-   "poster": "previews/posters/effects/knockout-tiles.jpg",
-   "variants": []
+   "line": "Fichas con nombres caen en la pared detrás de ti y salen tachadas cuando las nombras. Tres versiones.",
+   "preview": "previews/effects/knockout-tiles-1.mp4",
+   "poster": "previews/posters/effects/knockout-tiles-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Etiqueta de precio",
+     "preview": "previews/effects/knockout-tiles-1.mp4",
+     "poster": "previews/posters/effects/knockout-tiles-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Post-it a mano",
+     "preview": "previews/effects/knockout-tiles-2.mp4",
+     "poster": "previews/posters/effects/knockout-tiles-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Ventana que se cierra",
+     "preview": "previews/effects/knockout-tiles-3.mp4",
+     "poster": "previews/posters/effects/knockout-tiles-3.jpg"
+    }
+   ]
   },
   {
    "n": 23,

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """KNOCKOUT TILES: name tiles slam onto the wall behind the speaker, one per spoken word. Each one is struck out and
-knocked away (dropped, flicked or shattered) as the next lands. Optional second half: receipts stack up beside the
+knocked away as the next lands. Three looks (VARIANT): 1 price tag on a string, struck through; 2 hand-written post-it,
+crossed out with an X; 3 program window that cracks in half. Optional second half: receipts stack up beside the
 head while a running total counts them, then the whole pile is struck and falls.
 
 Layers: the clip < tiles / receipts / total (flat on the wall) < the speaker's cutout. The cutout layer only exists
@@ -23,18 +24,21 @@ import sys
 # Every word this effect draws takes its typeface, case, weight, colours and placement from here. The defaults are
 # a neutral dark tile with cream type. Fonts must be families that assets/fonts/fonts.css provides.
 STYLE = dict(
-    name_font='Inter Tight',       # typeface of the tile names, receipt titles and the total
-    name_weight=900,               # its weight (use one the font file has)
-    name_case='as-typed',          # 'as-typed', 'upper' or 'lower'
-    name_tracking=-0.022,          # letter spacing of the names, in em
+    name_font='Bebas Neue',        # typeface of the price tags, receipt titles and the total
+    name_weight=400,               # its weight (use one the font file has)
+    name_case='as-typed',          # 'as-typed', 'upper' or 'lower' (the price tag is always in capitals)
+    name_tracking=0.01,            # letter spacing of the names, in em
+    hand_font='Caveat',            # the hand-written post-it (VARIANT 2)
+    ui_font='Work Sans',           # the program window (VARIANT 3)
     small_font='JetBrains Mono',   # typeface of the small label, the receipt lines and the total tag
     small_weight=500,
     small_case='as-typed',         # 'as-typed', 'upper' or 'lower'
     width_factor=1.0,              # raise to 1.1 if a name touches the edge of its tile with another typeface
-    tile_bg='#0E0F12',             # tile and total plate
+    tile_bg='#13281F',             # total plate
+    deep='#13281F',                # the window's title bar (VARIANT 3)
     tile_text='#F2ECDF',           # name on the tile
     label_color='#C9A15B',         # small label under the name (the reel's accent colour; never orange)
-    strike='#E5484D',              # the strike-through, the counted amounts and the total digits
+    strike='#C9A15B',              # the strike-through, the X, the counted amounts and the total digits (the accent; never orange)
     paper='#F2ECDF',               # receipt paper
     paper_ink='#0E0F12',           # receipt text
     radius=28,                     # tile corner radius, px
@@ -43,6 +47,8 @@ STYLE = dict(
 # ==== END STYLE ====
 
 # ==== CLIP (edit this) ====
+VARIANT = 1          # the look: 1 Etiqueta de precio (struck through), 2 Post-it a mano (crossed with an X),
+                     # 3 Ventana que se cierra (cracks in half). fx_new.py fills it from the Studio Picker
 # The tiles, in spoken order. 'text' = the name on the tile: ONLY a name the speaker says in this clip or the user
 # gave you. Plain text, no logos. 'at' = the spoken word it lands on ('word', or 'word#2' for the second time it is
 # said) or a frame number; list them with `prep.py words`. Optional keys per tile: 'exit' ('drop', 'flick',
@@ -258,6 +264,10 @@ def burst_svg(W, H, color, cx, cy, rot):
 
 def strike_paths(kind, W, H):
     p = lambda a: ' '.join(str(r1(v)) if isinstance(v, float) else str(v) for v in a)
+    if VARIANT == 2:   # the post-it gets a hand-drawn X: two strokes in one path, drawn one after the other
+        return (p(['M', W * .08, H * .12, 'C', W * .35, H * .38, ',', W * .62, H * .6, ',', W * .92, H * .9,
+                   'M', W * .9, H * .1, 'C', W * .62, H * .38, ',', W * .38, H * .62, ',', W * .1, H * .9]),
+                p(['M', W * .12, H * .16, 'C', W * .38, H * .4, ',', W * .6, H * .62, ',', W * .88, H * .86]))
     if kind == 0:      # rising slash
         return (p(['M', -22, H * .82, 'C', W * .22, H * .72, ',', W * .4, H * .36, ',', W * .58, H * .44, 'S', W * .86, H * .15, ',', W + 22, H * .12]),
                 p(['M', -12, H * .86, 'C', W * .25, H * .7, ',', W * .42, H * .42, ',', W * .6, H * .46, 'S', W * .84, H * .2, ',', W + 12, H * .16]))
@@ -279,10 +289,23 @@ def strike_svg(k, W, H, d, d2, sw, outline, ids):
             f'<path{i("b")} d="{d2}" pathLength="1000" fill="none" stroke="{red}" stroke-opacity=".55" stroke-width="{round(sw * .3)}" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
 
-def tile_body(k, name, fs, sc, ident):
+def tile_body(k, name, fs, sc, ident, H=100):
     lab = f'<div class="tlabel" style="font-size:{r1(26 * sc)}px;line-height:{r1(30 * sc)}px;margin-top:{r1(9 * sc)}px">{esc(cased(TILE_LABEL, "small_case"))}</div>' if TILE_LABEL else ''
-    return (f'<div class="tbody"' + (f' id="tb-{k}"' if ident else '') + '><div class="sheen"></div><div class="edge"></div>'
-            f'<div class="tname" style="font-size:{fs}px">{esc(cased(name, "name_case"))}</div>{lab}</div>')
+    tid = f' id="tb-{k}"' if ident else ''
+    if VARIANT == 1:     # price tag: notched left end with a hole, name in capitals
+        n = r1(H * .34)
+        return (f'<div class="tbody tag"{tid} style="clip-path:polygon({n}px 0,100% 0,100% 100%,{n}px 100%,0 50%);padding-left:{n}px">'
+                f'<i class="hole" style="left:{r1(n * .55)}px;width:{r1(H * .15)}px;height:{r1(H * .15)}px;margin-top:{r1(-H * .075)}px"></i>'
+                f'<div class="tname" style="font-size:{fs}px;padding-top:{r1(fs * .08)}px">{esc(name.upper())}</div>{lab}</div>')
+    if VARIANT == 2:     # post-it: paper, a strip of tape, hand-written name
+        return (f'<div class="tbody postit"{tid}><div class="tape"></div>'
+                f'<div class="tname" style="font-size:{r1(fs * 1.06)}px">{esc(name)}</div>{lab}</div>')
+    # program window: title bar with a close button, the name below it
+    bh = r1(H * .3)
+    return (f'<div class="tbody win"{tid} style="padding-top:{bh}px"><div class="wbar" style="height:{bh}px;padding:0 {r1(bh * .4)}px;gap:{r1(bh * .22)}px">'
+            f'<i style="width:{r1(bh * .3)}px;height:{r1(bh * .3)}px"></i><i style="width:{r1(bh * .3)}px;height:{r1(bh * .3)}px"></i>'
+            f'<i style="width:{r1(bh * .3)}px;height:{r1(bh * .3)}px"></i><b style="width:{r1(bh * .66)}px;height:{r1(bh * .66)}px;font-size:{r1(bh * .5)}px">×</b></div>'
+            f'<div class="tname" style="font-size:{r1(fs * .6)}px">{esc(name)}</div>{lab}</div>')
 
 
 def teeth(W):
@@ -352,7 +375,7 @@ def build_tiles(P, lay, S):
         ox = 0 if cx - W / 2 < SAFE['left'] + W * .27 else 100 if cx + W / 2 > SAFE['right'] - W * .27 else 50
         oy = 0 if cy - H / 2 < SAFE['top'] + H * .27 else 50
         box = f'width:{W}px;height:{H}px;margin:{-H / 2}px 0 0 {-W / 2}px;transform-origin:{ox}% {oy}%'
-        ex = t.get('exit') or EXIT[g['spot']]
+        ex = 'split' if VARIANT == 3 else (t.get('exit') or EXIT[g['spot']])
         away = -1 if cx < cx_head else 1
         streak = ''
         if ex == 'drop':
@@ -365,15 +388,20 @@ def build_tiles(P, lay, S):
                       f'transform-origin:{100 if away > 0 else 0}% 50%"></div>')
         P.add(f'<div class="burst" id="bu-{k}" style="left:{cx}px;top:{cy}px">{burst_svg(W, H, STYLE["tile_text"], cx, cy, rot)}</div>'
               f'<div class="mover" id="mv-{k}" style="left:{cx}px;top:{cy}px">{streak}'
-              f'<div class="spin" id="sp-{k}" style="{box}">{tile_body(k, t["text"], fs, sc, True)}{strike_svg(k, W, H, d, d2, 16, False, True)}'
-              + (f'<svg class="cracks" id="cr-{k}" width="{W}" height="{H}" viewBox="0 0 {W} {H}"></svg>' if ex == 'shatter' else '') + '</div></div>')
+              f'<div class="spin{" tagwrap" if VARIANT == 1 else ""}" id="sp-{k}" style="{box}">{tag_string(W, H) if VARIANT == 1 else ""}'
+              f'{tile_body(k, t["text"], fs, sc, True, H)}{"" if VARIANT == 3 else strike_svg(k, W, H, d, d2, 16 if VARIANT == 1 else 13, False, True)}'
+              + (f'<svg class="cracks" id="cr-{k}" width="{W}" height="{H}" viewBox="0 0 {W} {H}"></svg>' if ex in ('shatter', 'split') else '') + '</div></div>')
         tL, tK = F(S['land'][k]), F(S['knock'][k]) - .01
         P.set(f'sp-{k}', {'opacity': 0, 'rotation': rot})
         kick = (9, -9, 6)[k % 3]
         P.slam(f'sp-{k}', f'tb-{k}', tL, rot, s0=1.45 if g['spot'] == 'above' else 1.5, kick=kick, settle=max(.12, min(.34, tK - .13 - tL)))
         P.burst(f'bu-{k}', tL, rot)
-        P.strike(k, tK - .12)
+        if VARIANT != 3:
+            P.strike(k, tK - (.2 if VARIANT == 2 else .12), .2 if VARIANT == 2 else .12)
         tilt = rot + (4 if rot >= 0 else -4)
+        if ex == 'split':
+            build_split(P, k, t, g, box, tK)
+            continue
         if ex == 'shatter':
             build_shards(P, k, t, g, d, d2, box, tK)
             continue
@@ -396,6 +424,44 @@ def build_tiles(P, lay, S):
             P.ft(f'st-{k}', tK + .01, .04, {'opacity': 0}, {'opacity': 1})
             P.ft(f'st-{k}', tK + .07, .06, {'opacity': 1}, {'opacity': 0})
             P.ft(f'sp-{k}', tK + .07, .06, {'opacity': 1}, {'opacity': 0})
+
+
+def tag_string(W, H):
+    """the price tag's string, from the hole up off the tag"""
+    hx, hy = r1(H * .34 * .55 + H * .075), r1(H / 2)
+    return (f'<svg class="tstring" width="{W}" height="{H}" viewBox="0 0 {W} {H}"><path d="M{hx} {hy} C {r1(hx - 10)} {r1(hy - 80)}, '
+            f'{r1(hx + 26)} {r1(hy - 150)}, {r1(hx + 6)} {r1(-190)}" fill="none" stroke="rgba(242,236,223,.85)" stroke-width="3"/></svg>')
+
+
+def build_split(P, k, t, g, box, tK):
+    """the program window cracks down the middle and its two halves fall apart"""
+    W, H, fs, cx, cy, rot, sc = g['w'], g['h'], g['fs'], g['x'], g['y'], g['rot'], g['scale'] * SIZE
+    zig = [(W * .52, 0), (W * .46, H * .3), (W * .56, H * .52), (W * .47, H * .76), (W * .53, H)]
+    left = [(0, 0)] + zig + [(0, H)]
+    right = [(W, 0), (W, H)] + zig[::-1]
+    line = ' '.join(f'{r1(x)},{r1(y)}' for x, y in zig)
+    P.html[-1] = P.html[-1].replace(f'viewBox="0 0 {W} {H}"></svg>', f'viewBox="0 0 {W} {H}"><polyline points="{line}" fill="none" '
+                                    f'stroke="{STYLE["strike"]}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg>')
+    html = f'<div class="mover" id="mv-sh{k}" style="left:{cx}px;top:{cy}px"><div class="spin" id="sp-sh{k}" style="{box}">'
+    for j, poly in enumerate((left, right)):
+        clip = ','.join(f'{r1(x)}px {r1(y)}px' for x, y in poly)
+        gx = sum(x for x, _ in poly) / len(poly)
+        html += (f'<div class="shard" id="sh-{k}-{j}" style="width:{W}px;height:{H}px;clip-path:polygon({clip});transform-origin:{r1(gx)}px {r1(H / 2)}px">'
+                 f'{tile_body(k, t["text"], fs, sc, False, H)}</div>')
+    P.add(f'<div class="burst" id="bu-sh{k}" style="left:{cx}px;top:{cy}px">{burst_svg(W + 30, H + 30, STYLE["strike"], cx, cy, rot)}</div>')
+    P.add(html + '</div></div>')
+    P.set(f'cr-{k}', {'opacity': 0})
+    P.set(f'sp-sh{k}', {'opacity': 0, 'rotation': rot})
+    P.ft(f'cr-{k}', tK - .1, .06, {'opacity': 0}, {'opacity': 1})            # the crack runs down first
+    P.ft(f'sp-{k}', tK, .001, {'opacity': 1}, {'opacity': 0})
+    P.ft(f'sp-sh{k}', tK, .001, {'opacity': 0}, {'opacity': 1})
+    P.burst(f'bu-sh{k}', tK, rot, .18)
+    room = fall(cy + H / 2, 300)
+    for j, sgn in enumerate((-1, 1)):
+        P.ft(f'sh-{k}-{j}', tK, .26, {'x': 0}, {'x': sgn * 150}, 'power2.out')
+        P.ft(f'sh-{k}-{j}', tK, .26, {'y': 0}, {'y': room}, 'power2.in')
+        P.ft(f'sh-{k}-{j}', tK, .26, {'rotation': 0}, {'rotation': sgn * 24}, 'power1.out')
+    P.ft(f'sp-sh{k}', tK + .16, .1, {'opacity': 1}, {'opacity': 0}, 'power1.in')
 
 
 def build_shards(P, k, t, g, d, d2, box, tK):
@@ -622,6 +688,22 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .strike path{{stroke-dasharray:1000;stroke-dashoffset:1000}}
 .strike.done path{{stroke-dashoffset:0}}
 .shard{{position:absolute;left:0;top:0}}
+/* the three looks */
+.spin.tagwrap{{filter:drop-shadow(0 16px 26px rgba(0,0,0,.45))}}
+.tstring{{position:absolute;left:0;top:0;overflow:visible}}
+.tbody.tag{{background:{s['paper']};border:none;border-radius:0;box-shadow:none}}
+.tbody.tag .tname{{color:{s['paper_ink']}}}
+.hole{{position:absolute;top:50%;border-radius:50%;background:rgba(20,22,21,.5);box-shadow:inset 0 2px 3px rgba(0,0,0,.4)}}
+.tbody.tag .sheen,.tbody.tag .edge,.tbody.postit .sheen,.tbody.postit .edge,.tbody.win .sheen,.tbody.win .edge{{display:none}}
+.tbody.postit{{background:{s['paper']};border:none;border-radius:5px;overflow:visible;box-shadow:{NEAR},inset 0 -14px 24px rgba(91,63,44,.1)}}
+.tbody.postit .tname{{font-family:'{s['hand_font']}',cursive;font-weight:600;color:{s['paper_ink']};letter-spacing:0}}
+.tape{{position:absolute;left:33%;top:-16px;width:34%;height:30px;background:rgba(201,161,91,.55);transform:rotate(-4deg)}}
+.tbody.win{{background:{s['paper']};border:none;border-radius:16px;box-shadow:{NEAR}}}
+.wbar{{position:absolute;left:0;top:0;right:0;background:{s['deep']};display:flex;align-items:center}}
+.wbar i{{border-radius:50%;background:rgba(242,236,223,.35)}}
+.wbar b{{margin-left:auto;border-radius:50%;background:{s['strike']};color:{s['paper_ink']};font-family:'{s['ui_font']}',sans-serif;font-weight:800;
+  display:flex;align-items:center;justify-content:center;line-height:1}}
+.tbody.win .tname{{font-family:'{s['ui_font']}',sans-serif;font-weight:700;color:{s['paper_ink']};letter-spacing:-.01em}}
 .paper{{position:absolute;left:0;top:0;right:0;bottom:10px;background:{s['paper']};border-radius:9px 9px 0 0;box-shadow:{PNEAR};overflow:hidden}}
 .paper:after{{content:"";position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(180deg,rgba(14,15,18,0),rgba(14,15,18,.055))}}
 .teeth{{position:absolute;left:0;bottom:0;display:block}}
