@@ -332,12 +332,16 @@ def comment_bubble(L):
     T(f"tl.to('#field',{{autoAlpha:1,duration:.14,ease:'power1.out'}},{T_IN:.3f});")
     T(f"tl.to('#field',{{y:0,scale:1,filter:'blur(0px)',duration:.56,ease:'expo.out'}},{T_IN:.3f});")
     T(f"tl.to('#fav',{{scale:1,autoAlpha:1,duration:.34,ease:'back.out(2)'}},{T_IN + .10:.3f});")
-    T(f"tl.to('#ph',{{autoAlpha:1,duration:.2,ease:'power1.out'}},{T_IN + .14:.3f});")
+    # the placeholder must finish fading in before the first letter hides it (a slot that opens right on
+    # "comment" leaves little room): start no later than focus, end at least a frame before the first letter
+    ph_t0 = min(T_IN + .14, T_FOCUS)
+    ph_d = max(.03, min(.2, T_TYPE - ph_t0 - .04))
+    T(f"tl.to('#ph',{{autoAlpha:1,duration:{ph_d:.3f},ease:'power1.out'}},{ph_t0:.3f});")
     T(f"tl.to('#send',{{scale:1,autoAlpha:1,duration:.34,ease:'back.out(2)'}},{T_IN + .17:.3f});")
 
     # ---- 2. "comment": focus ring + caret
     T(f"tl.to('#fring',{{autoAlpha:1,duration:.2,ease:'power2.out'}},{T_FOCUS:.3f});")
-    T(f"tl.to('#ph',{{autoAlpha:.55,duration:.2}},{T_FOCUS:.3f});")
+    T(f"tl.to('#ph',{{autoAlpha:.55,duration:{min(.2, max(.03, T_TYPE - max(T_FOCUS, ph_t0 + ph_d) - .04)):.3f}}},{max(T_FOCUS, ph_t0 + ph_d):.3f});")
     T(f"tl.set('#caret',{{autoAlpha:1}},{T_FOCUS:.3f});")
     if T_TYPE - T_FOCUS > .32:   # one blink while the speaker finishes the word
         T(f"tl.set('#caret',{{autoAlpha:0}},{T_FOCUS + .15:.3f});tl.set('#caret',{{autoAlpha:1}},{T_FOCUS + .25:.3f});")
