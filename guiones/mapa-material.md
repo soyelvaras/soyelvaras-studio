@@ -138,3 +138,13 @@ Alternativa con mejor recorte para Contundente (las palabras van detrás de la c
 2. **Tus cifras reales**: para La Pila (y opcionalmente para Gráfico que Crece).
 3. **Una grabación de pantalla** de Claude editando (opcional): para Teléfono 3D y Pantalla Verde.
 4. **Una frase de crecimiento** grabada en el sillón de `1016.mp4`, para Gráfico que Crece.
+
+### Escena base lista (fase 4)
+
+- Proyecto: `~/reel-edits/subtitulos-base` (1016(3), 1,30 a 6,25 s, 4,97 s, sin zoom).
+- Texto revisado: "Este video estaba lleno de errores, y míralo ahora: lo editó Claude al 100%." Marcas: errores
+  (énfasis), Claude (clave), 100% (número).
+- Barbilla corregida a mano a y 950 (los lentes cortan la caja en la nariz).
+- Título fijo para los estilos que lo usan (Discreta, Ficha Técnica): "Este video lo editó / Claude al 100%".
+- Prueba con Palabra Clave: 0 errores, subtítulos fuera de la cara, dorado en las tres marcas.
+- Fase 4: un render por estilo (`build_reel.py --caption <clave>`), copia 540x960 a `captions/previews/<clave>.mp4`.
