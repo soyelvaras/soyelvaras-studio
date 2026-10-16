@@ -1,73 +1,76 @@
-# Checks: the footage check, the cutout, the self-check
+# Revisiones: el chequeo de toma, el recorte, la autorrevisión
 
-Nothing in this product was tuned for the buyer's clip. These checks are the safety net. Do not skip them.
+Nada de este producto se ajustó para el clip del usuario. Estas revisiones son la red de seguridad. No te las saltes.
 
-## Reels safe zone (1080 x 1920)
-- top 220 clear, bottom 450 clear (nothing below **y 1470**), 35 clear on each side,
-- the right 100 clear from **y 1155** down (like / comment / share).
-- One exception: the Show and Tell speaker card sits flush with the bottom of the video.
-`build_reel.py --safe` paints the unsafe area red for snapshots. Never render with it on:
-`build_reel.py` without `--safe` right before every render.
+## Zona segura de Reels (1080 x 1920)
+- arriba 220 libres, abajo 450 libres (nada bajo **y 1470**), 35 libres a cada lado,
+- los 100 de la derecha libres desde **y 1155** hacia abajo (me gusta / comentar / compartir).
+- Una excepción: la tarjeta de la persona en Muestra y Cuenta va pegada al borde inferior.
+`build_reel.py --safe` pinta de rojo el área no segura para las instantáneas. Nunca renderices con eso puesto:
+`build_reel.py` sin `--safe` justo antes de cada render.
 
-## 1. Footage check (before any effect)
-`PY "SK/scripts/footage_check.py" "<project>"` checks each picked effect against what `layout.py` measured:
-framing, camera movement, open wall, number of shots, and the parts of the reel the buyer allowed.
-- `OK`: it fits. The lines under it say what has to be in place first (a cutout, a package, something from the buyer).
-- `SKIP`: leave it out. Say the printed line to the buyer. Do not argue the footage into qualifying.
-- `CHECK`: the script could not tell. Look at `work/sheets.jpg` and `work/layout/check.jpg` and decide.
-The measurements are first guesses (the framing comes from the head width, the camera from how much the room
-changes between samples). When your eyes and the script disagree, your eyes win. Say so in the delivery note.
+## 1. Chequeo de toma (antes de cualquier efecto)
+`PY "SK/scripts/footage_check.py" "<project>"` revisa cada efecto elegido contra lo que midió `layout.py`: encuadre,
+movimiento de cámara, pared libre, cantidad de tomas y las partes del reel que permitió el usuario.
+- `OK`: calza. Las líneas de abajo dicen qué tiene que estar listo antes (un recorte, un paquete, algo del usuario).
+- `SKIP`: déjalo fuera. Dile al usuario la línea impresa, traducida. No fuerces la toma para que califique.
+- `CHECK`: el script no pudo decidir. Mira `work/sheets.jpg` y `work/layout/check.jpg` y decide tú.
+Las mediciones son primeras estimaciones (el encuadre sale del ancho de la cabeza, la cámara de cuánto cambia el
+cuarto entre muestras). Cuando tus ojos y el script no coinciden, ganan tus ojos. Dilo en la nota de entrega.
 
-An effect that passes still has to fit the WORDS: no number said means no Odometer, no list means no Checklist.
+Un efecto que pasa igual tiene que calzar con las PALABRAS: sin número dicho no hay Contador, sin lista no hay
+Checklist.
 
-The last line under an `OK` says which kind the effect is. `ready`: make a slot with `fx_new.py`, fill the CLIP
-block, run the commands it prints, add it with `fx_add.py`. `recipe`: adapt the demo build by hand. Both are laid
-out step by step in `effects/INDEX.md`. The parts the buyer allowed are enforced three times (`fx_new.py` refuses to
-make the slot, `fx_add.py` refuses to add it, `build_reel.py` leaves it out): never work around a refusal, tell the
-buyer the one line it prints.
+La última línea bajo un `OK` dice de qué tipo es el efecto. `ready` (listo): crea un espacio con `fx_new.py`, llena el
+bloque CLIP, ejecuta los comandos que imprime, agrégalo con `fx_add.py`. `recipe` (receta): adapta a mano el armado de
+la demo. Ambos están paso a paso en `effects/INDEX.md`. Las partes que permitió el usuario se hacen cumplir tres veces
+(`fx_new.py` se niega a crear el espacio, `fx_add.py` se niega a agregarlo, `build_reel.py` lo deja fuera): nunca le
+saques la vuelta a una negativa, dile al usuario la línea que imprime.
 
-## 2. The cutout: quick or clean
-| | Quick: `cutout.py` | Clean: `rvm_cut.py` |
+## 2. El recorte: rápido o limpio
+| | Rápido: `cutout.py` | Limpio: `rvm_cut.py` |
 |---|---|---|
-| Time | about 7s per second of footage on Apple Silicon, a few times that on other machines | about 1.2s per FRAME: a 20s reel is about 12 minutes |
-| Good for | measuring (layout.py does its own small one), Sticky Text | anything BEHIND the speaker or popping out of a card: Bold, Chalk Talk (`--hard`), Show and Tell, most effects. Every ready effect uses this one |
-| Weak spot | can take a face in a painting or poster for the speaker; rough hands | slow; needs `setup.py --matting` once (about 105 MB) |
+| Tiempo | unos 7 s por segundo de video en Apple Silicon, varias veces eso en otros equipos | unos 1,2 s por CUADRO en Apple Silicon (0,4 en este computador): un reel de 20 s son unos 12 minutos en Mac |
+| Sirve para | medir (layout.py hace uno pequeño propio), Etiqueta Pegada | todo lo que va DETRÁS de la persona o sale de una tarjeta: Contundente, Pizarra (`--hard`), Muestra y Cuenta, la mayoría de los efectos. Todo efecto listo usa este |
+| Punto débil | puede tomar una cara de un cuadro o póster como la persona; manos bruscas | lento; necesita `setup.py --matting` una vez. Ropa del mismo color que la silla o el sillón detrás se mezcla con ella |
 
-Prefer the clean one whenever an edge will be seen. Tell the buyer the time BEFORE starting, run it in the
-background, keep working. One cutout at a time. Only an effect's own frames need matting: `fx_new.py` does that
-for a ready effect (a 3 second slot is about 2 minutes), `rvm_cut.py --src` for a recipe.
-Both write `assets/subject.webm` and stop with FRAME MISMATCH if it is not frame-for-frame with the cut: then
-re-run `assemble.py` and cut again.
+Prefiere el limpio siempre que se vaya a ver un borde. Dile al usuario el tiempo ANTES de empezar, córrelo en segundo
+plano, sigue trabajando. Un recorte a la vez. Solo los cuadros de un efecto necesitan recorte: `fx_new.py` lo hace para
+un efecto listo (un espacio de 3 segundos son unos 2 minutos en Mac), `rvm_cut.py --src` para una receta.
+Ambos escriben `assets/subject.webm` y se detienen con FRAME MISMATCH si no coincide cuadro por cuadro con el corte:
+entonces vuelve a ejecutar `assemble.py` y recorta de nuevo.
 
-## 3. Self-check (after building anything)
-Before the render, from snapshots with the red guide (`build_reel.py --safe`, `HF snapshot --at ...`): layout,
-readability, safe zone. Pick 5 to 10 moments: one per caption look change, every title, every effect, the last line.
+## 3. Autorrevisión (después de armar cualquier cosa)
+Antes del render, desde instantáneas con la guía roja (`build_reel.py --safe`, `HF snapshot --at ...`): composición,
+legibilidad, zona segura. Elige 5 a 10 momentos: uno por cada cambio de look de subtítulos, cada título, cada efecto,
+la última frase.
 
-After the render, from the FINAL file:
+Después del render, desde el archivo FINAL:
 `PY "SK/scripts/frames_check.py" "<project>" "renders/<file>.mp4" [--at 1.2,3.4]`
-writes one picture, `work/check/<file>.jpg` (six frames a row), with the safe zone in red and the face in green.
-The green box comes from `layout.json`: if it is not on the face, fix the layout first. Confirm all four:
+escribe una imagen, `work/check/<file>.jpg` (seis cuadros por fila), con la zona segura en rojo y la cara en verde.
+La caja verde sale de `layout.json`: si no está sobre la cara, corrige primero el layout. Confirma las cuatro:
 
-| Check | Fails when | Fix, or drop |
+| Revisión | Falla cuando | Arreglo, o dejarlo fuera |
 |---|---|---|
-| Nothing covers the face | any caption, card or title touches eyes to chin | rerun `layout.py`, correct `bands` in `layout.json`, or use a one-line style |
-| Nothing leaves the safe zone | anything drawn in the red area (except the Show and Tell card) | shorten the text, lower the size in the plan, or drop the element |
-| The cutout is clean | halo, missing hand, a poster cut out as a second person, the edge crawling | make the clean cutout; if it is still wrong, switch to a look that needs none |
-| Text is readable | pale text on a pale wall, text behind the head hiding more than a third of a letter | a style with a plate or a shadow (Karaoke, Golden Hour), or move the band |
+| Nada tapa la cara | cualquier subtítulo, tarjeta o título toca de los ojos a la barbilla | vuelve a correr `layout.py`, corrige `bands` en `layout.json`, o usa un estilo de una línea |
+| Nada sale de la zona segura | algo dibujado en el área roja (salvo la tarjeta de Muestra y Cuenta) | acorta el texto, baja el tamaño en el plan, o deja fuera el elemento |
+| El recorte está limpio | halo, una mano que falta, un póster recortado como segunda persona, el borde que tiembla, un pedazo de silla | haz el recorte limpio; si sigue mal, cambia a un look que no lo necesite |
+| El texto se lee | texto claro sobre pared clara, texto detrás de la cabeza que tapa más de un tercio de una letra | un estilo con placa o sombra (Karaoke, Hora Dorada), o mueve la franja |
 
-An effect slot adds a fifth check: **its two edges**. Pass `--at` the times `fx_add.py` printed (just inside the
-slot at both ends, the middle, just after it). The picture must not jump in brightness or colour going in or coming
-out, the captions must not double the effect's own words, no spoken word inside the slot may be left without any
-caption (the effect's or the reel's), and the effect has to be gone before the slot ends unless
-the slot ends on a cut. `fx_add.py` says whether it could match the slot to the reel; when it says NOT matched,
-look twice. If an edge shows, take the slot out (`fx_add.py ... --remove`) and say so.
+Un espacio de efecto suma una quinta revisión: **sus dos bordes**. Pásale a `--at` los tiempos que imprimió
+`fx_add.py` (justo dentro del espacio en ambos extremos, al medio, justo después). La imagen no debe saltar en brillo
+o color al entrar o salir, los subtítulos no deben repetir las palabras propias del efecto, ninguna palabra dicha
+dentro del espacio puede quedar sin algún subtítulo (del efecto o del reel), y el efecto tiene que haberse ido antes
+de que termine el espacio, salvo que el espacio termine en un corte. `fx_add.py` dice si pudo igualar el espacio con
+el reel; cuando dice NOT matched, mira dos veces. Si se nota un borde, saca el espacio (`fx_add.py ... --remove`) y
+dilo.
 
-For a caption style with no overall style the script also prints how much of the unsafe area and of the face box
-changed against the raw cut. Above about 1.5% means something is drawn there. It skips those numbers when the look
-regrades or moves the picture, and for every frame inside an effect slot (the effect changes the picture on
-purpose): then the picture is the only proof.
+Para un estilo de subtítulos sin estilo completo, el script también imprime cuánto del área no segura y de la caja de
+la cara cambió respecto del corte crudo. Sobre un 1,5% significa que hay algo dibujado ahí. Se salta esos números
+cuando el look cambia el color o mueve la imagen, y en cada cuadro dentro de un espacio de efecto (el efecto cambia la
+imagen a propósito): ahí la imagen es la única prueba.
 
-`check_cuts.py` covers the cuts (frame before / after each cut) and writes the phone copy.
+`check_cuts.py` cubre los cortes (cuadro antes / después de cada corte) y escribe la copia para el celular.
 
-One polish pass, then deliver. If something still fails after one fix, drop that element and tell the buyer what
-was dropped and why. A clean reel without the effect beats a broken reel with it.
+Una pasada de pulido y entrega. Si algo sigue fallando después de un arreglo, deja fuera ese elemento y dile al
+usuario qué quedó fuera y por qué. Un reel limpio sin el efecto es mejor que un reel roto con él.

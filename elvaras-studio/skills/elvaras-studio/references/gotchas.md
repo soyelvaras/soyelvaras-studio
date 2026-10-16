@@ -1,56 +1,71 @@
-# Gotchas (each one cost a render)
+# Problemas conocidos (cada uno costó un render)
 
-## Timing / sync
-- ffmpeg concat leaves a 0.033s start offset and uneven frame gaps, and a cutout made from that drifts.
-  `assemble.py` re-encodes to clean 30fps; `cutout.py` and `rvm_cut.py` stop when the frame counts differ.
-- `tl.set` at a rounded time fires one frame late: use `frame/30 - 0.002` (the engine's `T()` does this).
-- `HF snapshot` seeks roughly at cuts and can show the next shot a frame early. Only frames from the final render
-  prove a cut (`check_cuts.py`, `frames_check.py`).
-- Whisper word starts can be 0.1 to 0.3s off and it can invent a word at a cut. Confirm pauses with silencedetect.
-- Whisper splits "GPT-6" and "5.1" into two tokens and hears "Claude" as "cloud". Fix `words.json` by hand.
+## Tiempos / sincronía
+- La concatenación de ffmpeg deja un desfase inicial de 0,033 s y huecos de cuadro disparejos, y un recorte hecho
+  desde eso se corre. `assemble.py` recodifica a 30 fps limpios; `cutout.py` y `rvm_cut.py` se detienen cuando la
+  cantidad de cuadros no coincide.
+- `tl.set` en un tiempo redondeado se dispara un cuadro tarde: usa `frame/30 - 0.002` (la `T()` del motor lo hace).
+- `HF snapshot` busca aproximado en los cortes y puede mostrar la toma siguiente un cuadro antes. Solo los cuadros del
+  render final prueban un corte (`check_cuts.py`, `frames_check.py`).
+- Los inicios de palabra de Whisper pueden estar 0,1 a 0,3 s corridos y puede inventar una palabra en un corte.
+  Confirma las pausas con silencedetect.
+- Whisper parte "GPT-6" y "5.1" en dos y escucha "Claude" como "cloud". Corrige `words.json` a mano.
+- En tramos de ruido cortos Whisper inventa frases completas ("Subtítulos por la comunidad de Amara.org", "Gracias
+  por ver el video"). Un tramo de menos de un segundo con una frase así es ruido.
 
-## HyperFrames (pinned: hyperframes@0.8.34, Node 22+, always started through `HF`)
-- Lint: states hidden at the start use `gsap.set` outside the timeline; every exit needs a hard `tl.set` kill; every
-  `<video>` and `<audio>` needs an `id` (a video without one renders frozen); clips that touch in time go on
-  different `data-track-index` values; one composition per `index.html`.
-- Never tween autoAlpha or opacity on an element that has `data-start`: wrap it in a plain div and animate that.
-- `fromTo` shows its from-state at once: pass `immediateRender:false` for anything hidden until its time.
-- `autoAlpha:1` sets opacity to 1 and overrides a CSS opacity on the same element.
-- Lint rejects tweening letterSpacing: fake tracking with scaleX.
-- Element ids cannot contain apostrophes.
-- CSS masks do not survive the renderer. Bake alpha into a VP9 webm instead.
-- Reading an alpha webm with ffmpeg: `-c:v libvpx-vp9` BEFORE `-i`, and `alphaextract` before `scale`.
-- Heavy backdrop-filter or blur on many elements can turn captures black. Keep it to a few.
-- HyperFrames shifts video colours slightly against stills and CSS colours: a frozen frame next to live video
-  needs a colour match (see `effects/freeze-and-label/effect.md`).
+## HyperFrames (fijado: hyperframes@0.8.34, Node 22+, siempre iniciado a través de `HF`)
+- Lint: los estados ocultos al inicio usan `gsap.set` fuera de la línea de tiempo; cada salida necesita un `tl.set`
+  duro; cada `<video>` y `<audio>` necesita un `id` (un video sin id se renderiza congelado); los clips que se tocan en
+  el tiempo van en distintos valores de `data-track-index`; una composición por `index.html`.
+- Nunca animes autoAlpha u opacity en un elemento que tiene `data-start`: envuélvelo en un div simple y anima ese.
+- `fromTo` muestra su estado inicial de inmediato: pasa `immediateRender:false` para todo lo que debe estar oculto
+  hasta su tiempo.
+- `autoAlpha:1` pone la opacidad en 1 y pisa una opacidad CSS en el mismo elemento.
+- Dos animaciones sobre la misma propiedad que se solapan: la que sigue corriendo pisa a un `tl.set` posterior. Por
+  ejemplo, un texto que aparece (fade-in) y se oculta con un set antes de que termine de aparecer queda visible.
+  Haz que la primera termine antes del set.
+- Lint rechaza animar letterSpacing: simula el espaciado con scaleX.
+- Los ids de elementos no pueden tener apóstrofos.
+- Las máscaras CSS no sobreviven al motor de render. Hornea el canal alfa en un webm VP9.
+- Leer un webm con alfa con ffmpeg: `-c:v libvpx-vp9` ANTES de `-i`, y `alphaextract` antes de `scale`.
+- Mucho backdrop-filter o desenfoque en muchos elementos puede dejar las capturas en negro. Limítalo a unos pocos.
+- HyperFrames corre levemente los colores del video respecto de imágenes fijas y colores CSS: un cuadro congelado al
+  lado de video en vivo necesita igualar el color (ver `effects/freeze-and-label/effect.md`).
 
-## Tools
-- Python scripts run in the skill's own environment: read `python` from `ST/.platform.json` (`PY`). Its path
-  differs per OS.
-- Transcription dies with `unexpected keyword argument 'metadata_errors'`: run `setup.py` again, it repairs it.
-- The skill writes only in its state folder `ST` and in the project folder. Never into `SK`.
-- A shell safety hook can block a command that runs a program held in a variable, or a long inline `python -c`:
-  put such steps in a small script file in the project's `work/` folder and run that.
-- Large uploads to chat can fail: deliver the 720p phone copy and keep the full render on disk.
-- Effects that track the room or the face need extra packages (`effects/INDEX.md` lists them per effect). Install
-  them into the skill's own Python: `PY -m pip install opencv-python-headless`. mediapipe has no build for every
-  Python version: if it will not install, skip that effect and say so.
+## Herramientas
+- Los scripts de Python corren en el entorno propio de la skill: lee `python` de `ST/.platform.json` (`PY`). Su ruta
+  cambia según el sistema.
+- La transcripción muere con `unexpected keyword argument 'metadata_errors'`: ejecuta `setup.py` de nuevo, lo
+  repara.
+- La skill escribe solo en su carpeta de estado `ST` y en la carpeta del proyecto. Nunca en `SK`.
+- Un filtro de seguridad de la terminal puede bloquear un comando que ejecuta un programa guardado en una variable, o
+  un `python -c` largo en línea: pon esos pasos en un script pequeño en la carpeta `work/` del proyecto y ejecuta ese.
+- Las subidas grandes al chat pueden fallar: entrega la copia 720p para el celular y deja el render completo en el
+  disco.
+- Los efectos que siguen el cuarto o la cara necesitan paquetes extra (`effects/INDEX.md` los lista por efecto).
+  Instálalos en el Python propio de la skill: `PY -m pip install opencv-python-headless`. mediapipe no tiene versión
+  para todas las versiones de Python: si no se instala, salta ese efecto y dilo.
 
-## Windows (same skill, different shell)
-- Claude Code runs commands in Git Bash when Git for Windows is installed, otherwise PowerShell. Write commands
-  that work in both: full paths in double quotes with forward slashes, one command per call, no `&&`, no
-  `VAR=1 cmd`, no `~` in arguments. In PowerShell start a quoted program with `&`.
-- `python3` is usually a Store stub. Use `PY` for everything; before the environment exists try `python`, then
-  `py -3`, then `start.ps1` (it gets the skill its own Python when the computer has none).
-- A program installed while Claude Code is open is not found until Claude Code is fully quit and reopened.
-- The quick cutout has no GPU path on Windows: it runs on the processor. Run it in the background.
-- Windows opens text files as cp1252 unless told otherwise: every `open()` you write needs `encoding='utf-8'`.
-- Never put a file path inside an ffmpeg filter (drive colons break it). Pass files with `-i`.
-- Smart App Control or antivirus can block the image library HyperFrames loads, or make ffmpeg fail once with
-  `spawn EBUSY`. Retry once, then tell the buyer what Windows blocked.
-- Transcription dies with `Library cublas64_12.dll is not found or cannot be loaded`: the PC has an NVIDIA card, so
-  Whisper's default device ('auto') chose CUDA, but the CUDA toolkit is not installed. The scripts pass
-  `device='cpu'`; do the same in any one-off `WhisperModel(...)` call (a re-transcribed snippet, for example).
-- Windows on ARM: the transcription engine has no ARM build; `setup.py` asks for the x64 Python.
-- Helper files ending in `.sh` inside `effects/` are notes from the Mac builds. Do not run them: run the ffmpeg and
-  HyperFrames commands they contain directly.
+## Windows (la misma skill, otra terminal)
+- Claude Code ejecuta los comandos en Git Bash cuando Git para Windows está instalado, si no, en PowerShell. Escribe
+  comandos que funcionen en ambos: rutas completas entre comillas dobles con barras normales, un comando por llamada,
+  sin `&&`, sin `VAR=1 cmd`, sin `~` en los argumentos. En PowerShell empieza un programa entre comillas con `&`.
+- `python3` suele ser un acceso directo de la Tienda. Usa `PY` para todo; antes de que exista el entorno prueba
+  `python`, luego `py -3`, luego `start.ps1` (consigue un Python propio para la skill cuando el computador no tiene).
+- Un programa instalado con Claude Code abierto no se encuentra hasta cerrar Claude Code por completo y abrirlo de
+  nuevo.
+- El recorte rápido no tiene ruta de GPU en Windows: corre en el procesador. Córrelo en segundo plano.
+- Windows abre los archivos de texto como cp1252 salvo que se indique otra cosa: cada `open()` que escribas necesita
+  `encoding='utf-8'`. Python en Windows escribe saltos de línea CRLF en modo texto: usa `newline=''` o `'\n'` al
+  reescribir archivos de la skill.
+- Nunca pongas una ruta de archivo dentro de un filtro de ffmpeg (los dos puntos de la unidad lo rompen). Pasa los
+  archivos con `-i`.
+- Smart App Control o el antivirus pueden bloquear la librería de imágenes que carga HyperFrames, o hacer que ffmpeg
+  falle una vez con `spawn EBUSY`. Reintenta una vez, y luego dile al usuario qué bloqueó Windows.
+- La transcripción muere con `Library cublas64_12.dll is not found or cannot be loaded`: el PC tiene tarjeta NVIDIA,
+  así que el device por defecto de Whisper ('auto') eligió CUDA, pero el kit de CUDA no está instalado. Los scripts
+  pasan `device='cpu'`; haz lo mismo en cualquier llamada puntual a `WhisperModel(...)` (un trozo retranscrito, por
+  ejemplo).
+- Windows en ARM: el motor de transcripción no tiene versión ARM; `setup.py` pide el Python x64.
+- Los archivos auxiliares terminados en `.sh` dentro de `effects/` son notas de los armados en Mac. No los ejecutes:
+  ejecuta directamente los comandos de ffmpeg y HyperFrames que contienen.

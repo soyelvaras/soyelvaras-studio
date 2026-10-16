@@ -1,163 +1,172 @@
-# Replicating an example: study it, rebuild it, make it theirs
+# Replicar un ejemplo: estudiarlo, reconstruirlo, hacerlo suyo
 
-When the buyer shows an example (a reel they like, a pin, a screenshot) or describes a look, that IS the brief.
-The built-in caption styles and effects step aside. You study the example from top to bottom and rebuild its look
-on the buyer's own clips, so it fits THEIR words and footage. Then you save it, and every later "edit it" uses it.
+Cuando el usuario muestra un ejemplo (un reel que le gusta, un pin, una captura) o describe un look, ESO es el
+encargo. Los subtítulos y efectos que trae la skill quedan a un lado. Estudias el ejemplo de principio a fin y
+reconstruyes su look con los clips del usuario, para que calce con SUS palabras e imágenes. Luego lo guardas, y cada
+"edítalo" siguiente lo usa.
 
-## What is copied and what never is
+## Qué se copia y qué nunca
 
-Copied: the LOOK and the STRUCTURE. Type feel, case, colours, plates, layout, where things sit, caption rhythm,
-motion, pace, the kind of graphic elements, the sound character.
+Se copia: el LOOK y la ESTRUCTURA. Sensación de la tipografía, mayúsculas o minúsculas, colores, placas, composición,
+dónde va cada cosa, ritmo de los subtítulos, movimiento, ritmo de cortes, el tipo de elementos gráficos, el carácter
+del sonido.
 
-Never copied: the example's footage, music, voice, logo, handle, name or words. Never a claim that the result is
-by, with or approved by whoever made the example. On screen there are only the buyer's own words, the buyer's own
-footage and material, and generic placeholders.
+Nunca se copia: las imágenes, música, voz, logo, usuario, nombre o palabras del ejemplo. Nunca se dice que el
+resultado es de quien hizo el ejemplo, con esa persona o aprobado por ella. En pantalla solo hay palabras propias del
+usuario, sus imágenes y material, y rellenos genéricos.
 
-Typeface: the nearest face the skill ships, or an openly licensed one fetched with `get_font.py`. Never download,
-embed or ask for a paid font file. When the example's face is not available, say which face stands in.
+Tipografía: la más parecida que trae la skill, o una de licencia abierta descargada con `get_font.py`. Nunca
+descargues, incrustes ni pidas un archivo de fuente pagada. Cuando la del ejemplo no está disponible, di cuál la
+reemplaza.
 
-The skill's own text never names or imitates a specific creator. A buyer's reference is their business.
+El texto propio de la skill nunca nombra ni imita a un creador específico. La referencia del usuario es asunto suyo.
 
-## 1. Study it (the whole thing, not three stills)
+## 1. Estudiarlo (completo, no tres cuadros)
 
 ```
-PY "SK/scripts/study.py" "<example file>"            a video or a picture the buyer dropped in
+PY "SK/scripts/study.py" "<example file>"            un video o una imagen que dejó el usuario
 ```
-A link to a post (a reel, a short, a pin) goes through Apify: use your Apify tool to get the direct address of
-the video for that link, then `PY "SK/scripts/get_example.py" --direct "<address>"` right away (such addresses
-expire within minutes) and run `study.py` on the file it prints. It lands in `ST/examples/downloads/`. If you
-have no Apify tool, tell the buyer in one sentence that links need Apify connected (the walkthrough in their
-portal shows how), or they can drop the video file in instead.
+Un link a una publicación (un reel, un short, un pin) pasa por Apify: usa tu herramienta de Apify para conseguir la
+dirección directa del video de ese link, y luego `PY "SK/scripts/get_example.py" --direct "<address>"` de inmediato
+(esas direcciones vencen en minutos) y ejecuta `study.py` sobre el archivo que imprime. Queda en
+`ST/examples/downloads/`. Si no tienes herramienta de Apify, dile al usuario en una frase que para usar links hay que
+conectar Apify, o que puede dejar el archivo del video.
 
-It writes `ST/examples/<name>/`: every sampled frame on contact sheets (`sheet_01.jpg` ...), `cuts.jpg` (the frame
-before and after each cut), full-size frames in `frames/`, and `study.json` (cut times, shot lengths, loudness over
-time, where the sound jumps, the words with their times). It prints the measured half: length, cuts, pace, speech
-rate, sound jumps.
+Escribe `ST/examples/<name>/`: cada cuadro muestreado en hojas de cuadros (`sheet_01.jpg` ...), `cuts.jpg` (el cuadro
+antes y después de cada corte), cuadros a tamaño completo en `frames/`, y `study.json` (tiempos de corte, duración de
+cada toma, volumen en el tiempo, dónde salta el sonido, las palabras con sus tiempos). Imprime la mitad medida:
+duración, cortes, ritmo, velocidad al hablar, saltos de sonido. El modelo de voz del estudio detecta el idioma solo,
+así que sirve para ejemplos en inglés o en español.
 
-Then LOOK at every sheet, in order, and at two or three full-size frames for type and colour. Captions, graphics
-and framing change from beat to beat: a look read off three stills is a guess.
+Luego MIRA cada hoja, en orden, y dos o tres cuadros a tamaño completo para tipografía y color. Los subtítulos, los
+gráficos y el encuadre cambian de momento a momento: un look leído de tres cuadros es una suposición.
 
-A still (a pin, a screenshot) shows type, colour, plate, placement and graphics. It cannot show rhythm, animation,
-pace or sound: ask the buyer in one question, or choose calm defaults and say so.
+Una imagen fija (un pin, una captura) muestra tipografía, color, placa, ubicación y gráficos. No puede mostrar ritmo,
+animación ni sonido: pregúntale al usuario en una sola pregunta, o elige valores tranquilos y dilo.
 
-A description only ("white bold captions with a yellow highlight, fast cuts, no sounds"): skip the script, write
-the same notes from their words, and ask one question about whatever decides the look and is missing.
+Solo una descripción ("subtítulos blancos gruesos con un resaltado amarillo, cortes rápidos, sin sonidos"): sáltate
+el script, escribe las mismas notas desde sus palabras y haz una pregunta sobre lo que falte y defina el look.
 
-## 2. Write it down
+## 2. Escribirlo (What to write down)
 
-Write these into `ST/my-style.md`, in plain words, one short line each. Leave nothing as "like the example".
+Escribe esto en `ST/my-style.md`, con palabras simples, una línea corta por área. No dejes nada como "igual que el
+ejemplo".
 
-| Area | What to note |
+| Área | Qué anotar |
 |---|---|
-| Type | feel (serif, clean sans, condensed, wide capitals, mono, handwriting), weight, case, size against the frame width, tracking, the face you will use and why |
-| Colour | text, the accent, plate, outline or shadow, background or page colour, the grade (warm, cool, flat, contrasty, faded) |
-| Captions | where they sit (chest, lower third, above the head, top, centre), how many words and lines at once, plate or none, what the word being said does, what a key word does |
-| Caption motion | how a line arrives (cut, pop, fade, slide up, typed, word by word) and leaves |
-| Pace | cuts per 10 seconds, typical shot length, punch-ins (how often, how hard), pauses kept or cut |
-| Framing | how big the speaker is, where in the frame, anything behind or around them (a page, a border, a card) |
-| Graphic elements | titles, bars, borders, lower thirds, stickers, cards, inserts: what, where, when they come and go |
-| Sound | cues on cuts or words or none, how loud against the voice, music or none |
+| Tipografía | sensación (serif, sans limpia, condensada, mayúsculas anchas, monoespaciada, a mano), grosor, mayúsculas o minúsculas, tamaño respecto del ancho del cuadro, espaciado, la fuente que vas a usar y por qué |
+| Color | texto, el acento, placa, contorno o sombra, color de fondo o página, el tratamiento de color (cálido, frío, plano, contrastado, gastado) |
+| Subtítulos | dónde van (pecho, tercio inferior, sobre la cabeza, arriba, centro), cuántas palabras y líneas a la vez, con placa o sin, qué hace la palabra que se está diciendo, qué hace una palabra clave |
+| Movimiento de subtítulos | cómo llega una línea (corte, salto, aparición suave, sube, se escribe, palabra por palabra) y cómo se va |
+| Ritmo | cortes cada 10 segundos, duración típica de una toma, acercamientos (cada cuánto, qué tan fuertes), pausas que se dejan o se cortan |
+| Encuadre | qué tan grande está la persona, dónde en el cuadro, qué hay detrás o alrededor (una página, un borde, una tarjeta) |
+| Elementos gráficos | títulos, barras, bordes, tercios inferiores, stickers, tarjetas, insertos: qué, dónde, cuándo entran y salen |
+| Sonido | golpes en cortes o palabras o ninguno, qué tan fuerte respecto de la voz, música o no |
 
-## 3. Rebuild it on the buyer's clips
+## 3. Reconstruirlo con los clips del usuario
 
-Edit the buyer's clips as always (`references/cutting.md`): their best takes, their words. The example's timing
-is not copied. Its RHYTHM is: if it cuts every 2 seconds and marks one word per line, do that on their words.
+Edita los clips del usuario como siempre (`references/cutting.md`): sus mejores tomas, sus palabras. Los tiempos del
+ejemplo no se copian. Su RITMO sí: si corta cada 2 segundos y marca una palabra por línea, haz eso con sus palabras.
 
-Everything below goes into `ST/my-style.json` (the style, used by every reel) or `<project>/plan.json` (this reel
-only, wins over my-style). `build_reel.py` reads both. No built-in caption style or effect is used unless the
-buyer asks for one.
+Todo lo de abajo va en `ST/my-style.json` (el estilo, usado en cada reel) o en `<project>/plan.json` (solo este reel,
+gana sobre my-style). `build_reel.py` lee ambos. No se usa ningún estilo de subtítulos ni efecto de la skill salvo que
+el usuario lo pida.
 
-### The custom caption style: `"caption": { ... }`
+### El estilo de subtítulos a medida: `"caption": { ... }`
 
-One spec, rendered by the same engine as the built-in styles: same words, same marks, same safe zone and face
-logic, and effect slots (`--caption-y`, hide windows) work with it. Every field is optional.
+Una especificación, dibujada por el mismo motor que los estilos de la skill: mismas palabras, mismas marcas, misma
+lógica de zona segura y de cara, y los espacios de efecto (`--caption-y`, ventanas ocultas) funcionan con ella. Cada
+campo es opcional.
 
-| Field | Values | Default |
+| Campo | Valores | Por defecto |
 |---|---|---|
-| `font` | a family from `assets/fonts/fonts.css` (`PY "SK/scripts/get_font.py" --list`), or one fetched with `get_font.py` | Inter Tight |
-| `file` | the fetched font's file name (in `ST/fonts/`), only for a family the skill does not ship | |
-| `weight`, `italic`, `stretch` | 100 to 900; true / false; font-stretch in % (125 for the wide Archivo) | 800, false, 100 |
+| `font` | una familia de `assets/fonts/fonts.css` (`PY "SK/scripts/get_font.py" --list`), o una descargada con `get_font.py` | Inter Tight |
+| `file` | el nombre del archivo de la fuente descargada (en `ST/fonts/`), solo para una familia que la skill no trae | |
+| `weight`, `italic`, `stretch` | 100 a 900; true / false; font-stretch en % (125 para la Archivo ancha) | 800, false, 100 |
 | `case` | `as-typed`, `upper`, `lower`, `title` | as-typed |
-| `size`, `tracking`, `line_height` | px on the 1080 wide frame; em; multiple of the size | 64, 0, 1.12 |
-| `color`, `accent` | text colour; the colour of marked and lit words | white, #FAE67A |
-| `shadow` | a css text-shadow, or false | a soft dark shadow |
-| `stroke` | `{"color": "#000", "width": 8}` an outline around the letters | none |
-| `plate` | `{"color": "rgba(...)", "radius": 24, "pad": [18, 32], "blur": 0, "per": "line"}`; `"per": "word"` puts one behind each word | none |
-| `lit`, `lit_text` | what the word being said does: `none`, `color` (accent while said), `stay` (turns accent and stays), `plate` (an accent plate behind it, text in `lit_text`), `pop` | none |
-| `mark`, `mark_scale` | marked words (num, key, emph, cta in `words.json`): `accent` (accent colour), `highlight` (an accent box behind the word, text in `lit_text`) or `none`; a size factor such as 1.25 | accent, 1 |
-| `words`, `chars`, `lines` | most words and characters per line; 1 or 2 lines | 3, 18, 1 |
-| `position`, `dy` | `chest`, `lower`, `above-head`, `top`, `center`, or a y in px; a nudge in px | chest |
-| `align`, `margin` | `center`, `left`, `right`; side margin px | center, 70 |
-| `entrance`, `exit` | `none`, `pop`, `fade`, `slide-up`, `type-on`, `word-by-word`; `none` or `fade` | none |
-| `css` | extra css for this style. Classes: `.cu` the block, `.cu .ln` a line, `.cu .pl` the plate, `.cu .w` a word, `.cu .w.m` a marked word | |
+| `size`, `tracking`, `line_height` | px sobre el cuadro de 1080 de ancho; em; múltiplo del tamaño | 64, 0, 1.12 |
+| `color`, `accent` | color del texto; el color de las palabras marcadas e iluminadas | crema #F2ECDF, dorado #C9A15B |
+| `shadow` | un text-shadow css, o false | una sombra oscura suave |
+| `stroke` | `{"color": "#000", "width": 8}` un contorno alrededor de las letras | ninguno |
+| `plate` | `{"color": "rgba(...)", "radius": 24, "pad": [18, 32], "blur": 0, "per": "line"}`; `"per": "word"` pone una detrás de cada palabra | ninguna |
+| `lit`, `lit_text` | qué hace la palabra que se está diciendo: `none`, `color` (acento mientras se dice), `stay` (pasa a acento y se queda), `plate` (una placa de acento detrás, texto en `lit_text`), `pop` | none |
+| `mark`, `mark_scale` | palabras marcadas (num, key, emph, cta en `words.json`): `accent` (color de acento), `highlight` (una caja de acento detrás de la palabra, texto en `lit_text`) o `none`; un factor de tamaño como 1.25 | accent, 1 |
+| `words`, `chars`, `lines` | máximo de palabras y caracteres por línea; 1 o 2 líneas | 3, 18, 1 |
+| `position`, `dy` | `chest`, `lower`, `above-head`, `top`, `center`, o una y en px; un ajuste en px | chest |
+| `align`, `margin` | `center`, `left`, `right`; margen lateral en px | center, 70 |
+| `entrance`, `exit` | `none`, `pop`, `fade`, `slide-up`, `type-on`, `word-by-word`; `none` o `fade` | none |
+| `css` | css extra para este estilo. Clases: `.cu` el bloque, `.cu .ln` una línea, `.cu .pl` la placa, `.cu .w` una palabra, `.cu .w.m` una palabra marcada | |
 
-The engine keeps the block inside the safe zone, breaks lines where the width runs out, and moves a block that
-would sit on the face (it prints a `NOTE` when it does). `"caption": "karaoke"` (a key instead of a spec) simply
-makes a built-in style the buyer's own.
+El motor mantiene el bloque dentro de la zona segura, corta las líneas donde se acaba el ancho y mueve un bloque que
+quedaría sobre la cara (imprime una `NOTE` cuando lo hace). `"caption": "karaoke"` (una clave en vez de una
+especificación) simplemente hace suyo un estilo de la skill.
 
-### Your own layers: `"layers": [ ... ]`
+### Tus propias capas: `"layers": [ ... ]`
 
-For what the example has and no built-in effect covers: a title card, a progress bar, a border, a lower third, a
-corner tag, a sticker, a page behind the speaker. Plain html and css that you write, with a time range and an anchor.
+Para lo que tiene el ejemplo y ningún efecto de la skill cubre: una tarjeta de título, una barra de progreso, un
+borde, un tercio inferior, una etiqueta en una esquina, un sticker, una página detrás de la persona. Html y css
+simples que escribes tú, con un rango de tiempo y un ancla.
 
 ```json
 {"id": "title", "anchor": "top", "from": 0.0, "to": 2.4, "in": "slide-up", "out": "fade",
- "html": "<div class='tt'>3 things I wish I knew</div>",
- "css": ".tt{display:inline-block;font:800 64px 'Inter Tight';color:#111;background:#fff;padding:14px 30px;border-radius:18px}"}
+ "html": "<div class='tt'>3 cosas que ojalá hubiera sabido</div>",
+ "css": ".tt{display:inline-block;font:400 72px 'Bebas Neue';color:#141615;background:#F2ECDF;padding:14px 30px;border-radius:18px}"}
 ```
-- `anchor`: a band the engine places for this clip, `top` (y 236), `above-head`, `center`, `chest`, `lower-third`
-  (a 1080 wide centred box whose top sits on the band; `dx` / `dy` nudge it). Or `full`: the whole frame, your css
-  places everything. Or `behind`: the whole frame, BEHIND the speaker, which needs a person cutout (`rvm_cut.py`).
-- `from` / `to` in reel seconds. Leave both out for a layer that stays the whole reel. In `my-style.json` only
-  those always-on layers are used; timed layers belong in a reel's `plan.json`, written from that reel's words.
-- `in` / `out`: `none`, `fade`, `pop`, `slide-up`. That is all the motion a layer has: css `@keyframes` in a
-  layer's css will NOT play in the renderer. When the example moves a graphic in another way, use the nearest of
-  these four and say so.
-- A GIF or a short clip as a layer: `gif_add.py` makes it and writes the layer for you (`references/gifs.md`).
-- Text in a layer is the buyer's own words or a generic placeholder. Never a logo, a handle or a claim.
-- Layers go through the same checks as everything else: `HF lint`, snapshots with the red safe guide, and
-  `frames_check.py` on the final render (its numbers flag anything drawn in the unsafe area or on the face).
-  Keep text inside x 35 to 1045 (980 from y 1155 down) and y 220 to 1470. A plain page, band or border may run
-  into the unsafe area (the app's buttons sit on top of it); `frames_check.py` then flags every frame it is on:
-  look once that nothing to READ is out there, and move on.
+- `anchor`: una franja que el motor ubica para este clip, `top` (y 236), `above-head`, `center`, `chest`,
+  `lower-third` (una caja centrada de 1080 de ancho cuyo borde superior queda en la franja; `dx` / `dy` la ajustan).
+  O `full`: el cuadro completo, tu css ubica todo. O `behind`: el cuadro completo, DETRÁS de la persona, lo que
+  necesita un recorte de la persona (`rvm_cut.py`).
+- `from` / `to` en segundos del reel. Déjalos fuera para una capa que dura todo el reel. En `my-style.json` solo se
+  usan esas capas fijas; las capas con tiempo van en el `plan.json` de un reel, escritas a partir de sus palabras.
+- `in` / `out`: `none`, `fade`, `pop`, `slide-up`. Ese es todo el movimiento que tiene una capa: los `@keyframes` de
+  css en una capa NO se reproducen en el motor de render. Cuando el ejemplo mueve un gráfico de otra forma, usa la
+  más parecida de esas cuatro y dilo.
+- Un GIF o un clip corto como capa: `gif_add.py` lo hace y escribe la capa por ti (`references/gifs.md`).
+- El texto de una capa son palabras propias del usuario o un relleno genérico. Nunca un logo, un usuario ni una
+  afirmación.
+- Las capas pasan por las mismas revisiones que todo: `HF lint`, instantáneas con la guía roja de zona segura y
+  `frames_check.py` sobre el render final (sus números marcan todo lo dibujado en el área no segura o sobre la cara).
+  Mantén el texto dentro de x 35 a 1045 (980 desde y 1155 hacia abajo) e y 220 a 1470. Una página, franja o borde
+  simple puede entrar al área no segura (los botones de la app quedan encima); `frames_check.py` marca entonces cada
+  cuadro donde esté: mira una vez que no haya nada para LEER ahí, y sigue.
 
-### The whole reel
+### Todo el reel
 
-| What | How | Limit |
+| Qué | Cómo | Límite |
 |---|---|---|
-| Colour grade | `"grade": "contrast(1.08) saturate(.9) brightness(.98)"` (a css filter on the footage, the cutout and every effect slot) | css filters only: no LUTs, no film grain, no selective colour |
-| Punch-in rhythm | `edl.json`: split a take into segments and alternate `zoom` (1.0, 1.25, 1.0 ...) with `cx` / `cy` on the face, as often as the example punches in | hard cuts between zoom levels; a smooth zoom is the Digital Zoom effect; soft above about 1.4 on a 1080 source |
-| Cut pace | `edl.json`: tighter or looser out points, pauses kept or cut, to the example's typical shot length | the buyer's takes decide what can be cut |
-| Sound | `"sounds": [{"src": "assets/sfx/pop.mp3", "at": 1.2, "vol": 0.2}]` in `plan.json` (the stock names are in `<project>/assets/sfx`); none for a quiet example. Effects: `SFX=0`, `--no-sfx`, `SFX_GAIN` | the stock cue set only; no music is added |
-| Anything else | `"css": "..."` plain css appended last, in `plan.json` or `my-style.json` | it can restyle what is on the page; it cannot add motion |
+| Tratamiento de color | `"grade": "contrast(1.08) saturate(.9) brightness(.98)"` (un filtro css sobre la imagen, el recorte y cada espacio de efecto) | solo filtros css: sin LUTs, sin grano de película, sin color selectivo |
+| Ritmo de acercamientos | `edl.json`: parte una toma en tramos y alterna `zoom` (1.0, 1.25, 1.0 ...) con `cx` / `cy` en la cara, tan seguido como lo hace el ejemplo | cortes secos entre niveles de zoom; un zoom suave es el efecto Zoom Digital; blando sobre 1,4 en una fuente 1080 |
+| Ritmo de cortes | `edl.json`: salidas más justas o más holgadas, pausas que se dejan o se cortan, según la duración típica de toma del ejemplo | las tomas del usuario deciden qué se puede cortar |
+| Sonido | `"sounds": [{"src": "assets/sfx/pop.mp3", "at": 1.2, "vol": 0.2}]` en `plan.json` (los nombres disponibles están en `<project>/assets/sfx`); ninguno para un ejemplo tranquilo. Efectos: `SFX=0`, `--no-sfx`, `SFX_GAIN` | solo el set de sonidos incluido; no se agrega música |
+| Cualquier otra cosa | `"css": "..."` css simple que va al final, en `plan.json` o `my-style.json` | puede reestilizar lo que hay en la página; no puede agregar movimiento |
 
-What cannot be matched today, so say it plainly when the example has it: music, a layout that moves the speaker
-into a panel or onto a page (use the Show and Tell or Chalk Talk overall style when that is the look, or Green
-Screen for a background), speed ramps, transitions between shots other than a cut or the Zoom-Through Cut effect,
-animated graphics beyond the four entrances, caption motion beyond the six entrances, 3D, and b-roll the buyer
-did not supply.
+Lo que hoy no se puede igualar, así que dilo directo cuando el ejemplo lo tenga: música, una composición que mueve a la
+persona a un panel o a una página (usa los estilos completos Muestra y Cuenta o Pizarra cuando ese es el look, o
+Pantalla Verde para un fondo), cambios de velocidad, transiciones entre tomas que no sean un corte o el efecto Corte en
+Zoom, gráficos animados más allá de las cuatro entradas, movimiento de subtítulos más allá de las seis entradas, 3D, y
+b-roll que el usuario no entregó.
 
-## 4. Check it side by side
+## 4. Compararlo lado a lado
 
 ```
 PY "SK/scripts/side_by_side.py" "<example file>" "<project>" "renders/<slug>-v1.mp4" --example-at 1.2,3.0,6.5 --at 0.8,2.4,5.0
 ```
-Example frames on top, the buyer's reel below, in `work/compare/`. Pick pairs that show the same KIND of moment
-(a caption line, a marked word, a title, a graphic). Look at it and fix what is off: size against the frame,
-colour, position, weight. One polish pass.
+Cuadros del ejemplo arriba, el reel del usuario abajo, en `work/compare/`. Elige pares que muestren el mismo TIPO de
+momento (una línea de subtítulos, una palabra marcada, un título, un gráfico). Míralo y corrige lo que no calza:
+tamaño respecto del cuadro, color, posición, grosor. Una pasada de pulido.
 
-Then tell the buyer, in plain words: "I studied your example. Here is what I matched: ... And the two things I
-could not: ..." One line each. Send the sheet with the reel.
+Luego dile al usuario, con palabras simples: "Estudié tu ejemplo. Esto es lo que logré igualar: ... Y las dos cosas que
+no pude: ..." Una línea cada una. Manda la hoja junto con el reel.
 
-## 5. It becomes theirs
+## 5. Pasa a ser suyo
 
-- `ST/my-style.md`: the notes from step 2, the face that stands in for theirs, what could not be matched, their
-  standing notes ("always", "never"), and where the example's study is.
-- `ST/my-style.json`: `{"name": "...", "caption": {...}, "layers": [always-on ones], "grade": "...", "css": "...",
-  "pace": "...", "sound": "..."}`. `build_reel.py` reads `caption`, always-on `layers`, `grade` and `css` on every
-  build; `pace` and `sound` are notes for you when you write `edl.json` and `plan.json`.
-- From then on "edit it" uses their style without asking. It sits above the saved picks. A built-in caption style
-  or an effect is only used when the buyer asks for it, and an effect is then restyled to their style
+- `ST/my-style.md`: las notas del paso 2, la fuente que reemplaza a la suya, lo que no se pudo igualar, sus notas
+  fijas ("siempre", "nunca") y dónde está el estudio del ejemplo.
+- `ST/my-style.json`: `{"name": "...", "caption": {...}, "layers": [las fijas], "grade": "...", "css": "...",
+  "pace": "...", "sound": "..."}`. `build_reel.py` lee `caption`, las `layers` fijas, `grade` y `css` en cada armado;
+  `pace` y `sound` son notas para ti cuando escribes `edl.json` y `plan.json`.
+- Desde ahí "edítalo" usa su estilo sin preguntar. Está por encima de las elecciones guardadas. Un estilo de
+  subtítulos de la skill o un efecto solo se usa cuando el usuario lo pide, y ese efecto se reestiliza a su estilo
   (`effects/INDEX.md`, "Restyling an effect's own words").
-- "Go back to my picks": `build_reel.py --no-my-style` for one reel, or put `my-style.json` aside (rename it,
-  never delete it) for good.
+- "Vuelve a mis elecciones": `build_reel.py --no-my-style` para un reel, o deja a un lado `my-style.json`
+  (cámbiale el nombre, nunca lo borres) para siempre.

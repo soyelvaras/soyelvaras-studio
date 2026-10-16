@@ -1,106 +1,115 @@
-# Captions: the 19 styles, the word marks, where they sit
+# Subtítulos: los 19 estilos, las marcas de palabras, dónde van
 
-One engine (`SK/engine/captions.py`), 19 styles, all driven by the same `words.json`. `build_reel.py` picks the style
-from the saved picks. You never edit the engine for a reel: you clean the words, mark them, and write the title.
-A buyer with a style of their own (an example they showed, a look they described) gets a custom caption style
-instead, a spec the same engine renders: `references/replicate.md`. The marks and the bands below work the same.
+Un solo motor (`SK/engine/captions.py`), 19 estilos, todos manejados por el mismo `words.json`. `build_reel.py` elige
+el estilo según las elecciones guardadas. Nunca editas el motor para un reel: limpias las palabras, las marcas y
+escribes el título. Un usuario con estilo propio (un ejemplo que mostró, un look que describió) usa en cambio un
+estilo de subtítulos a medida, una especificación que el mismo motor dibuja: `references/replicate.md`. Las marcas y
+las franjas de abajo funcionan igual.
 
-## The 19
+Todos los estilos usan por defecto los colores de Soy Elvaras: texto crema #F2ECDF y acento dorado #C9A15B donde el
+original usaba blanco y amarillo.
 
-| Key | Name | The look | Uses the marks | Sits | Needs |
+## Los 19
+
+| Clave | Nombre | El look | Usa las marcas | Dónde va | Necesita |
 |---|---|---|---|---|---|
-| `arcade` | Arcade | White pixel type, short phrases, hard cuts | cta lands twice the size in quotes | chest | |
-| `low-key` | Low Key | Tiny quiet captions that build word by word, under a pinned white title pill | | chest + title at the top | a title |
-| `field-notes` | Field Notes | Quiet book serif, whole phrases fade in, each in a different open spot | | open wall left / chest / open wall right | open wall beside the speaker (falls back to the chest) |
-| `anchor` | Anchor | Bold clean sans in one spot, hard cuts | num and emph take over the frame with a glow, cta drops under in italic | chest | |
-| `loud-lowercase` | Loud Lowercase | Huge tight lowercase, one word at a time | num parks top left with what it counts, cta in caps | chest + top left | |
-| `vanity` | Vanity | Tall cream serif, one word at a time | any marked word flips to yellow italic, key gets a small icon, cta in quotes | chest | |
-| `bubblegum` | Bubblegum | One glowing pink word above the head, swashy pink title | key keeps its capital | above the head + title | room above the head (falls back to the chest), a swash title |
-| `moodboard` | Moodboard | Bold rounded line, thin italic line typed under it, sparkles | key keeps its capital | chest | |
-| `golden-hour` | Golden Hour | Gold italic film subtitles | cta in quotes | lower third | |
-| `spec-sheet` | Spec Sheet | Small wide caps dead centre, big tilted yellow tags | num and cta become tags top left | chest + top left | |
-| `bold` | Bold | Heavy tight lowercase, big words BEHIND the head | num / emph / cta go giant behind the head (emph and cta in yellow) | chest + behind the head | a clean cutout, room above the head (else the big word lands over the chest) |
-| `cool-girl` | Cool Girl | Small calm lowercase, one big yellow serif italic line per thought | num / emph / cta are the big line | chest (a tall block) | |
-| `cool-dude` | Cool Dude | Tiny wide caps over one heavy serif word | num / emph / cta are the serif word | chest (a tall block) | |
-| `karaoke` | Karaoke | Wide caps on a frosted dark plate, the spoken word lights up | | chest | |
-| `signature` | Signature | Clean wide caps; a marker script signs over heavy italic caps | num and cta get the script moment | chest | |
-| `keyword` | Keyword | One clean tight lowercase line | every marked word is yellow; a marked word alone goes bigger | chest | |
-| `weight-shift` | Weight Shift | Thin lead-in, heavy black punch word | num / emph / cta are the punch | chest (a tall block) | |
-| `terminal` | Terminal | Code-font lead-in, one big serif italic word | num / emph / cta are the punch | chest (a tall block) | |
-| `outline` | Outline | Tall condensed caps, the punch word drawn hollow | num / emph / cta are the punch | chest (a tall block) | |
+| `arcade` | Arcade | Letra pixelada crema, frases cortas, cortes secos | cta aparece al doble de tamaño entre comillas | pecho | |
+| `low-key` | Discreto | Subtítulos pequeños y tranquilos que se arman palabra por palabra, bajo un título fijo en cápsula | | pecho + título arriba | un título |
+| `field-notes` | Bitácora | Serif de libro tranquila, frases completas que aparecen suaves, cada una en un espacio libre distinto | | pared libre izquierda / pecho / pared libre derecha | pared libre al lado de la persona (si no, va al pecho) |
+| `anchor` | Noticiero | Sans gruesa y limpia en un solo lugar, cortes secos | num y emph toman el cuadro con brillo, cta cae debajo en itálica | pecho | |
+| `loud-lowercase` | Minúscula Gigante | Minúsculas enormes y apretadas, una palabra a la vez | num queda arriba a la izquierda con lo que cuenta, cta en mayúsculas | pecho + arriba a la izquierda | |
+| `vanity` | Tocador | Serif alta en crema, una palabra a la vez | toda palabra marcada pasa a itálica dorada, key lleva un ícono pequeño, cta entre comillas | pecho | |
+| `bubblegum` | Chicle | Una palabra brillante sobre la cabeza, título con trazo | key mantiene su mayúscula | sobre la cabeza + título | espacio sobre la cabeza (si no, va al pecho), un título con trazo |
+| `moodboard` | Moodboard | Línea gruesa redondeada, línea itálica fina escrita debajo, destellos | key mantiene su mayúscula | pecho | |
+| `golden-hour` | Hora Dorada | Subtítulos de cine en itálica dorada | cta entre comillas | tercio inferior | |
+| `spec-sheet` | Ficha Técnica | Mayúsculas anchas y pequeñas al centro, etiquetas doradas inclinadas | num y cta pasan a etiquetas arriba a la izquierda | pecho + arriba a la izquierda | |
+| `bold` | Contundente | Minúsculas gruesas, palabras grandes DETRÁS de la cabeza | num / emph / cta van gigantes detrás de la cabeza (emph y cta en dorado) | pecho + detrás de la cabeza | recorte limpio, espacio sobre la cabeza (si no, la palabra grande cae sobre el pecho) |
+| `cool-girl` | Relajada | Minúsculas pequeñas y calmas, una línea grande en serif itálica dorada por idea | num / emph / cta son la línea grande | pecho (un bloque alto) | |
+| `cool-dude` | Elegante | Mayúsculas diminutas y espaciadas sobre una palabra serif gruesa | num / emph / cta son la palabra serif | pecho (un bloque alto) | |
+| `karaoke` | Karaoke | Mayúsculas anchas sobre placa bosque esmerilada, la palabra dicha se ilumina | | pecho | |
+| `signature` | Firma | Mayúsculas anchas y limpias; una firma a mano sobre mayúsculas itálicas gruesas | num y cta tienen el momento de la firma | pecho | |
+| `keyword` | Palabra Clave | Una línea limpia en minúsculas | toda palabra marcada va en dorado; una palabra marcada sola va más grande | pecho | |
+| `weight-shift` | Contraste | Entrada fina, palabra de golpe gruesa | num / emph / cta son el golpe | pecho (un bloque alto) | |
+| `terminal` | Terminal | Entrada en letra de código, una palabra grande en serif itálica | num / emph / cta son el golpe | pecho (un bloque alto) | |
+| `outline` | Contorno | Mayúsculas altas y condensadas, la palabra de golpe dibujada hueca | num / emph / cta son el golpe | pecho (un bloque alto) | |
 
-`none` = no captions at all (titles and effects only).
+`none` = sin subtítulos (solo títulos y efectos).
 
-## Marking the words (do this for every reel)
+## Marcar las palabras (en cada reel)
 
-Each word in `words.json` can carry one mark in its `e` field. The marks are what make a caption style look
-designed instead of typed.
+Cada palabra de `words.json` puede llevar una marca en su campo `e`. Las marcas son las que hacen que un estilo de
+subtítulos se vea diseñado y no tipeado.
 
-| Mark | Meaning | Mark it when |
+| Marca | Significado | Cuándo marcarla |
 |---|---|---|
-| `num` | a number worth showing big | the number IS the point of the line: "7 video effects", "$500 a day", "10x". Not for passing numbers ("one of the things", a year, a time of day). |
-| `key` | a name or brand | every product, app, company or person said by name: "Claude", "Instagram". It keeps its capital in lowercase styles and turns yellow in Keyword. |
-| `emph` | the word the line leans on | a sentence has no number and no comment keyword, and one word carries it ("never", "automatically", "everything"). The word you would stress out loud. |
-| `cta` | the comment keyword | the word they ask people to comment: "comment EDIT". Exactly one per reel. |
+| `num` | un número que vale la pena mostrar grande | el número ES el punto de la frase: "7 efectos de video", "$500 al día", "10x". No para números de paso ("una de las cosas", un año, una hora). |
+| `key` | un nombre o una marca | todo producto, app, empresa o persona dicha por su nombre: "Claude", "Instagram". Mantiene su mayúscula en los estilos en minúscula y va en dorado en Palabra Clave. |
+| `emph` | la palabra en la que se apoya la frase | una oración sin número ni palabra para comentar, donde una palabra la carga ("nunca", "automáticamente", "todo"). La palabra que acentuarías en voz alta. |
+| `cta` | la palabra para comentar | la palabra que pide comentar: "comenta EDIT". Exactamente una por reel. |
 
-The rule:
-1. Run `PY "SK/scripts/marks.py" "<project>"` AFTER fixing mishearings. It guesses `num` (digits and number words),
-   `cta` (the word after "comment") and `key` (capitalised words that do not start a sentence). It never guesses `emph`.
-2. Then go through the transcript sentence by sentence:
-   - at most ONE of `num` / `emph` per sentence (they are the punch; two punches fight). Keep the one the
-     sentence is about and remove the other. A long sentence counts part by part: a comma, "and", "then" or "so"
-     starts a new part.
-   - the comment keyword ALWAYS keeps its `cta` mark, also when its sentence already has a `num` or an `emph`
-     (a one-sentence reel: "get all 21 effects, then just comment VIDEO" keeps `21` num and `VIDEO` cta).
-   - `key` on every name, as many as there are. Check sentence openers by hand: the script cannot tell a name that
-     starts a sentence from a normal word (it lists them).
-   - add `emph` where a sentence has no punch yet and one word clearly carries it. Not every sentence needs one.
-   - never mark filler ("the", "and", "so", "that", "for").
-3. A short reel (under 10 seconds) usually ends up with 2 to 5 marks. More than one mark every 4 words is too many.
+La regla:
+1. Ejecuta `PY "SK/scripts/marks.py" "<project>"` DESPUÉS de corregir lo mal escuchado. Propone `num` (dígitos y
+   números escritos, en español o inglés), `cta` (la palabra después de "comenta" / "comment") y `key` (palabras con
+   mayúscula que no empiezan una oración). Nunca propone `emph`.
+2. Luego recorre la transcripción oración por oración:
+   - como máximo UNA de `num` / `emph` por oración (son el golpe; dos golpes pelean). Deja la que trata la oración y
+     saca la otra. Una oración larga cuenta por partes: una coma, "y", "luego" o "entonces" empieza una parte nueva.
+   - la palabra para comentar SIEMPRE mantiene su marca `cta`, aunque su oración ya tenga `num` o `emph` (un reel de
+     una oración: "consigue los 21 efectos, y solo comenta VIDEO" mantiene `21` num y `VIDEO` cta).
+   - `key` en cada nombre, todos los que haya. Revisa a mano las palabras que abren oración: el script no distingue un
+     nombre que empieza una oración de una palabra normal (las lista).
+   - agrega `emph` donde una oración todavía no tiene golpe y una palabra claramente lo carga. No toda oración lo
+     necesita.
+   - nunca marques relleno ("el", "la", "y", "que", "para", "the", "and").
+3. Un reel corto (menos de 10 segundos) suele terminar con 2 a 5 marcas. Más de una marca cada 4 palabras es
+   demasiado.
 
-Example: "Everybody's talking about Claude editing videos, so here are seven video effects that Claude created
-for me." -> `Claude` key, `seven` num (write it as `7` if the buyer's style shows numbers big), second `Claude` key.
+Ejemplo: "Todos hablan de que Claude edita videos, así que aquí van siete efectos de video que Claude creó para mí."
+-> `Claude` key, `siete` num (escríbelo `7` si el estilo muestra los números grandes), segundo `Claude` key.
 
 ```json
-{"text": "seven", "start": 3.18, "end": 3.52, "e": "num"}
+{"text": "7", "start": 3.18, "end": 3.52, "e": "num"}
 ```
 
-## Titles come from the hook
+## Los títulos salen del gancho (Titles come from the hook)
 
-`plan.json` (started by `init_project.py` with a first guess, rewrite it):
-- `"title": ["line one", "line two"]`: the reel's hook as two short lines, up to about 26 characters each, sentence
-  case. Low Key pins it at the top for the whole reel. Overall styles use it as their fallback headline.
-- `"swash": ["Line One", "Line Two"]`: the same idea, shorter (up to about 16 characters a line), Title Case.
-  Bubblegum's title.
-Write what the reel promises, in the speaker's own words: "7 video effects" / "Claude made for me". Not a summary,
-not clickbait they did not say.
+`plan.json` (lo empieza `init_project.py` con una primera propuesta; reescríbelo):
+- `"title": ["línea uno", "línea dos"]`: el gancho del reel en dos líneas cortas, hasta unos 26 caracteres cada una,
+  en minúsculas normales. Discreto lo deja fijo arriba todo el reel. Los estilos completos lo usan como titular de
+  respaldo.
+- `"swash": ["Línea Uno", "Línea Dos"]`: la misma idea, más corta (hasta unos 16 caracteres por línea), con mayúscula
+  inicial en cada palabra. El título de Chicle.
+Escribe lo que el reel promete, con las palabras de la persona: "7 efectos de video" / "que Claude hizo para mí". No
+un resumen, ni un anzuelo que no dijo.
 
-## Where captions sit (worked out per clip, never typed in)
+## Dónde van los subtítulos (se calcula por clip, nunca se escribe a mano)
 
-`PY "SK/scripts/layout.py" "<project>"` samples the reel, cuts the speaker out of just those frames, reads the head
-off the silhouette and writes `layout.json`. Look at `work/layout/check.jpg` once (up to four frames, half size):
-the green box has to run from the top of the head to the chin, and its numbers are printed under it. Blue lines are
-the bands, red is the Reels safe zone. When the clean cutout is installed (`setup.py --matting`) the samples are cut
-out with it, which takes about a minute and is not fooled by what hangs behind the head.
+`PY "SK/scripts/layout.py" "<project>"` toma muestras del reel, recorta a la persona solo en esos cuadros, lee la
+cabeza desde la silueta y escribe `layout.json`. Mira `work/layout/check.jpg` una vez (hasta cuatro cuadros, a la
+mitad del tamaño): la caja verde tiene que ir de lo alto de la cabeza a la barbilla, y sus números están impresos
+debajo. Las líneas azules son las franjas, el rojo es la zona segura de Reels. Cuando el recorte limpio está
+instalado (`setup.py --matting`) las muestras se recortan con él, lo que toma cerca de un minuto y no se confunde con
+lo que cuelga detrás de la cabeza.
 
-| Band | In `bands` | Rule | When there is no room |
+| Franja | En `bands` | Regla | Cuando no hay espacio |
 |---|---|---|---|
-| Above the head | `Y_ABOVE_HEAD` | 104px above the highest head position, never above y 236 | `null`: Bubblegum's word goes over the chest |
-| Behind the head | `HEAD_TOP` | Bold's big word shows 72% of its height above the head, shrinking to fit under y 226 | under 110px of type: the word lands over the chest, in front |
-| Chest | `Y_CHEST` | y 1170, as long as the chin is at least 100px above it | the face is low or fills the frame: the picture is lifted (up to 260px, `lift`) and the captions take the collar band under the chin. `fits.chest` says `tight`: one-line styles only |
-| Lower third | `Y_LOWER` | y 1376 (one line ends at 1452) | same lift |
-| Open wall | `WALL_LEFT`, `WALL_RIGHT` | beside the speaker at face height, at least 240px wide | `null`: Field Notes uses the spots that exist |
+| Sobre la cabeza | `Y_ABOVE_HEAD` | 104 px sobre la posición más alta de la cabeza, nunca sobre y 236 | `null`: la palabra de Chicle va sobre el pecho |
+| Detrás de la cabeza | `HEAD_TOP` | la palabra grande de Contundente muestra el 72% de su alto sobre la cabeza, achicándose para caber bajo y 226 | menos de 110 px de letra: la palabra cae sobre el pecho, adelante |
+| Pecho | `Y_CHEST` | y 1170, siempre que la barbilla esté al menos 100 px más arriba | la cara está baja o llena el cuadro: la imagen se sube (hasta 260 px, `lift`) y los subtítulos toman la franja del cuello bajo la barbilla. `fits.chest` dice `tight`: solo estilos de una línea |
+| Tercio inferior | `Y_LOWER` | y 1376 (una línea termina en 1452) | el mismo lift |
+| Pared libre | `WALL_LEFT`, `WALL_RIGHT` | al lado de la persona a la altura de la cara, al menos 240 px de ancho | `null`: Bitácora usa los lugares que existen |
 
-Punch-ins move the head between segments: the bands are the ones that are safe in every segment, and Bold reads
-the head height of the segment each word falls in.
+Los acercamientos mueven la cabeza entre tramos: las franjas son las que quedan seguras en todos los tramos, y
+Contundente lee la altura de la cabeza del tramo en que cae cada palabra.
 
-The quick cutout can be fooled: a framed picture, poster or lamp right behind the head joins the outline and the
-box starts about 100px too high and stops at the nose. `layout.py` prints `CHECK THE HEAD BOX` when it could not
-find a neck under the head (the usual sign, also normal with long hair or a hood), and `fx_new.py` / `fx_add.py`
-print `CHECK layout.json` when an effect's own clean cutout disagrees with it by more than 60px. Either way: if
-`check.jpg` shows the green box off the face (too high, a poster, a second person), run `setup.py --matting` once
-and `layout.py` again, or correct `head` and `bands` in `layout.json` by hand. They are plain numbers in the
-1080x1920 frame. Bold, Bubblegum, Field Notes and the face box of the self-check all read them.
+El recorte rápido se puede confundir: un cuadro, póster o lámpara justo detrás de la cabeza se une a la silueta y la
+caja parte unos 100 px más arriba y se detiene en la nariz. Los lentes producen el mismo error (la caja termina en la
+nariz). `layout.py` imprime `CHECK THE HEAD BOX` cuando no encontró un cuello bajo la cabeza (la señal típica, también
+normal con pelo largo o capucha), y `fx_new.py` / `fx_add.py` imprimen `CHECK layout.json` cuando el recorte limpio
+de un efecto difiere en más de 60 px. En cualquier caso: si `check.jpg` muestra la caja verde fuera de la cara (muy
+alta, un póster, una segunda persona, cortada en la nariz), ejecuta `setup.py --matting` una vez y `layout.py` de
+nuevo, o corrige `head` y `bands` en `layout.json` a mano. Son números simples en el cuadro de 1080x1920. Contundente,
+Chicle, Bitácora y la caja de la cara de la autorrevisión los leen.
 
-Tall styles (Cool Girl, Cool Dude, Weight Shift, Terminal, Outline) stack three lines from about 70px above
-`Y_CHEST`. On a `tight` chest band tell the buyer and use a one-line style for that reel.
+Los estilos altos (Relajada, Elegante, Contraste, Terminal, Contorno) apilan tres líneas desde unos 70 px sobre
+`Y_CHEST`. Con una franja de pecho `tight` avísale al usuario y usa un estilo de una línea para ese reel.

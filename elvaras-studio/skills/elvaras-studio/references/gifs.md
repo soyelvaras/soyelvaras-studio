@@ -1,39 +1,40 @@
 # GIFs
 
-Only when the buyer asks for them: "add a GIF when I say X", "put some GIFs in this one", or "always use GIFs"
-(then write it into `ST/my-style.md` and do it on every reel). Never on your own.
+Solo cuando el usuario los pide: "agrega un GIF cuando digo X", "ponle unos GIFs a este", o "siempre usa GIFs"
+(entonces escríbelo en `ST/my-style.md` y hazlo en cada reel). Nunca por tu cuenta.
 
-## Which lines get one
+## Qué frases llevan uno
 
-A GIF is a reaction, so it goes on a line that has one in it: a joke, a surprise, a big number, a mistake, a win.
-One to three in a reel, each on for 1.5 to 3 seconds, never two at once and never during an effect slot. The
-buyer named the line or the GIF: do exactly that. "Add GIFs where they fit": you pick the lines from `words.json`.
+Un GIF es una reacción, así que va en una frase que tenga una: un chiste, una sorpresa, un número grande, un error,
+un logro. Uno a tres por reel, cada uno de 1,5 a 3 segundos, nunca dos a la vez y nunca durante un espacio de efecto.
+Si el usuario nombró la frase o el GIF: haz exactamente eso. "Agrega GIFs donde calcen": tú eliges las frases desde
+`words.json`.
 
-## Find it, look at it, place it
+## Buscarlo, mirarlo, ubicarlo
 
 ```
-PY "SK/scripts/gif_find.py" "<project>" "mind blown"      1 to 4 words: the reaction, not the sentence
-       GIFs from Giphy and Tenor on one numbered sheet. LOOK at it. Pick the one that reads at a glance and
-       fits the buyer's tone.
-PY "SK/scripts/gif_add.py" "<project>" "<link of the one you picked>" --from 3.2 --to 5.4
-       then build_reel.py --safe and look at one snapshot inside that time
+PY "SK/scripts/gif_find.py" "<project>" "mind blown"      1 a 4 palabras: la reacción, no la frase (en inglés
+       encuentra más resultados). GIFs de Giphy y Tenor en una hoja numerada. MÍRALA. Elige el que se entiende de
+       un vistazo y calza con el tono del usuario.
+PY "SK/scripts/gif_add.py" "<project>" "<link del que elegiste>" --from 3.2 --to 5.4
+       luego build_reel.py --safe y mira una instantánea dentro de ese tiempo
 ```
-- Nothing good on the sheet: run it again with other words. Use real GIFs, the kind people know from their
-  group chats. `--stickers` (cut-out shapes) only when the buyer asks for a sticker.
-- The buyer gave a GIF file or a link (Giphy, Tenor, or one that ends in .gif): skip the search and pass it
-  straight to `gif_add.py`.
-- Where it sits: `gif_add.py` picks a spot that keeps the face clear (above the head, else the open wall beside
-  the speaker). Move it with `--place above|left|right|top|chest` or `--at X,Y`, resize with `--width`. Run it
-  again with the same `--id` to replace it, `--remove <id>` to take it out.
-- In the snapshot: the GIF is not on the face, not on a caption, and not under the pinned title. It follows the
-  buyer's style like everything else: a calm style gets a small one, not three loud ones.
-- `STATUS gifs NONE` (the search gave nothing or is offline): say "I couldn't find a GIF for that line. Send me
-  one, or a link to one, and I'll drop it in."
+- Nada bueno en la hoja: búscalo de nuevo con otras palabras. Usa GIFs reales, de los que la gente conoce de sus
+  grupos de chat. `--stickers` (formas recortadas) solo cuando el usuario pide un sticker.
+- El usuario dio un archivo GIF o un link (Giphy, Tenor, o uno que termina en .gif): sáltate la búsqueda y pásalo
+  directo a `gif_add.py`.
+- Dónde va: `gif_add.py` elige un lugar que deja la cara libre (sobre la cabeza, si no, la pared libre al lado de la
+  persona). Muévelo con `--place above|left|right|top|chest` o `--at X,Y`, cambia el tamaño con `--width`. Ejecútalo
+  de nuevo con el mismo `--id` para reemplazarlo, `--remove <id>` para sacarlo.
+- En la instantánea: el GIF no está sobre la cara, ni sobre un subtítulo, ni bajo el título fijo. Sigue el estilo del
+  usuario como todo lo demás: un estilo tranquilo lleva uno pequeño, no tres llamativos.
+- `STATUS gifs NONE` (la búsqueda no dio nada o no hay conexión): di "No encontré un GIF para esa frase. Mándame uno,
+  o un link, y lo pongo."
 
-## What kind
+## De qué tipo
 
-Reaction GIFs from shows, films and memes are what the buyer means, so use them: asking for GIFs is the one
-exception to hard rule 4 ("never a real person who is not the buyer"). The first time you add GIFs for a buyer,
-say once: "These GIFs come from Giphy and Tenor, the same ones you see in chats."
+Los GIFs de reacción de series, películas y memes son lo que el usuario quiere decir, así que úsalos: pedir GIFs es la
+única excepción a la regla fija 4 ("nunca una persona real que no sea el usuario"). La primera vez que agregues GIFs,
+dilo una vez: "Estos GIFs vienen de Giphy y Tenor, los mismos que ves en los chats."
 
-Say it plainly at delivery: "GIFs: a mind-blown one on the line about the price."
+Dilo simple en la entrega: "GIFs: uno de cabeza explotando en la frase del precio."
