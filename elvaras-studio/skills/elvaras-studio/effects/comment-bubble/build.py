@@ -226,7 +226,7 @@ def arrow_up(color, size):
 
 
 def heart(size):
-    return (f'<svg width="{size}" height="{size}" viewBox="0 0 24 24"><path fill="#FF4A6E" d="M12 21.2s-7.6-4.6-9.6-9.5C1 8.1 3 4.6 6.6 4.6c2 0 '
+    return (f'<svg width="{size}" height="{size}" viewBox="0 0 24 24"><path fill="#C9A15B" d="M12 21.2s-7.6-4.6-9.6-9.5C1 8.1 3 4.6 6.6 4.6c2 0 '
             '3.6 1 5.4 3.1 1.8-2.1 3.4-3.1 5.4-3.1 3.6 0 5.6 3.5 4.2 7.1-2 4.9-9.6 9.5-9.6 9.5z"/></svg>')
 
 
@@ -286,7 +286,7 @@ def comment_bubble(L):
     <div id="field" style="left:{L['fx']:.1f}px;top:{L['fy']:.1f}px;width:{L['fw']:.1f}px;height:{P(FIELD_H)}px">
       <div id="fring"></div>
       <div id="fav">{person(P(76), 'f')}</div>
-      <div id="ph" style="left:{P(FIELD_TEXT_X + 14)}px">Agrega un comentario...</div>
+      <div id="ph" style="left:{P(FIELD_TEXT_X + 14)}px">Comenta aquí...</div>
       <div id="typed" style="left:{P(FIELD_TEXT_X)}px">{keys}</div>
       <div id="caret" style="left:{P(FIELD_TEXT_X - 1)}px"></div>
       <div id="send"><div id="sendoff">{arrow_up('rgba(255,255,255,.55)', P(42))}</div><div id="sendon">{arrow_up(INK, P(42))}</div></div>
