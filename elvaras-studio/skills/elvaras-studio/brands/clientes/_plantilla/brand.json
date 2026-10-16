@@ -1,0 +1,12 @@
+{
+  "name": "Nombre del cliente",
+  "handle": "@cliente",
+  "colors": { "ground": "#000000", "text": "#FFFFFF", "accent": "#FFD400", "text_on_accent": "#000000" },
+  "fonts": { "golpe": "Bebas Neue", "remate": "Instrument Serif (itálica)", "texto": "Work Sans" },
+  "captions": {
+    "spoken": { "font": "Bebas Neue", "color": "#FFFFFF", "case": "upper" },
+    "keyword": { "font": "Bebas Neue", "color": "#FFD400", "case": "upper" }
+  },
+  "voice": "",
+  "language": "es"
+}

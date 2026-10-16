@@ -1,0 +1,9 @@
+{
+  "name": "elvaras-studio",
+  "displayName": "Soy Elvaras Studio",
+  "version": "0.1.0",
+  "description": "Convierte clips verticales hablando a cámara en reels terminados con la identidad de Soy Elvaras: mejores tomas, cortes, subtítulos, efectos y sonido. Uso personal.",
+  "author": {
+    "name": "Cristobal Varas"
+  }
+}

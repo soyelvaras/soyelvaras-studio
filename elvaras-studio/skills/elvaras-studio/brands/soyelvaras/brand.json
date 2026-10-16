@@ -1,0 +1,42 @@
+{
+  "name": "Soy Elvaras",
+  "handle": "@soyelvaras",
+  "web": "soyelvaras.cl",
+  "logo": {
+    "wordmark": "SOY EL + Varas (Bebas Neue crema + Instrument Serif itálica dorada)",
+    "seal": "logo-sello.svg"
+  },
+  "colors": {
+    "bosque": "#13281F",
+    "musgo": "#2C4A3B",
+    "cafe": "#5B3F2C",
+    "dorado": "#C9A15B",
+    "crema": "#F2ECDF",
+    "tinta": "#141615",
+    "salvia": "#8FA394",
+    "crema_suave": "#C9CFC4",
+    "papel": "#FBF8F1",
+    "linea": "#DDD4C2"
+  },
+  "roles": {
+    "ground": "bosque",
+    "text": "crema",
+    "accent": "dorado",
+    "text_on_accent": "tinta",
+    "secondary_text": "salvia",
+    "light_ground": "crema",
+    "text_on_light": "tinta"
+  },
+  "fonts": {
+    "golpe": "Bebas Neue",
+    "remate": "Instrument Serif (itálica)",
+    "texto": "Work Sans"
+  },
+  "captions": {
+    "spoken": { "font": "Bebas Neue", "color": "#F2ECDF", "case": "upper" },
+    "keyword": { "font": "Instrument Serif", "style": "italic", "color": "#C9A15B", "case": "as-said" },
+    "stroke_or_shadow": "#13281F"
+  },
+  "voice": "Español de Chile, directo y cercano. Golpe en mayúsculas, remate en itálica dorada.",
+  "language": "es"
+}

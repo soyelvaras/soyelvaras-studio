@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "selector",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:/Users/crist/Documents/soyelvaras-studio/elvaras-studio/skills/elvaras-studio/picker/serve.py",
+        "--no-open", "--keep-alive", "--port", "4790",
+        "--config", "C:/Users/crist/Documents/soyelvaras-studio/dev/studio-picks.json"
+      ],
+      "port": 4790
+    }
+  ]
+}

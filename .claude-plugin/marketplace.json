@@ -1,0 +1,13 @@
+{
+  "name": "soyelvaras-studio",
+  "owner": {
+    "name": "Cristobal Varas"
+  },
+  "plugins": [
+    {
+      "name": "elvaras-studio",
+      "source": "./elvaras-studio",
+      "description": "Soy Elvaras Studio: edición de reels con la marca Soy Elvaras. Uso personal."
+    }
+  ]
+}
