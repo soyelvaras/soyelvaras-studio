@@ -31,7 +31,7 @@ saques la vuelta a una negativa, dile al usuario la línea que imprime.
 | | Rápido: `cutout.py` | Limpio: `rvm_cut.py` |
 |---|---|---|
 | Tiempo | unos 7 s por segundo de video en Apple Silicon, varias veces eso en otros equipos | unos 1,2 s por CUADRO en Apple Silicon (0,4 en este computador): un reel de 20 s son unos 12 minutos en Mac |
-| Sirve para | medir (layout.py hace uno pequeño propio), Etiqueta Pegada | todo lo que va DETRÁS de la persona o sale de una tarjeta: Contundente, Pizarra (`--hard`), Muestra y Cuenta, la mayoría de los efectos. Todo efecto listo usa este |
+| Sirve para | medir (layout.py hace uno pequeño propio), Etiqueta Pegada | todo lo que va DETRÁS de la persona o sale de una tarjeta: Contundente, Muestra y Cuenta, la mayoría de los efectos. Todo efecto listo usa este |
 | Punto débil | puede tomar una cara de un cuadro o póster como la persona; manos bruscas | lento; necesita `setup.py --matting` una vez. Ropa del mismo color que la silla o el sillón detrás se mezcla con ella |
 
 Prefiere el limpio siempre que se vaya a ver un borde. Dile al usuario el tiempo ANTES de empezar, córrelo en segundo

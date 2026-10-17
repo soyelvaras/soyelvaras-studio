@@ -1,24 +1,195 @@
 {
-  "configKey": "captionStyle",
-  "styles": [
-    {"n": 1, "key": "arcade", "name": "Arcade", "look": "Letra pixelada crema, como el menú de un juego antiguo.", "motion": "Frases cortas, cortes secos. La palabra clave aparece al doble de tamaño.", "bestFor": "Tecnología, IA y tutoriales de herramientas", "preview": "previews/arcade.mp4", "en": "Arcade"},
-    {"n": 2, "key": "low-key", "name": "Discreto", "look": "Subtítulos pequeños y tranquilos bajo un título fijo en cápsula.", "motion": "Cada frase se arma palabra por palabra.", "bestFor": "Hablar directo a cámara, contar historias", "preview": "previews/low-key.mp4", "en": "Low Key"},
-    {"n": 3, "key": "field-notes", "name": "Bitácora", "look": "Serif de libro, crema y tranquila, en minúsculas normales.", "motion": "Frases completas que aparecen suaves, cada una en un espacio libre distinto del cuadro.", "bestFor": "Voz en off, viajes, piezas reflexivas", "preview": "previews/field-notes.mp4", "en": "Field Notes"},
-    {"n": 4, "key": "anchor", "name": "Noticiero", "look": "Sans gruesa y limpia, fija en un solo lugar.", "motion": "Cortes secos. Números y palabras clave toman el cuadro con un brillo.", "bestFor": "Noticias, explicaciones, análisis", "preview": "previews/anchor.mp4", "en": "Anchor"},
-    {"n": 5, "key": "loud-lowercase", "name": "Minúscula Gigante", "look": "Minúsculas enormes y apretadas.", "motion": "Una palabra a la vez. El número queda arriba a la izquierda como título.", "bestFor": "Ganchos con historia, estilo de vida", "preview": "previews/loud-lowercase.mp4", "speaker": "her", "en": "Loud Lowercase"},
-    {"n": 6, "key": "vanity", "name": "Tocador", "look": "Serif alta en crema, palabras clave en itálica dorada.", "motion": "Una palabra a la vez, con un ícono pequeño junto a lo que nombras.", "bestFor": "Belleza, moda, tutoriales", "preview": "previews/vanity.mp4", "speaker": "her", "en": "Vanity"},
-    {"n": 7, "key": "bubblegum", "name": "Chicle", "look": "Una palabra crema con brillo dorado sobre tu cabeza, bajo un título con trazo.", "motion": "Una palabra a la vez. El título entra desenfocado.", "bestFor": "Estilo de vida, diario, contenido divertido", "preview": "previews/bubblegum.mp4", "speaker": "her", "en": "Bubblegum"},
-    {"n": 8, "key": "moodboard", "name": "Moodboard", "look": "Línea gruesa redondeada, línea itálica fina debajo y destellos pequeños.", "motion": "La línea itálica se escribe sola.", "bestFor": "Contenido estético y listas de tips, con o sin cara", "preview": "previews/moodboard.mp4", "speaker": "her", "en": "Moodboard"},
-    {"n": 9, "key": "golden-hour", "name": "Hora Dorada", "look": "Subtítulos de cine en itálica dorada, abajo en el cuadro.", "motion": "Frases completas, cortes secos.", "bestFor": "B-roll cinematográfico, videos de marca", "preview": "previews/golden-hour.mp4", "en": "Golden Hour"},
-    {"n": 10, "key": "spec-sheet", "name": "Ficha Técnica", "look": "Mayúsculas anchas y pequeñas, etiquetas doradas inclinadas para los números.", "motion": "Las palabras entran con una estela de movimiento.", "bestFor": "Equipos, reseñas, todo lo que tenga precios", "preview": "previews/spec-sheet.mp4", "en": "Spec Sheet"},
-    {"n": 11, "key": "bold", "name": "Contundente", "look": "Minúsculas gruesas sobre tu pecho. Las palabras importantes van gigantes detrás de tu cabeza.", "motion": "Cada palabra aparece cuando la dices.", "bestFor": "Ganchos, opiniones, todo lo que tenga energía", "preview": "previews/bold.mp4", "en": "Bold"},
-    {"n": 12, "key": "cool-girl", "name": "Relajada", "look": "Minúsculas pequeñas y calmas, una línea grande en itálica dorada y destellos.", "motion": "La línea pequeña se arma, la itálica cae en la palabra clave.", "bestFor": "Estilo de vida, venta suave, marca personal", "preview": "previews/cool-girl.mp4", "speaker": "her", "en": "Cool Girl"},
-    {"n": 13, "key": "cool-dude", "name": "Elegante", "look": "Mayúsculas diminutas y espaciadas sobre una palabra serif gruesa.", "motion": "Las letras serif suben a su lugar una por una.", "bestFor": "Entrevistas en estudio, contenido premium y sobrio", "preview": "previews/cool-dude.mp4", "en": "Cool Dude"},
-    {"n": 14, "key": "karaoke", "name": "Karaoke", "look": "Mayúsculas anchas sobre una placa verde bosque esmerilada.", "motion": "La palabra que estás diciendo se ilumina en dorado y salta.", "bestFor": "Personas que hablan rápido, fondos recargados", "preview": "previews/karaoke.mp4", "en": "Karaoke"},
-    {"n": 15, "key": "signature", "name": "Firma", "look": "Mayúsculas anchas y limpias. En los grandes momentos, una firma a mano sobre mayúsculas itálicas crema.", "motion": "Cortes secos, la firma entra deslizándose y las mayúsculas saltan.", "bestFor": "Negocios, ofertas, llamados a la acción", "preview": "previews/signature.mp4", "en": "Signature"},
-    {"n": 16, "key": "keyword", "name": "Palabra Clave", "look": "Una línea limpia en minúsculas, la palabra importante en dorado.", "motion": "Las palabras aparecen cuando las dices. Una palabra clave sola va más grande.", "bestFor": "Reels del día a día, la opción segura", "preview": "previews/keyword.mp4", "en": "Keyword"},
-    {"n": 17, "key": "weight-shift", "name": "Contraste", "look": "Una sola tipografía. Fina para la entrada, gruesa para la palabra importante.", "motion": "La línea fina se arma, la palabra gruesa cae.", "bestFor": "Limpio, moderno, producto y tecnología", "preview": "previews/weight-shift.mp4", "en": "Weight Shift"},
-    {"n": 18, "key": "terminal", "name": "Terminal", "look": "Letra de código para la entrada, una palabra grande en itálica serif.", "motion": "La línea de código se arma, la palabra itálica cae.", "bestFor": "IA, programación y contenido de creadores", "preview": "previews/terminal.mp4", "en": "Terminal"},
-    {"n": 19, "key": "outline", "name": "Contorno", "look": "Mayúsculas altas y condensadas. La palabra importante va hueca.", "motion": "Las mayúsculas se arman, la palabra hueca cae.", "bestFor": "Deporte, fitness, frases potentes", "preview": "previews/outline.mp4", "en": "Outline"}
-  ]
+ "configKey": "captionStyle",
+ "styles": [
+  {
+   "n": 1,
+   "key": "arcade",
+   "name": "Arcade",
+   "look": "Letra pixelada crema, como el menú de un juego antiguo.",
+   "motion": "Frases cortas, cortes secos. La palabra clave aparece al doble de tamaño.",
+   "bestFor": "Tecnología, IA y tutoriales de herramientas",
+   "preview": "previews/arcade.mp4",
+   "en": "Arcade"
+  },
+  {
+   "n": 2,
+   "key": "low-key",
+   "name": "Discreto",
+   "look": "Subtítulos pequeños y tranquilos bajo un título fijo en cápsula.",
+   "motion": "Cada frase se arma palabra por palabra.",
+   "bestFor": "Hablar directo a cámara, contar historias",
+   "preview": "previews/low-key.mp4",
+   "en": "Low Key"
+  },
+  {
+   "n": 3,
+   "key": "field-notes",
+   "name": "Bitácora",
+   "look": "Serif de libro, crema y tranquila, en minúsculas normales.",
+   "motion": "Frases completas que aparecen suaves, cada una en un espacio libre distinto del cuadro.",
+   "bestFor": "Voz en off, viajes, piezas reflexivas",
+   "preview": "previews/field-notes.mp4",
+   "en": "Field Notes"
+  },
+  {
+   "n": 4,
+   "key": "anchor",
+   "name": "Noticiero",
+   "look": "Sans gruesa y limpia, fija en un solo lugar.",
+   "motion": "Cortes secos. Números y palabras clave toman el cuadro con un brillo.",
+   "bestFor": "Noticias, explicaciones, análisis",
+   "preview": "previews/anchor.mp4",
+   "en": "Anchor"
+  },
+  {
+   "n": 5,
+   "key": "loud-lowercase",
+   "name": "Minúscula Gigante",
+   "look": "Minúsculas enormes y apretadas.",
+   "motion": "Una palabra a la vez. El número queda arriba a la izquierda como título.",
+   "bestFor": "Ganchos con historia, estilo de vida",
+   "preview": "previews/loud-lowercase.mp4",
+   "en": "Loud Lowercase"
+  },
+  {
+   "n": 6,
+   "key": "vanity",
+   "name": "Tocador",
+   "look": "Serif alta en crema, palabras clave en itálica dorada.",
+   "motion": "Una palabra a la vez, con un ícono pequeño junto a lo que nombras.",
+   "bestFor": "Belleza, moda, tutoriales",
+   "preview": "previews/vanity.mp4",
+   "en": "Vanity"
+  },
+  {
+   "n": 7,
+   "key": "bubblegum",
+   "name": "Chicle",
+   "look": "Una palabra crema con brillo dorado sobre tu cabeza, bajo un título con trazo.",
+   "motion": "Una palabra a la vez. El título entra desenfocado.",
+   "bestFor": "Estilo de vida, diario, contenido divertido",
+   "preview": "previews/bubblegum.mp4",
+   "en": "Bubblegum"
+  },
+  {
+   "n": 8,
+   "key": "moodboard",
+   "name": "Moodboard",
+   "look": "Línea gruesa redondeada, línea itálica fina debajo y destellos pequeños.",
+   "motion": "La línea itálica se escribe sola.",
+   "bestFor": "Contenido estético y listas de tips, con o sin cara",
+   "preview": "previews/moodboard.mp4",
+   "en": "Moodboard"
+  },
+  {
+   "n": 9,
+   "key": "golden-hour",
+   "name": "Hora Dorada",
+   "look": "Subtítulos de cine en itálica dorada, abajo en el cuadro.",
+   "motion": "Frases completas, cortes secos.",
+   "bestFor": "B-roll cinematográfico, videos de marca",
+   "preview": "previews/golden-hour.mp4",
+   "en": "Golden Hour"
+  },
+  {
+   "n": 10,
+   "key": "spec-sheet",
+   "name": "Ficha Técnica",
+   "look": "Mayúsculas anchas y pequeñas, etiquetas doradas inclinadas para los números.",
+   "motion": "Las palabras entran con una estela de movimiento.",
+   "bestFor": "Equipos, reseñas, todo lo que tenga precios",
+   "preview": "previews/spec-sheet.mp4",
+   "en": "Spec Sheet"
+  },
+  {
+   "n": 11,
+   "key": "bold",
+   "name": "Contundente",
+   "look": "Minúsculas gruesas sobre tu pecho. Las palabras importantes van gigantes detrás de tu cabeza.",
+   "motion": "Cada palabra aparece cuando la dices.",
+   "bestFor": "Ganchos, opiniones, todo lo que tenga energía",
+   "preview": "previews/bold.mp4",
+   "en": "Bold"
+  },
+  {
+   "n": 12,
+   "key": "cool-girl",
+   "name": "Relajada",
+   "look": "Minúsculas pequeñas y calmas, una línea grande en itálica dorada y destellos.",
+   "motion": "La línea pequeña se arma, la itálica cae en la palabra clave.",
+   "bestFor": "Estilo de vida, venta suave, marca personal",
+   "preview": "previews/cool-girl.mp4",
+   "en": "Cool Girl"
+  },
+  {
+   "n": 13,
+   "key": "cool-dude",
+   "name": "Elegante",
+   "look": "Mayúsculas diminutas y espaciadas sobre una palabra serif gruesa.",
+   "motion": "Las letras serif suben a su lugar una por una.",
+   "bestFor": "Entrevistas en estudio, contenido premium y sobrio",
+   "preview": "previews/cool-dude.mp4",
+   "en": "Cool Dude"
+  },
+  {
+   "n": 14,
+   "key": "karaoke",
+   "name": "Karaoke",
+   "look": "Mayúsculas anchas sobre una placa verde bosque esmerilada.",
+   "motion": "La palabra que estás diciendo se ilumina en dorado y salta.",
+   "bestFor": "Personas que hablan rápido, fondos recargados",
+   "preview": "previews/karaoke.mp4",
+   "en": "Karaoke"
+  },
+  {
+   "n": 15,
+   "key": "signature",
+   "name": "Firma",
+   "look": "Mayúsculas anchas y limpias. En los grandes momentos, una firma a mano sobre mayúsculas itálicas crema.",
+   "motion": "Cortes secos, la firma entra deslizándose y las mayúsculas saltan.",
+   "bestFor": "Negocios, ofertas, llamados a la acción",
+   "preview": "previews/signature.mp4",
+   "en": "Signature"
+  },
+  {
+   "n": 16,
+   "key": "keyword",
+   "name": "Palabra Clave",
+   "look": "Una línea limpia en minúsculas, la palabra importante en dorado.",
+   "motion": "Las palabras aparecen cuando las dices. Una palabra clave sola va más grande.",
+   "bestFor": "Reels del día a día, la opción segura",
+   "preview": "previews/keyword.mp4",
+   "en": "Keyword"
+  },
+  {
+   "n": 17,
+   "key": "weight-shift",
+   "name": "Contraste",
+   "look": "Una sola tipografía. Fina para la entrada, gruesa para la palabra importante.",
+   "motion": "La línea fina se arma, la palabra gruesa cae.",
+   "bestFor": "Limpio, moderno, producto y tecnología",
+   "preview": "previews/weight-shift.mp4",
+   "en": "Weight Shift"
+  },
+  {
+   "n": 18,
+   "key": "terminal",
+   "name": "Terminal",
+   "look": "Letra de código para la entrada, una palabra grande en itálica serif.",
+   "motion": "La línea de código se arma, la palabra itálica cae.",
+   "bestFor": "IA, programación y contenido de creadores",
+   "preview": "previews/terminal.mp4",
+   "en": "Terminal"
+  },
+  {
+   "n": 19,
+   "key": "outline",
+   "name": "Contorno",
+   "look": "Mayúsculas altas y condensadas. La palabra importante va hueca.",
+   "motion": "Las mayúsculas se arman, la palabra hueca cae.",
+   "bestFor": "Deporte, fitness, frases potentes",
+   "preview": "previews/outline.mp4",
+   "en": "Outline"
+  }
+ ]
 }

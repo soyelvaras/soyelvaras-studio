@@ -141,7 +141,7 @@ simples que escribes tú, con un rango de tiempo y un ancla.
 | Cualquier otra cosa | `"css": "..."` css simple que va al final, en `plan.json` o `my-style.json` | puede reestilizar lo que hay en la página; no puede agregar movimiento |
 
 Lo que hoy no se puede igualar, así que dilo directo cuando el ejemplo lo tenga: música, una composición que mueve a la
-persona a un panel o a una página (usa los estilos completos Muestra y Cuenta o Pizarra cuando ese es el look, o
+persona a un panel o a una página (usa el estilo completo Muestra y Cuenta cuando ese es el look, o
 Pantalla Verde para un fondo), cambios de velocidad, transiciones entre tomas que no sean un corte o el efecto Corte en
 Zoom, gráficos animados más allá de las cuatro entradas, movimiento de subtítulos más allá de las seis entradas, 3D, y
 b-roll que el usuario no entregó.

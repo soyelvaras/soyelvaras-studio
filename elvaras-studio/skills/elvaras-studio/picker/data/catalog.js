@@ -453,26 +453,10 @@ window.STUDIO_CATALOG = {
  "styles": [
   {
    "n": 1,
-   "key": "soft-hours",
-   "name": "Horas Suaves",
-   "group": "her",
-   "label": "Para ella",
-   "line": "Acogedor y lento. Una sala cálida y tenue, subtítulos suaves escritos a máquina. Con o sin cara.",
-   "captionStyle": "moodboard",
-   "effects": [
-    "phone-mockup",
-    "checklist"
-   ],
-   "ready": true,
-   "preview": "previews/styles/soft-hours.mp4",
-   "poster": "previews/posters/styles/soft-hours.jpg"
-  },
-  {
-   "n": 2,
    "key": "glam-cam",
    "name": "Glam Cam",
-   "group": "her",
-   "label": "Para ella",
+   "group": "",
+   "label": "",
    "line": "Primer plano de belleza en estudio. Un zoom en cada idea nueva, una palabra serif a la vez.",
    "captionStyle": "vanity",
    "effects": [
@@ -485,27 +469,11 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/styles/glam-cam.jpg"
   },
   {
-   "n": 3,
-   "key": "color-block",
-   "name": "Bloques de Color",
-   "group": "her",
-   "label": "Para ella",
-   "line": "Un día en tu vida contado en partes, con tarjetas de color plano y minúsculas enormes.",
-   "captionStyle": "loud-lowercase",
-   "effects": [
-    "phone-mockup",
-    "freeze-and-label"
-   ],
-   "ready": true,
-   "preview": "previews/styles/color-block.mp4",
-   "poster": "previews/posters/styles/color-block.jpg"
-  },
-  {
-   "n": 4,
+   "n": 2,
    "key": "camera-shy",
    "name": "Tímido de Cámara",
-   "group": "her",
-   "label": "Para ella",
+   "group": "",
+   "label": "",
    "line": "Una lista de tips. Cortes rápidos, un título fijo y tus puntos escritos en el cuadro. Con o sin cara.",
    "captionStyle": "moodboard",
    "effects": [
@@ -518,58 +486,11 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/styles/camera-shy.jpg"
   },
   {
-   "n": 5,
-   "key": "chalk-talk",
-   "name": "Pizarra",
-   "group": "him",
-   "label": "Para él",
-   "line": "Tú sobre un fondo oscuro de estudio, con títulos a plumón y una tarjeta redondeada de b-roll.",
-   "captionStyle": "none",
-   "effects": [
-    "pointer-callout",
-    "sticky-text",
-    "phone-mockup"
-   ],
-   "ready": true,
-   "preview": "previews/styles/chalk-talk.mp4",
-   "poster": "previews/posters/styles/chalk-talk.jpg"
-  },
-  {
-   "n": 6,
-   "key": "fireside",
-   "name": "Junto al Fuego",
-   "group": "him",
-   "label": "Para él",
-   "line": "Una sola toma fija, luz cálida de lámpara, sin cortes. Las palabras hacen el trabajo.",
-   "captionStyle": "golden-hour",
-   "effects": [
-    "digital-zoom"
-   ],
-   "ready": true,
-   "preview": "previews/styles/fireside.mp4",
-   "poster": "previews/posters/styles/fireside.jpg"
-  },
-  {
-   "n": 7,
-   "key": "raw-tape",
-   "name": "Cinta Cruda",
-   "group": "him",
-   "label": "Para él",
-   "line": "Una conversación sentada, sin intervenir. Imagen 4:3, look de película gastada, subtítulos pequeños dorados.",
-   "captionStyle": "golden-hour",
-   "effects": [
-    "digital-zoom"
-   ],
-   "ready": true,
-   "preview": "previews/styles/raw-tape.mp4",
-   "poster": "previews/posters/styles/raw-tape.jpg"
-  },
-  {
-   "n": 8,
+   "n": 3,
    "key": "show-and-tell",
    "name": "Muestra y Cuenta",
-   "group": "him",
-   "label": "Para él",
+   "group": "",
+   "label": "",
    "line": "Tú en una ventana abajo y un lienzo claro arriba para etiquetas, tarjetas y el llamado a la acción.",
    "captionStyle": "none",
    "effects": [

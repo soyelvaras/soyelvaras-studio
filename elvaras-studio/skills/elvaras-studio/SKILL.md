@@ -20,7 +20,7 @@ Lee `references/gifs.md` cuando pida GIFs (puedes buscarlos tú y ponerlos en la
 
 - **Responde siempre en español de Chile**, con palabras simples, aunque el usuario escriba en inglés o las
   instrucciones técnicas de algún archivo estén en inglés.
-- Los efectos y estilos se nombran con su **nombre en español** (Palabra Clave, Zoom Digital, Junto al Fuego...).
+- Los efectos y estilos se nombran con su **nombre en español** (Palabra Clave, Zoom Digital, Glam Cam...).
   Cada entrada de los archivos de datos guarda su nombre original en inglés en el campo `en`: úsalo solo para
   cruzarlo con código o notas antiguas. Las claves (`key`) nunca cambiaron.
 - Las frases de "Lo que escucha el usuario" (al final) son las que usas, tal cual o con el mismo tono.
@@ -130,7 +130,7 @@ Cómo leer las líneas STATUS:
   - En Soy Elvaras Studio la fuente de actualizaciones es su propio repositorio privado (`SOURCE` en
     `scripts/update.py`). Mientras esté vacía, nunca se busca ni se instala nada.
 - `clean cutout NOT SET UP` está bien para subtítulos solos. Casi todos los efectos lo necesitan, igual que los looks
-  que van detrás de la persona (subtítulos Contundente, Pizarra, Muestra y Cuenta). Consíguelo la primera vez que las
+  que van detrás de la persona (subtítulos Contundente, Muestra y Cuenta). Consíguelo la primera vez que las
   elecciones tengan un efecto o uno de esos looks: `setup.py --matting`, una vez, unos 105 MB.
 - El otro extra opcional, solo cuando un script lo pide: `setup.py --fx <effect key>` (paquetes de Python extra para
   ese efecto, en el Python propio de la skill).
@@ -197,7 +197,7 @@ sus propios subtítulos salvo que `captionStyle` sea distinto al que trae ese es
 medio, end = final).
 
 Algo puntual ("prueba Karaoke en este") no cambia las elecciones guardadas: `build_reel.py --caption karaoke` o
-`--style fireside`.
+`--style glam-cam`.
 
 ## Cuando el usuario muestra un ejemplo o describe un estilo
 
@@ -294,7 +294,7 @@ de `clipsDir`.
 un look que necesita recorte, un cambio de subtítulos que no calza con un estilo): transmite cada una al usuario con
 palabras simples, y arregla lo que se pueda.
 
-Un look que va detrás de la persona o la saca del cuarto (subtítulos Contundente, Pizarra, Muestra y Cuenta) necesita
+Un look que va detrás de la persona o la saca del cuarto (subtítulos Contundente, Muestra y Cuenta) necesita
 primero un recorte de la persona en todo el reel. Usa el limpio, `rvm_cut.py`, y dile cuánto tarda antes de empezar
 (`references/checks.md`). Casi todos los efectos necesitan también el recorte limpio (`effects/INDEX.md` dice cuáles
 no), pero solo de sus propios cuadros: `fx_new.py` lo hace (unos 1,2 a 1,8 segundos por cuadro en un Mac con Apple
@@ -324,5 +324,4 @@ Ronda de notas: cambia `edl.json` / `words.json` / `plan.json`, vuelve a armar d
 - Después de replicarlo: "Esto es lo que logré igualar y lo que no. Desde ahora todos tus reels usan este estilo."
 - Una grabación baja: "Tu voz quedó grabada un poco baja en este clip. ¿Quieres una copia más fuerte?"
 
-Los estilos "para ella" (Horas Suaves, Glam Cam, Bloques de Color, Tímido de Cámara) funcionan con o sin cara. Dilo
-así.
+Glam Cam y Tímido de Cámara funcionan con o sin cara. Dilo así. Los estilos no son "para él" ni "para ella".

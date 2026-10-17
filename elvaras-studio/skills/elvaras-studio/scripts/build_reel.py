@@ -178,7 +178,7 @@ def main():
     with open(os.path.join(proj, 'work', 'build.json'), 'w', encoding='utf-8') as fh:
         json.dump({'style': style, 'caption': caption, 'safe': safe,
                    'untouched_footage': not style and not cap.LIFT and not cap.EXTRA.get('grade'),
-                   'face_in_place': (not style) or style == 'fireside'}, fh, indent=1)
+                   'face_in_place': not style}, fh, indent=1)
     marks = sum(1 for w in cap.W if w.get('e'))
     print(f'built index.html  {what}  words={len(cap.W)} marked={marks}  dur={cap.DUR:.3f}s  '
           f'slots={len(live)}  safe guide={"ON (snapshots only)" if safe else "off"}')

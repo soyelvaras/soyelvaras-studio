@@ -19,9 +19,8 @@ Nothing here is typed in for a clip:
 import captions as cap
 from captions import Build, T, esc, bare, low, chunk, windows, STAR
 
-NAMES = {'soft-hours': 'Soft Hours', 'glam-cam': 'Glam Cam', 'color-block': 'Color Block', 'camera-shy': 'Camera Shy',
-         'chalk-talk': 'Chalk Talk', 'fireside': 'Fireside', 'raw-tape': 'Raw Tape', 'show-and-tell': 'Show and Tell'}
-NEEDS_CUTOUT = ('chalk-talk', 'show-and-tell')      # these two lift the speaker off the room: they need assets/subject.webm
+NAMES = {'glam-cam': 'Glam Cam', 'camera-shy': 'Camera Shy', 'show-and-tell': 'Show and Tell'}
+NEEDS_CUTOUT = ('show-and-tell',)                    # lifts the speaker off the room: it needs assets/subject.webm
 NO_SWAP = {'show-and-tell': 'Show and Tell carries the words on its light canvas, and caption styles are built for video, '
                             'so they would not read there.'}
 NOTES = []                                           # things the editing Claude should tell the buyer; build_reel prints them
@@ -110,20 +109,6 @@ def captions(b, caption, own):
 VIGNETTE = '<div class="full" style="background:radial-gradient(120% 75% at 50% 45%,rgba(0,0,0,0) 50%,rgba(20,10,5,.42) 100%)"></div>'
 
 
-# ======================================================================================================================
-# FOR HER (all four work faceless or on camera)
-# ======================================================================================================================
-def soft_hours(b, caption):
-    """cozy how-to: dim warm room, slow cuts, the bold + typed italic captions (upper third when nobody is on camera)"""
-    b.css.append('.gr{filter:brightness(.9) saturate(.86) sepia(.16) contrast(.96)}')
-    body = footage_shots(b, 'soft-hours', push=.06)
-    body.append(VIGNETTE)
-    if cap.FACELESS:
-        cap.Y_CHEST = 470
-    captions(b, caption, cap.moodboard)
-    return body
-
-
 def camera_shy(b, caption):
     """tips list: quick cuts, a pinned title, the points typed onto the frame as a small numbered list"""
     p = plan('camera-shy')
@@ -163,32 +148,6 @@ def camera_shy(b, caption):
     return body
 
 
-def color_block(b, caption):
-    """a day in the life in pieces: shots broken up by flat colour cards, huge tight lowercase on top"""
-    p = plan('color-block')
-    color = p.get('color', '#B5C77A')
-    b.css.append('.gr{filter:saturate(1.06) contrast(1.03)}')
-    body = [f'<div class="full" style="background:{color}"></div>']        # the colour card is simply what is under the shots
-    if p.get('broll'):
-        body += footage_shots(b, 'color-block', push=.03)
-    else:
-        cards = p.get('cards')
-        if cards is None:                                                   # a card on the first beat of every new sentence
-            starts = sentence_starts()[1:]
-            cards = [[t, min(t + 1.15, cap.DUR)] for t in starts if cap.DUR - t > 1.6]
-        edges, t = [], 0.0
-        for c0, c1 in cards:
-            if c0 - t > .3:
-                edges.append((t, float(c0)))
-            t = float(c1)
-        if cap.DUR - t > .1:
-            edges.append((t, cap.DUR))
-        origin = '50% 45%' if cap.FACELESS else face_origin()
-        body += [shot(b, f's{n}', cap.VIDEO, t0, t1, media=t0, push=.03, origin=origin, track=n % 2) for n, (t0, t1) in enumerate(edges)]
-    captions(b, caption, cap.loud)
-    return body
-
-
 def glam_cam(b, caption):
     """studio beauty tutorial: tight face shot, a jump zoom on every new thought, one-word serif captions"""
     p = plan('glam-cam')
@@ -210,63 +169,6 @@ def glam_cam(b, caption):
     for t, z in beats:
         b.js.append(f"tl.set('#gz',{{scale:{float(z)}}},{T(float(t)):.3f});")
     captions(b, caption, cap.vanity)
-    return body
-
-
-# ======================================================================================================================
-# FOR HIM
-# ======================================================================================================================
-def fireside(b, caption):
-    """one locked-off shot, warm lamp light, no added cuts: a slow push-in and small gold captions over the chest"""
-    h = cap.HEAD
-    cx, fy = h['cx'] / 1080 * 100, (h['top'] - cap.LIFT + .75 * h['width']) / 1920 * 100      # the face, in % of the frame
-    b.css.append(f'''.gr{{filter:sepia(.5) saturate(1.7) contrast(1.1) brightness(.9) hue-rotate(-14deg)}}
-.fs{{top:{cap.Y_CHEST + 70}px;font-family:'Newsreader';font-weight:500;font-size:46px;line-height:56px;color:#F4AE52;
-  text-shadow:0 2px 14px rgba(20,8,0,.75),0 0 3px rgba(20,8,0,.6)}}''')
-    video = (f'<video id="bgv" class="full gr" src="{cap.VIDEO}" muted playsinline data-start="0" data-media-start="0" '
-             f'data-duration="{cap.DUR:.3f}" data-track-index="0"></video>')
-    body = [f'<div id="pl" class="full" style="transform-origin:{cx:.1f}% {fy:.1f}%">{cap.lifted(video)}</div>',
-            f'<div class="full" style="background:radial-gradient(70% 45% at {cx:.1f}% {fy + 2:.1f}%,rgba(255,150,50,.34),rgba(255,110,20,.16));mix-blend-mode:overlay"></div>',
-            f'<div class="full" style="background:radial-gradient(95% 62% at {cx:.1f}% {fy + 6:.1f}%,rgba(0,0,0,0) 38%,rgba(12,5,0,.62) 100%)"></div>']
-    b.js.append(f"tl.fromTo('#pl',{{scale:1}},{{scale:1.08,duration:{cap.DUR:.3f},ease:'none',immediateRender:false}},0);")
-
-    def gold(b):
-        for g, t0, t1 in windows(chunk(cap.W, 2, 14)):
-            i_d = b.nid()
-            b.html.append(f'<div id="{i_d}" class="cap fs">{esc(" ".join(low(w) for w in g))}</div>')
-            b.cut(f'#{i_d}', t0, t1)
-    captions(b, caption, gold)
-    return body
-
-
-def raw_tape(b, caption):
-    """a sit-down left alone: 4:3 picture inside the reel, faded green film grade, small plain yellow subtitles"""
-    WIN_TOP, WIN_H = 555, 810
-    h = cap.HEAD
-    # the head sits 158px under the top of the window; a face that is too tall for that slides up until the chin
-    # clears the subtitle line
-    up = max(h['top'] - 158, h['chin'] - (WIN_H - 150))
-    up = int(min(max(up, 0), 1920 - WIN_H))
-    b.css.append(f'''.gr{{filter:contrast(.92) saturate(.82) brightness(1.04) sepia(.12) hue-rotate(14deg)}}
-#win{{position:absolute;left:0;top:{WIN_TOP}px;width:1080px;height:{WIN_H}px;overflow:hidden;background:#111}}
-#win .in{{position:absolute;left:0;top:{-up}px;width:1080px;height:1920px;transform-origin:{h['cx']}px {h['top'] + 118}px}}
-.rt{{top:{WIN_TOP + WIN_H - 96}px;font-family:'Arimo';font-weight:400;font-size:36px;line-height:44px;color:#F4E455;
-  text-shadow:0 2px 3px rgba(0,0,0,.75),0 0 8px rgba(0,0,0,.4)}}''')
-    body = ['<div class="full" style="background:#000"></div>',
-            f'<div id="win"><div id="rin" class="in"><video id="bgv" class="full gr" src="{cap.VIDEO}" muted playsinline data-start="0" '
-            f'data-media-start="0" data-duration="{cap.DUR:.3f}" data-track-index="0"></video></div>'
-            '<div class="full" style="background:rgba(60,120,90,.16);mix-blend-mode:soft-light"></div>'
-            '<div class="full" style="background:rgba(210,225,205,.07)"></div></div>']
-    b.js.append(f"tl.fromTo('#rin',{{scale:1}},{{scale:1.06,duration:{cap.DUR:.3f},ease:'none',immediateRender:false}},0);")
-
-    def subs(b):
-        for g, t0, t1 in windows(chunk(cap.W, 6, 28)):
-            i_d = b.nid()
-            b.html.append(f'<div id="{i_d}" class="cap rt">{esc(" ".join(w["text"] for w in g))}</div>')
-            b.cut(f'#{i_d}', t0, t1)
-    if caption not in (None, 'none'):
-        cap.Y_CHEST = min(cap.Y_CHEST, WIN_TOP + WIN_H - 260)      # a swapped caption style stays inside the picture
-    captions(b, caption, subs)
     return body
 
 
@@ -298,91 +200,6 @@ def cta_times():
     t_cta = cap.W[ci]['start']
     t_say = next((w['start'] for w in reversed(cap.W[:ci]) if bare(w['text']).lower() == 'comment'), t_cta)
     return t_say, t_cta, bare(cap.W[ci]['text']).strip('"“”\'')
-
-
-def chalk_talk(b, caption):
-    """presenter on a dark studio gradient, hand-drawn marker titles and doodles, cutting out to a rounded b-roll card"""
-    p = plan('chalk-talk')
-    h = cap.HEAD
-    oy = h['top'] + 122                                  # the speaker is scaled 1.5 around a point just under the top of the speaker's head
-    ty = 547 - (oy - 183)                                # so the top of the speaker's head lands at y 547, under the titles
-    b.css.append(f'''#stg{{position:absolute;inset:0;background:radial-gradient(90% 60% at 50% 38%,#17515c 0%,#0c2c36 46%,#051318 100%)}}
-#man{{position:absolute;inset:0;transform-origin:{h['cx']}px {oy}px;transform:translate({540 - h['cx']}px,{ty}px) scale(1.5)}}
-#floor{{position:absolute;left:0;right:0;top:1180px;bottom:0;background:linear-gradient(180deg,rgba(5,19,24,0) 0%,#051318 34%)}}
-.mk{{position:absolute;font-family:'Covered By Your Grace';color:#fff;white-space:nowrap;transform:rotate(-4deg);transform-origin:0 50%;
-  text-shadow:0 3px 14px rgba(0,0,0,.45)}}
-.mk span{{display:inline-block}}
-.dd{{position:absolute;overflow:visible}}
-.dd path{{fill:none;stroke:#fff;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}}
-#card{{position:absolute;left:180px;top:330px;width:720px;height:1140px;border-radius:54px;overflow:hidden;
-  box-shadow:0 40px 90px rgba(0,0,0,.6);background:#000}}
-#card video{{position:absolute;left:0;top:-70px;width:720px;height:1280px;object-fit:cover}}''')
-    body = ['<div id="stg"></div>',
-            f'<div id="manw"><div id="man"><video id="cut" class="full" src="{cap.CUTOUT}" muted playsinline data-start="0" '
-            f'data-media-start="0" data-duration="{cap.DUR:.3f}" data-track-index="0"></video></div><div id="floor"></div></div>']
-    cta = cta_times()
-    t_stop = cta[0] if cta else cap.DUR
-
-    def underline(i_d, y, width, t):
-        b.html.append(f'<svg id="{i_d}" class="dd" style="left:70px;top:{y}px" width="{width}" height="40" viewBox="0 0 {width} 40">'
-                      f'<path id="{i_d}p" d="M6 22 C {width * .19:.0f} 4, {width * .39:.0f} 34, {width * .59:.0f} 14 S {width * .87:.0f} 8, {width - 6} 20"/></svg>')
-        b.js.append(f"gsap.set('#{i_d}p',{{strokeDasharray:{width + 20},strokeDashoffset:{width + 20}}});")
-        b.js.append(f"tl.to('#{i_d}p',{{strokeDashoffset:0,duration:.3,ease:'power2.out'}},{T(t):.3f});")
-
-    for n, bt in enumerate(p.get('beats') or auto_beats()):
-        t0, t1 = float(bt['from']), min(float(bt['to']), t_stop)
-        if t1 - t0 < .2:
-            continue
-        if bt.get('big'):                                 # a number with the two words it counts, and a drawn underline
-            lines = [str(x).upper() for x in (bt.get('lines') or [])][:2]
-            at = list(bt.get('lineAt') or []) + [t0, t0]
-            big = str(bt['big']).upper()
-            bw = int(len(big) * 118)                      # width of the big number at 250px
-            size = min(104, int((1010 - 64 - bw - 30) / (max([len(x) for x in lines] + [1]) * .42)))
-            rows = '<br>'.join(f'<span id="k{n}l{k}">{esc(x)}</span>' for k, x in enumerate(lines))
-            b.html.append(f'<div id="k{n}a" class="mk" style="left:64px;top:236px;font-size:250px;line-height:210px">{esc(big)}</div>'
-                          f'<div id="k{n}b" class="mk" style="left:{64 + bw + 30}px;top:262px;font-size:{size}px;line-height:{size * .92:.0f}px">{rows}</div>')
-            b.cut(f'#k{n}a', t0, t1)
-            b.cut(f'#k{n}b', float(at[0]), t1)
-            if len(lines) > 1:
-                b.cut(f'#k{n}l1', float(at[1]))
-            t_line = float(at[min(1, len(lines) - 1)]) + .1 if lines else t0 + .1
-            underline(f'k{n}d', 486, 640, t_line)
-            b.cut(f'#k{n}d', t_line, t1)
-        else:                                             # one marker line (two when it is long)
-            text = str(bt.get('title', '')).upper()
-            words, rows = text.split(), [text]
-            if len(text) > 18 and len(words) > 1:
-                k = min(range(1, len(words)), key=lambda k: abs(len(' '.join(words[:k])) - len(' '.join(words[k:]))))
-                rows = [' '.join(words[:k]), ' '.join(words[k:])]
-            size = min(92, int(900 / (max(len(r) for r in rows) * .42)))
-            b.html.append(f'<div id="k{n}" class="mk" style="left:70px;top:{262 if len(rows) == 1 else 240}px;font-size:{size}px;'
-                          f'line-height:{size}px">{"<br>".join(esc(r) for r in rows)}</div>')
-            b.cut(f'#k{n}', t0, t1)
-    br = p.get('broll')                                   # cut away to a rounded b-roll card with a marker label
-    if br:
-        t0, t1 = float(br['from']), float(br['to'])
-        body.append(f'<div id="cardw"><div id="card"><video id="brv" src="{br["src"]}" muted playsinline data-start="{T(t0):.3f}" '
-                    f'data-media-start="{float(br.get("media", 0)):.3f}" data-duration="{t1 - T(t0):.3f}" data-track-index="1"></video></div></div>')
-        b.cut('#cardw', t0, t1)
-        b.cut('#manw', 0, t0)
-        b.js.append(f"tl.set('#manw',{{autoAlpha:1}},{T(t1):.3f});")
-        b.js.append(f"tl.fromTo('#card',{{scale:.9}},{{scale:1,duration:.3,ease:'back.out(1.6)',immediateRender:false}},{T(t0):.3f});")
-        if br.get('label'):
-            label = str(br['label']).upper()
-            b.html.append(f'<div id="kbl" class="mk" style="left:196px;top:232px;font-size:{min(78, int(700 / (len(label) * .42)))}px;line-height:80px">{esc(label)}</div>')
-            b.cut('#kbl', t0 + .1, t1)
-    if cta:                                               # back on the speaker for the call to action
-        t_say, t_cta, kw = cta
-        size = min(214, int(900 / (max(len(kw), 2) * .46)))
-        b.html.append('<div id="kc1" class="mk" style="left:70px;top:250px;font-size:96px;line-height:92px">COMMENT</div>'
-                      f'<div id="kc2" class="mk" style="left:70px;top:336px;font-size:{size}px;line-height:190px">{esc(kw.upper())}</div>')
-        b.cut('#kc1', t_say)
-        b.cut('#kc2', t_cta)
-        underline('kcd', 522, 520, t_cta + .15)
-        b.cut('#kcd', t_cta + .15)
-    captions(b, caption, lambda b: None)
-    return body
 
 
 def show_and_tell(b, caption):
@@ -464,8 +281,7 @@ def show_and_tell(b, caption):
     return body                                           # no caption swap on this style: see NO_SWAP
 
 
-PRESETS = {'soft-hours': soft_hours, 'camera-shy': camera_shy, 'color-block': color_block, 'glam-cam': glam_cam,
-           'fireside': fireside, 'raw-tape': raw_tape, 'chalk-talk': chalk_talk, 'show-and-tell': show_and_tell}
+PRESETS = {'glam-cam': glam_cam, 'camera-shy': camera_shy, 'show-and-tell': show_and_tell}
 
 
 def page(key, caption=None, safe=False):

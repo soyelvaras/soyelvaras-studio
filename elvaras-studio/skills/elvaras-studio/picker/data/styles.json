@@ -1,14 +1,49 @@
 {
-  "configKey": "style",
-  "groups": [{"key": "her", "label": "Para ella"}, {"key": "him", "label": "Para él"}],
-  "styles": [
-    {"n": 1, "group": "her", "key": "soft-hours", "name": "Horas Suaves", "line": "Acogedor y lento. Una sala cálida y tenue, subtítulos suaves escritos a máquina. Con o sin cara.", "captionStyle": "moodboard", "effects": ["phone-mockup", "checklist"], "preview": "previews/styles/soft-hours.mp4", "ready": true, "en": "Soft Hours"},
-    {"n": 2, "group": "her", "key": "glam-cam", "name": "Glam Cam", "line": "Primer plano de belleza en estudio. Un zoom en cada idea nueva, una palabra serif a la vez.", "captionStyle": "vanity", "effects": ["digital-zoom", "ui-world", "phone-mockup"], "preview": "previews/styles/glam-cam.mp4", "ready": true, "en": "Glam Cam"},
-    {"n": 3, "group": "her", "key": "color-block", "name": "Bloques de Color", "line": "Un día en tu vida contado en partes, con tarjetas de color plano y minúsculas enormes.", "captionStyle": "loud-lowercase", "effects": ["phone-mockup", "freeze-and-label"], "preview": "previews/styles/color-block.mp4", "ready": true, "en": "Color Block"},
-    {"n": 4, "group": "her", "key": "camera-shy", "name": "Tímido de Cámara", "line": "Una lista de tips. Cortes rápidos, un título fijo y tus puntos escritos en el cuadro. Con o sin cara.", "captionStyle": "moodboard", "effects": ["checklist", "odometer", "phone-mockup"], "preview": "previews/styles/camera-shy.mp4", "ready": true, "en": "Camera Shy"},
-    {"n": 5, "group": "him", "key": "chalk-talk", "name": "Pizarra", "line": "Tú sobre un fondo oscuro de estudio, con títulos a plumón y una tarjeta redondeada de b-roll.", "captionStyle": "none", "effects": ["pointer-callout", "sticky-text", "phone-mockup"], "preview": "previews/styles/chalk-talk.mp4", "ready": true, "en": "Chalk Talk"},
-    {"n": 6, "group": "him", "key": "fireside", "name": "Junto al Fuego", "line": "Una sola toma fija, luz cálida de lámpara, sin cortes. Las palabras hacen el trabajo.", "captionStyle": "golden-hour", "effects": ["digital-zoom"], "preview": "previews/styles/fireside.mp4", "ready": true, "en": "Fireside"},
-    {"n": 7, "group": "him", "key": "raw-tape", "name": "Cinta Cruda", "line": "Una conversación sentada, sin intervenir. Imagen 4:3, look de película gastada, subtítulos pequeños dorados.", "captionStyle": "golden-hour", "effects": ["digital-zoom"], "preview": "previews/styles/raw-tape.mp4", "ready": true, "en": "Raw Tape"},
-    {"n": 8, "group": "him", "key": "show-and-tell", "name": "Muestra y Cuenta", "line": "Tú en una ventana abajo y un lienzo claro arriba para etiquetas, tarjetas y el llamado a la acción.", "captionStyle": "none", "effects": ["the-stack", "pointer-callout"], "preview": "previews/styles/show-and-tell.mp4", "ready": true, "en": "Show and Tell"}
-  ]
+ "configKey": "style",
+ "styles": [
+  {
+   "n": 1,
+   "key": "glam-cam",
+   "name": "Glam Cam",
+   "line": "Primer plano de belleza en estudio. Un zoom en cada idea nueva, una palabra serif a la vez.",
+   "captionStyle": "vanity",
+   "effects": [
+    "digital-zoom",
+    "ui-world",
+    "phone-mockup"
+   ],
+   "preview": "previews/styles/glam-cam.mp4",
+   "ready": true,
+   "en": "Glam Cam"
+  },
+  {
+   "n": 2,
+   "key": "camera-shy",
+   "name": "Tímido de Cámara",
+   "line": "Una lista de tips. Cortes rápidos, un título fijo y tus puntos escritos en el cuadro. Con o sin cara.",
+   "captionStyle": "moodboard",
+   "effects": [
+    "checklist",
+    "odometer",
+    "phone-mockup"
+   ],
+   "preview": "previews/styles/camera-shy.mp4",
+   "ready": true,
+   "en": "Camera Shy"
+  },
+  {
+   "n": 3,
+   "key": "show-and-tell",
+   "name": "Muestra y Cuenta",
+   "line": "Tú en una ventana abajo y un lienzo claro arriba para etiquetas, tarjetas y el llamado a la acción.",
+   "captionStyle": "none",
+   "effects": [
+    "the-stack",
+    "pointer-callout"
+   ],
+   "preview": "previews/styles/show-and-tell.mp4",
+   "ready": true,
+   "en": "Show and Tell"
+  }
+ ]
 }
