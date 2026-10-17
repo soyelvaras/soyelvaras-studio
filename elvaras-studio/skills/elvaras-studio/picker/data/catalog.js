@@ -535,7 +535,7 @@ window.STUDIO_CATALOG = {
    "n": 25,
    "key": "knockout-tiles",
    "name": "Fichas Fuera",
-   "line": "Fichas con nombres caen en la pared detrás de ti y salen tachadas cuando las nombras. Tres versiones.",
+   "line": "Fichas con nombres caen en la pared detrás de ti y salen tachadas cuando las nombras. Cuatro versiones.",
    "preview": "previews/effects/knockout-tiles-1.mp4",
    "poster": "previews/posters/effects/knockout-tiles-1.jpg",
    "variants": [
@@ -556,6 +556,12 @@ window.STUDIO_CATALOG = {
      "name": "Ventana que se cierra",
      "preview": "previews/effects/knockout-tiles-3.mp4",
      "poster": "previews/posters/effects/knockout-tiles-3.jpg"
+    },
+    {
+     "n": 4,
+     "name": "Íconos",
+     "preview": "previews/effects/knockout-tiles-4.mp4",
+     "poster": "previews/posters/effects/knockout-tiles-4.jpg"
     }
    ],
    "category": "effect"

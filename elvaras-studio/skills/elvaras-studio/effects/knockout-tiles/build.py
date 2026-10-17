@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """KNOCKOUT TILES: name tiles slam onto the wall behind the speaker, one per spoken word. Each one is struck out and
-knocked away as the next lands. Three looks (VARIANT): 1 price tag on a string, struck through; 2 hand-written post-it,
-crossed out with an X; 3 program window that cracks in half. Optional second half: receipts stack up beside the
-head while a running total counts them, then the whole pile is struck and falls.
+knocked away as the next lands. Four looks (VARIANT): 1 price tag on a string, struck through; 2 hand-written post-it,
+crossed out with an X; 3 program window that cracks in half; 4 app icons in one row (brand tiles with the initial and
+the name, never a real logo): they pop in on their words, ONE line strikes through all of them, they fall with gravity
+behind the speaker and a serif word lands where they were. Optional second half (looks 1 to 3): receipts stack up
+beside the head while a running total counts them, then the whole pile is struck and falls.
 
 Layers: the clip < tiles / receipts / total (flat on the wall) < the speaker's cutout. The cutout layer only exists
 between F_IN and F_OUT, so the first and last frame of the slot are the untouched clip.
@@ -16,6 +18,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -42,13 +45,18 @@ STYLE = dict(
     paper='#F2ECDF',               # receipt paper
     paper_ink='#0E0F12',           # receipt text
     radius=28,                     # tile corner radius, px
+    icon_palette=[('linear-gradient(160deg,#2C4A3B,#13281F)', '#F2ECDF'), ('#F2ECDF', '#13281F'),
+                  ('linear-gradient(160deg,#D8B475,#C9A15B)', '#141615'), ('#141615', '#C9A15B')],   # VARIANT 4: (icon, initial) per icon, in turn
+    word_font='Instrument Serif',  # VARIANT 4: the word that lands where the icons were (italic)
+    word_color='auto',             # VARIANT 4: 'auto' = bosque on a light wall, crema on a dark one (prep.py measures it), or a colour
     order=['left', 'right', 'above'],   # placement: wall spots around the head, used in turn. Drop one to keep it clear
 )
 # ==== END STYLE ====
 
 # ==== CLIP (edit this) ====
 VARIANT = 1          # the look: 1 Etiqueta de precio (struck through), 2 Post-it a mano (crossed with an X),
-                     # 3 Ventana que se cierra (cracks in half). fx_new.py fills it from the Studio Picker
+                     # 3 Ventana que se cierra (cracks in half), 4 Íconos (app icons in a row, one strike through all,
+                     # they fall). fx_new.py fills it from the Studio Picker
 # The tiles, in spoken order. 'text' = the name on the tile: ONLY a name the speaker says in this clip or the user
 # gave you. Plain text, no logos. 'at' = the spoken word it lands on ('word', or 'word#2' for the second time it is
 # said) or a frame number; list them with `prep.py words`. Optional keys per tile: 'exit' ('drop', 'flick',
@@ -60,6 +68,11 @@ TILES = [
     {'text': 'Herramienta tres', 'at': 60},      # placeholder
 ]
 TILE_LABEL = ''      # small line under every name saying what these things are ('' = none). The speaker's own words
+# Íconos (VARIANT 4) only. Each tile becomes an app icon: its initial on a brand tile, the name under it. Never a logo.
+STRIKE_AT = None     # frame or word the one line goes through all the icons. None = 12 frames after the last icon lands
+WORD = ''            # the word that lands where the icons were, in serif italic: one the speaker says ('' = none)
+WORD_AT = None       # frame or word it lands on. None = 10 frames after the strike
+WORD_OUT = None      # frame or word it leaves on. None = 30 frames after it lands
 RECEIPTS_ON = False  # the switch for the second half. False = tiles only (the fields below are ignored)
 # One entry per receipt, in spoken order: a frame or word (uses the three defaults below), or a dict with 'at' and
 # any of 'title', 'item', 'amount' for a receipt that differs. Up to 8; they alternate sides of the head.
@@ -100,6 +113,7 @@ ROT = {'left': -5.0, 'right': 4.0, 'above': -2.5}
 EXIT = {'left': 'drop', 'right': 'flick', 'above': 'shatter'}
 RW, RH, RSTEP = 300, 136, 70          # receipt size and how far the next one on a side lands above the last
 PLACEHOLDERS = ('Herramienta uno', 'Herramienta dos', 'Herramienta tres', 'Recibo', '1 ítem')
+ICON = 168                            # VARIANT 4: icon size at SIZE 1 (px); the row shrinks if the wall is short
 NEAR = '0px 16px 30px 0px rgba(0,0,0,0.5), 0px 3px 7px 0px rgba(0,0,0,0.4)'
 FAR = '0px 80px 90px 0px rgba(0,0,0,0.2), 0px 34px 44px 0px rgba(0,0,0,0.1)'
 PNEAR = '0px 14px 26px 0px rgba(0,0,0,0.44), 0px 2px 6px 0px rgba(0,0,0,0.34)'
@@ -176,6 +190,8 @@ def ats():
     """every 'at' value of the CLIP block (words or frames) that prep.py has to turn into a frame"""
     v = [t['at'] for t in TILES] + [t['knock'] for t in TILES if t.get('knock') is not None]
     v += [r['at'] for r in receipts()]
+    if VARIANT == 4:
+        v += [x for x in (STRIKE_AT, WORD_AT, WORD_OUT) if x is not None]
     if RECEIPTS_ON:
         v += [x for x in (TOTAL_AT, TOTAL_TAG_AT, WIPE_AT) if x is not None]
     return v
@@ -186,7 +202,8 @@ def signature():
     blob = json.dumps([TILES, TILE_LABEL, RECEIPTS_ON, receipts(), CURRENCY, RECEIPT_FIRST_SIDE, TOTAL_AT, TOTAL_TAG,
                        TOTAL_TAG_AT, TOTAL_POS, WIPE_AT, F_IN, F_OUT, WALL, SPOTS, PILES, SIZE, SEED,
                        STYLE['order'], STYLE['name_case'], STYLE['small_case'], STYLE['width_factor'],
-                       STYLE['name_tracking']], sort_keys=True, default=str)
+                       STYLE['name_tracking']] + ([4, STRIKE_AT, WORD, WORD_AT, WORD_OUT] if VARIANT == 4 else []),
+                      sort_keys=True, default=str)
     return hashlib.md5(blob.encode()).hexdigest()[:12]
 
 
@@ -194,6 +211,8 @@ def schedule(at, nfr, spots=None):
     """frames of every beat. at = {str(word or frame): frame} from prep.py; spots = the wall spot of each tile once
     prep.py has placed them (a tile that reuses the spot of the one before is knocked 6 frames early)"""
     fr = lambda x: at[str(x)]
+    if VARIANT == 4:
+        return schedule_icons(fr, nfr)
     rc = receipts()
     R = [fr(r['at']) for r in rc]
     L = [fr(t['at']) for t in TILES]
@@ -240,6 +259,46 @@ def schedule(at, nfr, spots=None):
         sys.exit(f'the effect ends on f{s["f_out"]} but the slot has {nfr} frames: it needs {s["f_out"] + 2} or more '
                  '(the last frames must be the plain clip). Make the slot longer or move the beats earlier')
     return s
+
+
+def schedule_icons(fr, nfr):
+    """VARIANT 4: every icon lands on its word and stays; one strike goes through the row; they fall one after another
+    (knock = when each one starts to fall); the word lands where they were and leaves"""
+    L = [fr(t['at']) for t in TILES]
+    if L != sorted(L) or any(b - a < 3 for a, b in zip(L, L[1:])):
+        sys.exit(f'icons must land in spoken order, 3 frames or more apart (got {L})')
+    if len(TILES) > 5:
+        sys.exit('more than 5 icons: the row would not fit. Use 2 to 5')
+    strike = fr(STRIKE_AT) if STRIKE_AT is not None else L[-1] + 12
+    if strike - L[-1] < 6:
+        sys.exit(f'the strike (f{strike}) comes {strike - L[-1]} frames after the last icon lands: give it 6 or more to be seen')
+    K = [strike + 6 + 3 * k for k in range(len(TILES))]          # the line takes 6 frames, then they drop 3 frames apart
+    word = word_out = None
+    last = K[-1] + 16
+    if WORD:
+        word = fr(WORD_AT) if WORD_AT is not None else strike + 10
+        word_out = fr(WORD_OUT) if WORD_OUT is not None else word + 30
+        if word_out - word < 12:
+            sys.exit(f'the word is up {word_out - word} frames: it needs 12 or more to be read')
+        last = max(last, word_out + 7)
+    f_in = F_IN if F_IN is not None else L[0] - 5
+    if f_in < 1 or L[0] - f_in < 5:
+        sys.exit(f'the first icon lands on f{L[0]}: the slot must start at least 6 frames (0.2 s) before that word, '
+                 'so its first frame is the plain clip')
+    f_out = F_OUT if F_OUT is not None else last
+    if f_out < last:
+        sys.exit(f'F_OUT {f_out} is too early: the last piece is gone on f{last}')
+    if f_out > nfr - 2:
+        sys.exit(f'the effect ends on f{f_out} but the slot has {nfr} frames: it needs {f_out + 2} or more '
+                 '(the last frames must be the plain clip). Make the slot longer or move the beats earlier')
+    return dict(land=L, knock=K, f_in=f_in, f_out=f_out, rec=[], total=None, tag=None, wipe=None, strike=strike, word=word,
+                word_out=word_out)
+
+
+def initials(name):
+    """the letters on an icon: the initials of a two-word name, else the first letter"""
+    words = [w for w in re.split(r'[\s\-_/.]+', name) if w]
+    return (words[0][0] + words[1][0]).upper() if len(words) >= 2 else name[:1].upper()
 
 
 # ---------------------------------------------------------------- page pieces
@@ -427,6 +486,82 @@ def build_tiles(P, lay, S):
             P.ft(f'st-{k}', tK + .01, .04, {'opacity': 0}, {'opacity': 1})
             P.ft(f'st-{k}', tK + .07, .06, {'opacity': 1}, {'opacity': 0})
             P.ft(f'sp-{k}', tK + .07, .06, {'opacity': 1}, {'opacity': 0})
+
+
+def build_icons(P, lay, S):
+    """VARIANT 4: the row of icons, the one strike (drawn icon by icon, so each icon carries its own piece of the line),
+    the fall and the word"""
+    row, n = lay['row'], len(TILES)
+    IW, gap, lab = row['icon'], row['gap'], row['label']
+    pal = STYLE.get('icon_palette') or [('linear-gradient(160deg,#2C4A3B,#13281F)', '#F2ECDF'), ('#F2ECDF', '#13281F')]
+    G = lay['tiles']
+    x_a, x_b = G[0]['x'] - IW / 2 - 26, G[-1]['x'] + IW / 2 + 26
+    yc = G[0]['y']
+
+    def yline(x):                 # a rising slash with a slight sag, like a pen stroke
+        u = (x - x_a) / max(1, x_b - x_a)
+        return yc + IW * .16 - IW * .3 * u + IW * .05 * math.sin(u * math.pi)
+
+    tS, dseg = F(S['strike']), .2 / n
+    sw = max(9, round(IW * .075))
+    for k, (t, g) in enumerate(zip(TILES, G)):
+        cx, cy, rot = g['x'], g['y'], g['rot']
+        bg, ink = pal[k % len(pal)]
+        x0 = x_a if k == 0 else cx - IW / 2 - gap / 2
+        x1 = x_b if k == n - 1 else cx + IW / 2 + gap / 2
+        pts = [(x0 + (x1 - x0) * j / 4, 0) for j in range(5)]
+        d = 'M ' + ' L '.join(f'{r1(x - cx)} {r1(yline(x) - cy)}' for x, _ in pts)
+        ini = initials(t['text'])
+        fs = r1(IW * (.6 if len(ini) == 1 else .46))
+        strike = (f'<svg class="strike" id="sk-{k}" width="1" height="1">'
+                  f'<path id="sk-{k}-u" d="{d}" pathLength="1000" fill="none" stroke="rgba(0,0,0,.42)" stroke-width="{sw}" '
+                  f'stroke-linecap="round" stroke-linejoin="round" transform="translate(3 6)"/>'
+                  f'<path id="sk-{k}-a" d="{d}" pathLength="1000" fill="none" stroke="{STYLE["strike"]}" stroke-width="{sw}" '
+                  f'stroke-linecap="round" stroke-linejoin="round"/>'
+                  f'<path id="sk-{k}-b" d="{d}" pathLength="1000" fill="none" stroke="#F2ECDF" stroke-opacity=".45" '
+                  f'stroke-width="{max(2, round(sw * .28))}" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -2)"/></svg>')
+        P.add(f'<div class="mover" id="mv-{k}" style="left:{cx}px;top:{cy}px"><div class="spin" id="sp-{k}" style="width:0;height:0">'
+              f'<div class="icon" style="left:{-IW / 2}px;top:{-IW / 2}px;width:{IW}px;height:{IW}px;background:{bg}">'
+              f'<div class="ini" style="font-size:{fs}px;color:{ink}">{esc(ini)}</div><div class="gl"></div></div>'
+              f'<div class="ilabel" style="top:{IW / 2 + 10}px;font-size:{lab}px;line-height:{lab + 4}px">{esc(t["text"])}</div>'
+              f'{strike}</div></div>')
+        tL, tK = F(S['land'][k]), F(S['knock'][k])
+        P.set(f'sp-{k}', {'opacity': 0, 'rotation': rot, 'scale': .3})
+        P.ft(f'sp-{k}', tL - .05, .05, {'opacity': 0}, {'opacity': 1})
+        P.ft(f'sp-{k}', tL - .05, .28, {'scale': .3}, {'scale': 1}, 'back.out(2.4)')
+        P.strike(k, tS + k * dseg, dseg + .012)
+        sgn = -1 if k % 2 == 0 else 1
+        drop = fall(cy + IW / 2 + lab + 14, 1100)
+        P.ft(f'mv-{k}', tK - .1, .1, {'y': 0}, {'y': -16}, 'power2.out')
+        P.ft(f'mv-{k}', tK, .5, {'y': -16}, {'y': drop}, 'power2.in')
+        P.ft(f'mv-{k}', tK, .5, {'x': 0}, {'x': sgn * (34 + 14 * k)}, 'power1.in')
+        P.ft(f'sp-{k}', tK - .1, .6, {'rotation': rot}, {'rotation': rot + sgn * (30 + 9 * k)}, 'power1.in')
+        P.ft(f'sp-{k}', tK + .34, .16, {'opacity': 1}, {'opacity': 0})
+    if WORD and S.get('word') is not None:
+        # the word takes the free wall on the row's side of the head: never past the safe edge, never onto the head
+        hd = row.get('head_word') or lay['head']
+        lo, hi = SAFE['left'] + 20, SAFE['right'] - 20
+        if row['spot'] == 'left':
+            hi = min(hi, hd['x0'] - 16)
+        elif row['spot'] == 'right':
+            lo = max(lo, hd['x1'] + 16)
+        avail = max(160, hi - lo)
+        wfs = round(min(176 * SIZE * row['scale'], avail / max(1, .44 * len(WORD))))
+        half = .44 * wfs * len(WORD) / 2
+        wx = min(max(row['x'], lo + half), hi - half) if hi - lo > 2 * half else (lo + hi) / 2
+        col = STYLE.get('word_color', 'auto')
+        light_wall = row.get('wall_luma', 0) > 150
+        if col == 'auto':
+            col = '#13281F' if light_wall else '#F2ECDF'
+        glow = ('0 0 22px rgba(242,236,223,.55),0 2px 4px rgba(242,236,223,.4)' if col.upper() in ('#13281F', '#141615')
+                else '0 6px 26px rgba(0,0,0,.45)')
+        P.add(f'<div class="iword" id="iw" style="left:{wx:.0f}px;top:{yc}px;font-size:{wfs}px;line-height:{round(wfs * 1.05)}px;'
+              f'color:{col};text-shadow:{glow}">{esc(WORD)}</div>')
+        tW, tO = F(S['word']), F(S['word_out'])
+        P.set('iw', {'xPercent': -50, 'yPercent': -50, 'opacity': 0})
+        P.ft('iw', tW, .16, {'opacity': 0}, {'opacity': 1})
+        P.ft('iw', tW, .34, {'y': 26, 'scale': .94}, {'y': 0, 'scale': 1}, 'power3.out')
+        P.ft('iw', tO - .2, .2, {'opacity': 1}, {'opacity': 0})
 
 
 def tag_string(W, H):
@@ -639,7 +774,8 @@ def audio(S, lay, dur):
         return []
     snd = SOUNDS
     if snd == 'auto':
-        snd = [('pop', f - 1, .15) for f in S['land']] + [('whoosh-short', f - 4, .10) for f in S['knock']]
+        snd = [('pop', f - 1, .15) for f in S['land']] + ([('whoosh-short', S['strike'] - 2, .12)] if VARIANT == 4 else
+                                                         [('whoosh-short', f - 4, .10) for f in S['knock']])
         snd += [('pop', f - 1, .08) for f in S['rec']]
         if S['total'] is not None and lay.get('total'):
             snd.append(('impact-bass-1', S['total'] - 1, .15))
@@ -692,6 +828,13 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .strike path{{stroke-dasharray:1000;stroke-dashoffset:1000}}
 .strike.done path{{stroke-dashoffset:0}}
 .shard{{position:absolute;left:0;top:0}}
+/* VARIANT 4: app icons */
+.icon{{position:absolute;border-radius:23%;overflow:hidden;box-shadow:0 18px 34px rgba(0,0,0,.45),0 3px 8px rgba(0,0,0,.3),inset 0 0 0 1.5px rgba(242,236,223,.18)}}
+.icon .ini{{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;padding-top:.06em;letter-spacing:.01em}}
+.icon .gl{{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,0) 48%)}}
+.ilabel{{position:absolute;left:0;transform:translateX(-50%);white-space:nowrap;font-family:'Work Sans',sans-serif;font-weight:600;color:#F2ECDF;
+  text-shadow:0 2px 8px rgba(0,0,0,.65),0 0 2px rgba(0,0,0,.4)}}
+.iword{{position:absolute;white-space:nowrap;font-family:'{s.get('word_font', 'Instrument Serif')}',serif;font-style:italic;font-weight:400;letter-spacing:-.01em}}
 /* the three looks */
 .spin.tagwrap{{filter:drop-shadow(0 16px 26px rgba(0,0,0,.45))}}
 .tstring{{position:absolute;left:0;top:0;overflow:visible}}
@@ -745,7 +888,10 @@ def main():
         sys.exit('the CLIP block (or the clip) changed since prep.py ran: run prep.py again, look at work/layout.jpg, then build')
     S = schedule(lay['at'], nfr, [g['spot'] for g in lay['tiles']])
     P = Page()
-    build_tiles(P, lay, S)
+    if VARIANT == 4:
+        build_icons(P, lay, S)
+    else:
+        build_tiles(P, lay, S)
     if lay.get('receipts'):
         build_receipts(P, lay, S)
     t_in, t_out = F(S['f_in']), F(S['f_out'])
@@ -818,7 +964,13 @@ window.__timelines["main"] = tl;
     name = os.path.basename(HERE)
     print(f'wrote index.html  {nfr} frames ({dur:.3f}s)  effect on f{S["f_in"]} to f{S["f_out"]}  (plain clip before and after)'
           + (f'  zoom x{ZOOM} (+{ZOOM_KICK} per tile)' if ZOOM > 1.0001 else ''))
+    if VARIANT == 4:
+        print(f'  íconos: row of {len(TILES)} on the "{lay["row"]["spot"]}" wall, icon {lay["row"]["icon"]}px, size {lay["row"]["scale"]:.2f}; '
+              f'strike f{S["strike"]}' + (f', word "{WORD}" f{S["word"]} to f{S["word_out"]}' if WORD else ', no word'))
     for k, (t, g) in enumerate(zip(TILES, lay['tiles'])):
+        if VARIANT == 4:
+            print(f'  icon {k + 1} "{t["text"]}" ({initials(t["text"])})  lands f{S["land"][k]}  falls f{S["knock"][k]}')
+            continue
         print(f'  tile {k + 1} "{t["text"]}"  lands f{S["land"][k]}  knocked f{S["knock"][k]}  {g["spot"]:5s} {t.get("exit") or EXIT[g["spot"]]:7s} size {g["scale"]:.2f}')
     for i, f in enumerate(S['rec']):
         print(f'  receipt {i + 1} lands f{f}  {lay["receipts"][i]["side"]}')
@@ -827,7 +979,9 @@ window.__timelines["main"] = tl;
     if S['wipe'] is not None:
         print(f'  pile struck and falls f{S["wipe"]}')
     snaps = sorted({S['f_in'] - 1, *[f + 3 for f in S['land']], *[f - 2 for f in S['knock']], *[f + 3 for f in S['rec'][-1:]],
-                    *([S['wipe'] - 6] if S['wipe'] is not None else []), S['f_out']})
+                    *([S['wipe'] - 6] if S['wipe'] is not None else []), S['f_out'],
+                    *([S['strike'] + 4, S['knock'][-1] + 8] if VARIANT == 4 else []),
+                    *([S['word'] + 8] if VARIANT == 4 and S.get('word') is not None else [])})
     print('snapshot times: ' + ','.join(f'{(f + .5) / FPS:.3f}' for f in snaps if 0 <= f < nfr))
     used = [t['text'] for t in TILES] + ([RECEIPT_TITLE, RECEIPT_ITEM] if RECEIPTS_ON else [])
     if any(u in PLACEHOLDERS for u in used):

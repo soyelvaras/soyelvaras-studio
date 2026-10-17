@@ -8,16 +8,30 @@ tachando).
 **Frases que lo activan:** "pon estos tres nombres en la pared detrás de mí y saca cada uno cuando lo digo",
 "táchalos detrás de mí", "apila los recibos y muestra cuánto suman".
 
-## Las tres versiones (`VARIANT`)
+## Las cuatro versiones (`VARIANT`)
 | n | nombre | cómo se ve |
 |---|---|---|
 | 1 | Etiqueta de precio | etiqueta de papel con hilo y agujero, nombre en mayúsculas; sale tachada |
 | 2 | Post-it a mano | papel con cinta y nombre escrito a mano; sale con una X |
 | 3 | Ventana que se cierra | ventana de programa con barra y botón de cerrar; se raja en dos y las mitades caen |
+| 4 | Íconos | íconos de app en una fila (una baldosa de marca con la inicial y el nombre debajo, nunca un logo real); aparecen en su palabra, UNA línea dorada los tacha a todos, caen con gravedad detrás de la persona y en su lugar aterriza una palabra en serif cursiva |
 
-Se elige en el Studio Picker con los tres puntitos bajo la tarjeta; `fx_new.py` escribe la versión guardada en la línea
+Se elige en el Studio Picker con los puntitos bajo la tarjeta; `fx_new.py` escribe la versión guardada en la línea
 `VARIANT`. Colores y letras salen del bloque `STYLE` (`paper`, `paper_ink`, `deep`, `strike`, `name_font`, `hand_font`,
 `ui_font`), así que sirven para la marca de cualquier cliente.
+
+### Versión 4, Íconos
+- Todos los íconos quedan arriba juntos hasta `STRIKE_AT` (por defecto 12 cuadros después del último); la línea los cruza
+  en 6 cuadros, de izquierda a derecha, y cada ícono se lleva su pedazo al caer (caen con 3 cuadros de diferencia).
+- `prep.py` busca una fila libre de la persona: primero sobre la cabeza, si no al lado; achica los íconos antes de
+  dejar que la persona los roce. 2 a 5 íconos.
+- `WORD` (una palabra que la persona dice, como "programa.") aterriza donde estaban, en el espacio libre de ese lado de
+  la cabeza mientras dura; con `word_color = 'auto'` sale verde bosque sobre una pared clara y crema sobre una oscura.
+  `WORD_AT` / `WORD_OUT` la mueven; `WORD = ''` la apaga.
+- La inicial sale del nombre (dos palabras = dos iniciales: "Adobe Premiere" = AP). Colores en `STYLE['icon_palette']`.
+- Sin recibos ni total en esta versión. Sonidos: un pop por ícono y un whoosh en la línea.
+- `check.py` puede marcar "something is over the face" cuando la persona se mueve mucho: el leve acercamiento (`ZOOM`)
+  cambia la cara aunque nada la tape. Mira los cuadros de `work/check/sheet.jpg`; con `ZOOM = 1.0` la alerta se va.
 
 ## Primer paso: solo nombres y montos propios de la persona
 Cada ficha es un nombre que la persona dice en este clip o que te dio el usuario. Cada monto en un recibo es uno que
@@ -58,6 +72,7 @@ borde.
 |---|---|---|
 | `TILES` | un diccionario por ficha: `text`, `at` (palabra dicha, `'palabra#2'`, o cuadro); opcional `exit`, `spot`, `knock` | `prep.py words`; en el orden dicho; 2 a 5 fichas, cada una arriba 9 cuadros o más |
 | `TILE_LABEL` | línea pequeña bajo cada nombre (`''` = ninguna) | qué son esas cosas, con las palabras de la persona |
+| `STRIKE_AT`, `WORD`, `WORD_AT`, `WORD_OUT` | solo Íconos: cuándo pasa la línea, la palabra que aterriza y cuándo entra y sale | palabras o cuadros de `prep.py words`; `None` = por defecto |
 | `RECEIPTS_ON` | interruptor de la segunda mitad | `False` = solo fichas |
 | `RECEIPTS` | una entrada por recibo: una palabra / cuadro, o un diccionario con `at`, `title`, `item`, `amount` | después de la última ficha; hasta 8 |
 | `RECEIPT_TITLE`, `RECEIPT_ITEM`, `RECEIPT_AMOUNT`, `CURRENCY` | valores por defecto de cada recibo; texto antes de cada monto | números enteros que dijo la persona |

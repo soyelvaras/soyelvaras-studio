@@ -233,9 +233,54 @@ def main():
         warn.append('the speaker moves a lot while the effect is up: each piece is placed for its own frames, check work/layout.jpg')
 
     # ---- tiles
-    tiles, prev = [], None
+    tiles, prev, row = [], None, None
     order = [s for s in B.STYLE['order'] if s in ('left', 'right', 'above')] or ['left', 'right']
-    for k, t in enumerate(B.TILES):
+    if B.VARIANT == 4:                         # Íconos: one row of icons, on one wall, for the whole effect
+        n = len(B.TILES)
+        wall = Wall(m, sch['f_in'], sch['knock'][0])
+        hk = head_in(sch['f_in'], sch['knock'][0])
+        tries = ['above'] + [s for s in order if s != 'above']
+        for lim in (.015, .06):                # first a row the speaker never touches (smaller if need be), then one they graze
+            for spot in tries:
+                for sc in (1, .9, .8, .72, .64):
+                    IW = round(B.ICON * B.SIZE * sc)
+                    gap, lab = round(IW * .3), round(max(20, IW * .17))
+                    W, H = n * IW + (n - 1) * gap, IW + 14 + lab
+                    hit = find(wall, W, H, W + 70, H + 40, pref_for(spot, hk, W, H),
+                               region_for(spot, hk, B.WALL, hk['bottom'] + .7 * (hk['bottom'] - hk['top'])))
+                    if hit and hit[2] <= lim:
+                        row = dict(spot=spot, x=int(hit[0]), y=int(hit[1]), w=W, h=H, icon=IW, gap=gap, label=lab, scale=sc,
+                                   cover=round(hit[2], 3))
+                        break
+                if row:
+                    break
+            if row:
+                break
+        if not row:
+            sys.exit(f'the row of {n} icons has no clear wall inside the safe zone. Use a wider shot, fewer icons, set '
+                     'WALL by hand, or leave this effect out for this clip.')
+        if row['spot'] != 'above':
+            warn.append(f'no room above the head for the row: it sits on the "{row["spot"]}" wall')
+        if row['scale'] < 1:
+            warn.append(f'the icons shrunk to {row["scale"]:.2f} to fit: check the names still read on a phone')
+        if B.WORD and sch.get('word') is not None:        # where the head is while the word is up (it gets the free wall beside it)
+            hw = head_in(sch['word'], sch['word_out'])
+            row['head_word'] = dict(x0=round(hw['x0']), x1=round(hw['x1']), top=round(hw['top']))
+            # how light the wall is around the row while the word is up: build.py picks a dark or a light word from it
+            fmid = (sch['word'] + sch['word_out']) // 2
+            raw = subprocess.run([FF, '-v', 'error', '-i', 'assets/aroll.mp4', '-vf', f"select='eq(n,{fmid})',scale=270:480",
+                                  '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'gray', '-'], capture_output=True).stdout
+            if len(raw) == 270 * 480:
+                g = np.frombuffer(raw, np.uint8).reshape(480, 270)
+                x0, x1 = int(max(0, row['x'] - row['w'] / 2) / 4), int(min(1080, row['x'] + row['w'] / 2) / 4) + 1
+                y0, y1 = int(max(0, row['y'] - row['h'] / 2) / 4), int(min(1920, row['y'] + row['h'] / 2) / 4) + 1
+                row['wall_luma'] = round(float(g[y0:y1, x0:x1].mean()), 1)
+        top = row['y'] - row['h'] / 2
+        for k, t in enumerate(B.TILES):
+            x = row['x'] - row['w'] / 2 + row['icon'] / 2 + k * (row['icon'] + row['gap'])
+            tiles.append(dict(spot='row', x=int(x), y=int(top + row['icon'] / 2), w=row['icon'], h=row['icon'],
+                              fs=round(row['icon'] * .6), rot=round(rng.uniform(-3, 3), 2), scale=row['scale'], cover=row['cover']))
+    for k, t in enumerate(B.TILES if B.VARIANT != 4 else []):
         wall = Wall(m, sch['land'][k] - 4, sch['knock'][k] + 6)
         hk = head_in(sch['land'][k] - 4, sch['knock'][k] + 6)
         want = t.get('spot') or order[k % len(order)]
@@ -338,6 +383,8 @@ def main():
     os.makedirs('work', exist_ok=True)
     lay = dict(sig=B.signature(), frames=nfr, at=at, head={k: round(v, 1) for k, v in hd.items()}, tiles=tiles, receipts=recs,
                total=total, warnings=warn)
+    if row:
+        lay['row'] = row
     json.dump(lay, open('work/layout.json', 'w'), indent=1)
     picture(lay, sch, nfr)
     print(f'head: centre x {hd["cx"]:.0f}, y {hd["top"]:.0f} to {hd["bottom"]:.0f}, width {hd["w"]:.0f} (moves x {hd["x0"]:.0f} to {hd["x1"]:.0f})')
