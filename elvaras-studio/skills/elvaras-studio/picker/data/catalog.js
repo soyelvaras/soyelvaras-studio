@@ -587,19 +587,19 @@ window.STUDIO_CATALOG = {
    "n": 27,
    "key": "flicker",
    "name": "Flicker",
-   "line": "El corte se vuelve una ráfaga de destellos que aterriza en la toma siguiente. Dos versiones.",
+   "line": "La persona de la toma siguiente aparece parpadeando, luego el fondo, y aterriza en la toma nueva. Dos versiones.",
    "preview": "previews/effects/flicker-1.mp4",
    "poster": "previews/posters/effects/flicker-1.jpg",
    "variants": [
     {
      "n": 1,
-     "name": "Completo",
+     "name": "Por capas",
      "preview": "previews/effects/flicker-1.mp4",
      "poster": "previews/posters/effects/flicker-1.jpg"
     },
     {
      "n": 2,
-     "name": "Por capas",
+     "name": "Completo",
      "preview": "previews/effects/flicker-2.mp4",
      "poster": "previews/posters/effects/flicker-2.jpg"
     }

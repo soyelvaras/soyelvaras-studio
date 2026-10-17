@@ -2,9 +2,9 @@
 """flicker (transition): a hard cut between two shots becomes a burst of flashing light that lands on the next shot.
 
 Two looks (VARIANT):
-  1 Completo   the whole frame flickers: white flashes, shot A, shot B, faster and faster, landing on shot B
-  2 Por capas  the speaker of shot B flickers in OVER shot A first (cut out, flashing white), settles, then the room
-               behind flickers between the two shots and white, and shot B takes the frame
+  1 Por capas  the main one. The speaker of shot B flickers in OVER shot A first (cut out, flashing white), settles,
+               then the room behind flickers between the two shots and white, and shot B takes the frame
+  2 Completo   the whole frame flickers: white flashes, shot A, shot B, faster and faster, landing on shot B
 
 Nothing is baked: every frame of the transition just shows or hides a few layers (the live slot video, the last frame
 of shot A, the first frame of shot B, the cutout of shot B, white). The cutout of shot B before the cut is its first
@@ -22,8 +22,8 @@ import sys
 
 # ==== CLIP (edit this) ====
 CUT = None            # first frame of shot B. None = clip.json "cut_frames"[0] (fx_new.py writes it)
-VARIANT = 1           # look: 1 = Completo (the whole frame flickers), 2 = Por capas (shot B's speaker flickers in over
-                      # shot A, then the room behind flickers, then shot B). 2 needs assets/subject.webm (the cutout)
+VARIANT = 1           # look: 1 = Por capas (shot B's speaker flickers in over shot A, then the room behind flickers,
+                      # then shot B; needs assets/subject.webm, the cutout), 2 = Completo (the whole frame flickers)
 LENGTH = 24           # frames the flicker takes (24 = 0.8 s). The patterns below are stretched or squeezed to it
 FLASH = '#FFFFFF'     # colour of the flashes. White reads as light; the brand cream '#F2ECDF' is softer
 FLASH_OPACITY = .95   # how solid a flash frame is (1 = a pure white frame)
@@ -39,10 +39,10 @@ SFX_VOL = .26         # template volume of the flicker crackle (x0.75 is applied
 #   x  a flash with shot B's speaker on top
 # Before the cut "shot B" is its first frame held; after the cut "shot A" is its last frame held.
 PATTERNS = {
-    1: ('WAWWAWBWAWWBWBWBBWBBBBBB', 12),
-    2: ('PaPpaPPpPpxBpxBxxBpBBBBB', 16),
+    1: ('PaPpaPPpPpxBpxBxxBpBBBBB', 16),
+    2: ('WAWWAWBWAWWBWBWBBWBBBBBB', 12),
 }
-VARIANT_NAMES = {1: 'Completo', 2: 'Por capas'}
+VARIANT_NAMES = {1: 'Por capas', 2: 'Completo'}
 FPS = 30
 SFX_GAIN = 0.75
 SFX = ('glitch-2', 0.0)            # stock crackle under the burst: file, seconds of air before its first hit
@@ -75,8 +75,9 @@ if F0 < 2 or F0 + len(PAT) > N - 2:
     sys.exit('the flicker does not fit: it needs %d frames before the cut and %d after it (plus 2 on each side), the slot has '
              '%d before and %d after. Widen --from / --to, or lower LENGTH' % (AT, len(PAT) - AT, CUT, N - CUT))
 HAS_CUT = os.path.exists('assets/subject.webm')
-if VARIANT == 2 and not HAS_CUT:
-    sys.exit('Por capas needs the cutout (assets/subject.webm): make the slot without --no-cutout')
+if VARIANT == 1 and not HAS_CUT:
+    sys.exit('Por capas (version 1) needs the cutout (assets/subject.webm): make the slot without --no-cutout, '
+             'or set VARIANT = 2 (Completo)')
 
 
 def stills():

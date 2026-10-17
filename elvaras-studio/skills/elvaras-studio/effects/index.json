@@ -665,7 +665,7 @@
    "n": 27,
    "key": "flicker",
    "name": "Flicker",
-   "does": "A hard cut becomes a burst of flashing light that lands on the next shot (version 2: the next shot's speaker flickers in first, then the room).",
+   "does": "A hard cut becomes a burst of flashing light that lands on the next shot (version 1, the main one: the next shot's speaker flickers in first, then the room; version 2: the whole frame flickers).",
    "say": "make that cut a flicker",
    "shot": [
     "wide",
@@ -683,7 +683,7 @@
    "tracking": "none",
    "extra": [],
    "material": "none",
-   "notes": "Needs two different shots back to back (a real cut), the speaker in both. Version 1 needs 12 frames each side of the cut; version 2 needs 16 before and 8 after, and the cutout. White flashes: use it as an accent, not on every cut.",
+   "notes": "Needs two different shots back to back (a real cut), the speaker in both. Version 1 (Por capas) needs 16 frames before the cut and 8 after, and the cutout; version 2 (Completo) needs 12 each side. White flashes: use it as an accent, not on every cut.",
    "status": "ready"
   }
  ]
