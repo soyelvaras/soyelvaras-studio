@@ -582,6 +582,29 @@ window.STUDIO_CATALOG = {
     }
    ],
    "category": "effect"
+  },
+  {
+   "n": 27,
+   "key": "flicker",
+   "name": "Flicker",
+   "line": "El corte se vuelve una ráfaga de destellos que aterriza en la toma siguiente. Dos versiones.",
+   "preview": "previews/effects/flicker-1.mp4",
+   "poster": "previews/posters/effects/flicker-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Completo",
+     "preview": "previews/effects/flicker-1.mp4",
+     "poster": "previews/posters/effects/flicker-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Por capas",
+     "preview": "previews/effects/flicker-2.mp4",
+     "poster": "previews/posters/effects/flicker-2.jpg"
+    }
+   ],
+   "category": "transition"
   }
  ],
  "styles": [

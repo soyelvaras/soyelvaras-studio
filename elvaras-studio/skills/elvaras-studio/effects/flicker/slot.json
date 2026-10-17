@@ -1,0 +1,24 @@
+{
+ "key": "flicker",
+ "pack": "flicker",
+ "imported": "2026-10-17",
+ "cutout": "measure",
+ "hi": "no",
+ "reel_captions": "keep",
+ "captions_note": "draws no words: the reel's own captions run straight through the transition",
+ "reel_env": [],
+ "in_a_reel": [
+  "make the slot ACROSS the cut: --from about 0.6 s before it, --to about 0.5 s after it (version 1 needs 12 frames before the cut and 12 after, version 2 needs 16 before and 8 after, plus 2 on each side). fx_new.py --project records the cut frame and the cutout by itself",
+  "version 2 (Por capas) needs the cutout; version 1 also runs with --no-cutout",
+  "after the reel render, look at every frame of the burst: frames_check.py --at with 6 to 8 times from 0.6 s before the cut to 0.3 s after it"
+ ],
+ "sounds": {},
+ "steps": [
+  "edit the CLIP block in build.py (VARIANT, and LENGTH only if the cut has less room)",
+  "run build.py SAFE=1",
+  "hf lint",
+  "hf snapshot --at <6 to 8 times around the cut>",
+  "run build.py",
+  "hf render"
+ ]
+}
