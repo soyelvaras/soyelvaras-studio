@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Open the Studio Picker on the buyer's own picks file.
 
-Usage:  PY picker.py [--tab styles|captions|effects] [--until-saved] [--no-open] [--port N]
+Usage:  PY picker.py [--tab styles|captions|effects|transitions] [--until-saved] [--no-open] [--port N]
 
-  --tab            open straight on one section ("switch my captions" -> captions, "change my effects" -> effects)
+  --tab            open straight on one section ("switch my captions" -> captions, "change my effects" -> effects, "change my transitions" -> transitions)
   --until-saved    stop by itself a few seconds after the buyer presses Save (handy when you wait on this command).
                    Without it the picker stops about 25 seconds after its browser tab is closed.
 

@@ -6,10 +6,26 @@
       "runtimeExecutable": "python",
       "runtimeArgs": [
         "C:/Users/crist/Documents/soyelvaras-studio/elvaras-studio/skills/elvaras-studio/picker/serve.py",
-        "--no-open", "--keep-alive", "--port", "4790",
-        "--config", "C:/Users/crist/Documents/soyelvaras-studio/dev/studio-picks.json"
+        "--no-open",
+        "--keep-alive",
+        "--port",
+        "4790",
+        "--config",
+        "C:/Users/crist/Documents/soyelvaras-studio/dev/studio-picks.json"
       ],
       "port": 4790
+    },
+    {
+      "name": "maquetas",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4791",
+        "--directory",
+        "C:/Users/crist/Documents/soyelvaras-studio/dev/maquetas"
+      ],
+      "port": 4791
     }
   ]
 }

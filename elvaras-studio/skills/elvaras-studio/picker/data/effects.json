@@ -59,7 +59,8 @@
    "job": "Gancho",
    "line": "La cámara te atraviesa y entra a la siguiente toma.",
    "preview": "previews/effects/zoom-through-cut.mp4",
-   "en": "Zoom-Through Cut"
+   "en": "Zoom-Through Cut",
+   "category": "transition"
   },
   {
    "n": 18,

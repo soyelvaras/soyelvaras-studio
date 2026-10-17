@@ -1,6 +1,6 @@
 ---
 name: elvaras-studio
-description: "Soy Elvaras Studio. Convierte clips verticales 9:16 de alguien hablando a cámara en un reel de Instagram terminado, con el look guardado en el selector de estilo: uno de 19 estilos de subtítulos o uno de 8 estilos completos, más los efectos elegidos. Elige la toma más limpia de cada frase, corta los silencios, transcribe con tiempo por palabra, ubica los subtítulos según dónde está la persona en el cuadro y revisa todo dentro de la zona segura de Reels. Responde siempre en español. Úsala cuando el usuario diga 'edítalo', 'edita estos clips', 'dejé clips en descargas', 'arma un reel con esto', 'cambia mis subtítulos', 'cambia mis efectos', 'cambia mi estilo', 'abre el selector', 'actualiza el Studio', o sus versiones en inglés ('edit it', 'open the picker'), o cuando ejecute /elvaras-studio."
+description: "Soy Elvaras Studio. Convierte clips verticales 9:16 de alguien hablando a cámara en un reel de Instagram terminado, con el look guardado en el selector de estilo: uno de 19 estilos de subtítulos o uno de 3 estilos completos, más los efectos y transiciones elegidos. Elige la toma más limpia de cada frase, corta los silencios, transcribe con tiempo por palabra, ubica los subtítulos según dónde está la persona en el cuadro y revisa todo dentro de la zona segura de Reels. Responde siempre en español. Úsala cuando el usuario diga 'edítalo', 'edita estos clips', 'dejé clips en descargas', 'arma un reel con esto', 'cambia mis subtítulos', 'cambia mis efectos', 'cambia mi estilo', 'abre el selector', 'actualiza el Studio', o sus versiones en inglés ('edit it', 'open the picker'), o cuando ejecute /elvaras-studio."
 ---
 
 # Soy Elvaras Studio (elvaras-studio)
@@ -41,9 +41,9 @@ se comparte, publica ni entrega a otra persona, y su repositorio de GitHub es pr
   cliente tiene además sus propios archivos de estilo: guárdalos como `ST/clients/<cliente>/my-style.{md,json}`.
 - Formatos: el render principal es 9:16 para Instagram. Cuando pida la versión web, renderiza también en 16:9.
 - Los 19 clips de `captions/previews` (y sus fotos en `picker/previews/posters/captions`) ya son de él: una sola
-  escena de 1016(3), todo el texto abajo, armada en `~/reel-edits/subtitulos-base`. Los de `picker/previews/effects`,
-  `picker/previews/styles` y `effects/*/example` siguen siendo de relleno hasta que él grabe los suyos. Nunca los
-  presentes como trabajo suyo.
+  escena de 1016(3), todo el texto abajo, armada en `~/reel-edits/subtitulos-base`. Los de `picker/previews/effects`
+  (los 26) y `picker/previews/styles` (los 3) también son suyos. Los de `effects/*/example` siguen siendo de relleno
+  hasta que él grabe los suyos: nunca los presentes como trabajo suyo.
 - Lo que ya se aprendió con sus tomas (detalle en la memoria del proyecto): usa lentes, y la medición de la cabeza
   se corta en la nariz (la barbilla real queda unos 150 px más abajo); su silla oscura se mezcla con su polerón en
   los recortes; en los acercamientos usa `cy` cerca de 0.52; la palabra que pide comentar es "EDIT".
@@ -177,16 +177,20 @@ estudia esos videos o imágenes para poder replicar el estilo.
 
 ## El selector de estilo
 
-Una página local donde el usuario elige un estilo completo, o su propio estilo de subtítulos y efectos, con un clip
-de muestra en cada tarjeta. Corre solo en su computador y se abre en su navegador.
+Una página local donde el usuario elige un estilo completo, o arma el suyo en tres pestañas (Subtítulos, Efectos,
+Transiciones), con un clip de muestra en cada tarjeta. Abajo, "Tu reel" muestra lo elegido en carriles: Cualquier
+parte, Gancho, Medio, Final y Transiciones. Sobre cada efecto hay botones Gancho / Medio / Final / Cualquier parte, y
+cada efecto en un carril abre un menú para cambiar dónde va, su versión o quitarlo (también se puede arrastrar).
+Corre solo en su computador y se abre en su navegador.
 
 ```
 PY "SK/scripts/picker.py" --until-saved                  primera vez, "abre el selector", "cambia mi estilo"
 PY "SK/scripts/picker.py" --tab captions --until-saved   "cambia mis subtítulos"
 PY "SK/scripts/picker.py" --tab effects --until-saved    "cambia mis efectos"
+PY "SK/scripts/picker.py" --tab transitions --until-saved "cambia mis transiciones"
 ```
 Córrelo en segundo plano y dile: "Abrí el selector de estilo en tu navegador. Elige un estilo completo, o arma el
-tuyo con subtítulos y efectos, y presiona Guardar." Espera la línea `STATUS picks SAVED ...`. Luego lee
+tuyo con subtítulos, efectos y transiciones, y presiona Guardar." Espera la línea `STATUS picks SAVED ...`. Luego lee
 `ST/studio-picks.json` y confirma en UNA frase simple, con los nombres en español, por ejemplo: "Guardado. Quedaste
 con subtítulos Palabra Clave, Zoom Digital y Checklist. Deja tus clips y di edítalo."
 
@@ -194,7 +198,9 @@ Las elecciones: `{"mode": "preset"|"custom", "style": key|null, "captionStyle": 
 "effectSections": null | {"hook": [...], "middle": [...], "end": [...]}}`. `mode: preset` = un estilo completo, con
 sus propios subtítulos salvo que `captionStyle` sea distinto al que trae ese estilo (el usuario los cambió).
 `effectSections` con valor = cada efecto solo puede usarse en las partes indicadas para él (hook = gancho, middle =
-medio, end = final).
+medio, end = final). `effectVariants` = la versión elegida de los efectos que vienen en versiones.
+Las transiciones (en `picker/data/effects.json` con `"category": "transition"`, hoy Corte en Zoom) van en `effects`
+como cualquier efecto: el archivo no cambia. Nunca tienen parte propia: con `effectSections` aparecen en las tres.
 
 Algo puntual ("prueba Karaoke en este") no cambia las elecciones guardadas: `build_reel.py --caption karaoke` o
 `--style glam-cam`.

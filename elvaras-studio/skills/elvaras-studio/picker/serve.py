@@ -5,7 +5,7 @@ Opens a local page where you pick a caption style and the effects you like (or o
 then saves the picks to a JSON file the skill reads. Python 3 standard library only. Mac, Linux, Windows.
 
     python3 serve.py                      open the picker
-    python3 serve.py --tab captions       open straight on the captions (also: effects, styles)
+    python3 serve.py --tab captions       open straight on the captions (also: effects, transitions, styles)
     python3 serve.py --config <path>      where the picks are saved (default: studio-picks.json beside this file)
     python3 serve.py --captions <path>    the caption styles list (default: ../captions/styles.json)
     python3 serve.py --styles <path>      the overall styles list (default: data/styles.json)
@@ -34,6 +34,10 @@ Picks file:
 
 effectVariants: for a picked effect that comes in versions (the catalog lists its "variants"), the version
 the buyer chose, 1 to the number of versions. fx_new.py writes it into the slot's VARIANT line.
+
+Transitions (effects marked "category": "transition" in data/effects.json) are listed in "effects" like any other
+effect. The page shows them in their own tab and lane; they never get a part of their own, so with effectSections
+set they sit under every part.
 
 captionStyle "none" means no caption style: titles and effects only.
 mode "preset" keeps the overall style the buyer picked; captionStyle and effects start as that style's own
@@ -190,6 +194,8 @@ def build_catalog(captions_json=DEFAULT_CAPTIONS, mode='server', styles_json=Non
             'preview': picker_url(e.get('preview', 'previews/effects/%s.mp4' % key)),    # null = plain card on purpose
             'poster': picker_url(e.get('poster') or ('previews/posters/effects/%s.jpg' % key)),
             'variants': variants,
+            # "transition" shows in the Transiciones tab and lane. It is still an effect: same list in the picks file.
+            'category': 'transition' if e.get('category') == 'transition' else 'effect',
         })
     effect_keys = {e['key'] for e in effects}
 
@@ -640,7 +646,7 @@ def main(argv=None):
     ap.add_argument('--config', default=DEFAULT_CONFIG, help='the picks file (default: studio-picks.json beside serve.py)')
     ap.add_argument('--captions', default=DEFAULT_CAPTIONS, help='the caption styles list (default: ../captions/styles.json)')
     ap.add_argument('--styles', default=DEFAULT_STYLES, help='the overall styles list (default: data/styles.json)')
-    ap.add_argument('--tab', choices=('captions', 'effects', 'styles'), help='open straight on one section')
+    ap.add_argument('--tab', choices=('captions', 'effects', 'transitions', 'styles'), help='open straight on one section')
     ap.add_argument('--port', type=int, default=0, help='port to use (default: %d, or any open port)' % DEFAULT_PORT)
     ap.add_argument('--no-open', action='store_true', help='do not open the browser')
     ap.add_argument('--keep-alive', action='store_true', help='keep running after the page is closed')
