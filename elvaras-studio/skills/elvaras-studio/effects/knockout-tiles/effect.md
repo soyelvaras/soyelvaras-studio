@@ -14,7 +14,7 @@ tachando).
 | 1 | Etiqueta de precio | etiqueta de papel con hilo y agujero, nombre en mayúsculas; sale tachada |
 | 2 | Post-it a mano | papel con cinta y nombre escrito a mano; sale con una X |
 | 3 | Ventana que se cierra | ventana de programa con barra y botón de cerrar; se raja en dos y las mitades caen |
-| 4 | Íconos | íconos de app en una fila (una baldosa de marca con la inicial y el nombre debajo, nunca un logo real); aparecen en su palabra, UNA línea dorada los tacha a todos, caen con gravedad detrás de la persona y en su lugar aterriza una palabra en serif cursiva |
+| 4 | Íconos | íconos de app en una fila (el ícono real de la app cuando está en `assets/icons`, con fondo oficial; si no, una baldosa de marca con la inicial; el nombre debajo); aparecen en su palabra, UNA línea dorada los tacha a todos, caen con gravedad detrás de la persona y en su lugar aterriza una palabra en serif cursiva |
 
 Se elige en el Studio Picker con los puntitos bajo la tarjeta; `fx_new.py` escribe la versión guardada en la línea
 `VARIANT`. Colores y letras salen del bloque `STYLE` (`paper`, `paper_ink`, `deep`, `strike`, `name_font`, `hand_font`,
@@ -36,7 +36,7 @@ Se elige en el Studio Picker con los puntitos bajo la tarjeta; `fx_new.py` escri
 ## Primer paso: solo nombres y montos propios de la persona
 Cada ficha es un nombre que la persona dice en este clip o que te dio el usuario. Cada monto en un recibo es uno que
 dijo o entregó; el total lo suma el armado, nunca se escribe a mano. Nunca inventes un nombre, un precio o una
-cantidad, y nunca dibujes un logo: las fichas son texto simple. Sin lista en la frase = deja fuera este efecto. Los
+cantidad, y nunca dibujes un logo (en la versión 4 solo van los íconos de app de `assets/icons`, con licencia libre, para nombrar la app; ver `assets/icons/LICENSES.md`). Sin lista en la frase = deja fuera este efecto. Los
 valores por defecto del CLIP ("Herramienta uno", "Recibo", 0) son de relleno; `build.py` avisa mientras sigan ahí.
 
 ## Toma que necesita

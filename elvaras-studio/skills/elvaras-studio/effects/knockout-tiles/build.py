@@ -2,7 +2,7 @@
 """KNOCKOUT TILES: name tiles slam onto the wall behind the speaker, one per spoken word. Each one is struck out and
 knocked away as the next lands. Four looks (VARIANT): 1 price tag on a string, struck through; 2 hand-written post-it,
 crossed out with an X; 3 program window that cracks in half; 4 app icons in one row (brand tiles with the initial and
-the name, never a real logo): they pop in on their words, ONE line strikes through all of them, they fall with gravity
+the name; the real app icon when assets/icons has it): they pop in on their words, ONE line strikes through all of them, they fall with gravity
 behind the speaker and a serif word lands where they were. Optional second half (looks 1 to 3): receipts stack up
 beside the head while a running total counts them, then the whole pile is struck and falls.
 
@@ -68,7 +68,9 @@ TILES = [
     {'text': 'Herramienta tres', 'at': 60},      # placeholder
 ]
 TILE_LABEL = ''      # small line under every name saying what these things are ('' = none). The speaker's own words
-# Íconos (VARIANT 4) only. Each tile becomes an app icon: its initial on a brand tile, the name under it. Never a logo.
+# Íconos (VARIANT 4) only. Each tile becomes an app icon with its name under it: the real phone icon when the name is an
+# app in assets/icons (Instagram, TikTok, YouTube, CapCut, Adobe Premiere... see ICON_SPECS), otherwise its initial on
+# a brand tile. Per tile: 'icon': '<file>' forces one (e.g. 'capcut'), 'icon': '' forces the initial.
 STRIKE_AT = None     # frame or word the one line goes through all the icons. None = 12 frames after the last icon lands
 WORD = ''            # the word that lands where the icons were, in serif italic: one the speaker says ('' = none)
 WORD_AT = None       # frame or word it lands on. None = 10 frames after the strike
@@ -114,6 +116,32 @@ EXIT = {'left': 'drop', 'right': 'flick', 'above': 'shatter'}
 RW, RH, RSTEP = 300, 136, 70          # receipt size and how far the next one on a side lands above the last
 PLACEHOLDERS = ('Herramienta uno', 'Herramienta dos', 'Herramienta tres', 'Recibo', '1 ítem')
 ICON = 168                            # VARIANT 4: icon size at SIZE 1 (px); the row shrinks if the wall is short
+# VARIANT 4 real app icons: file in assets/icons -> (background, symbol colour or None = its own colours, symbol size,
+# 'tt' = TikTok's cyan / red edges, 'outline' = a black outline). Sources and licences: assets/icons/LICENSES.md
+ICON_SPECS = {
+    'instagram': ('radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%)', '#FFFFFF', .64, ''),
+    'tiktok': ('#000000', '#FFFFFF', .58, 'tt'),
+    'youtube': ('#FFFFFF', '#FF0000', .70, ''),
+    'facebook': ('#FFFFFF', '#0866FF', .74, ''),
+    'x': ('#000000', '#FFFFFF', .50, ''),
+    'whatsapp': ('linear-gradient(180deg,#5FFC7B,#28D146)', '#FFFFFF', .64, ''),
+    'threads': ('#000000', '#FFFFFF', .58, ''),
+    'linkedin': ('#FFFFFF', '#0A66C2', .66, ''),
+    'snapchat': ('#FFFC00', '#FFFFFF', .66, 'outline'),
+    'pinterest': ('#FFFFFF', '#E60023', .74, ''),
+    'telegram': ('#FFFFFF', '#26A5E4', .76, ''),
+    'spotify': ('#000000', '#1ED760', .68, ''),
+    'messenger': ('linear-gradient(45deg,#0099FF 0%,#A033FF 60%,#FF5280 90%,#FF7061 100%)', '#FFFFFF', .62, ''),
+    'twitch': ('#9146FF', '#FFFFFF', .56, ''),
+    'discord': ('#5865F2', '#FFFFFF', .62, ''),
+    'davinciresolve': ('linear-gradient(160deg,#3a3a3a,#141414)', '#FFFFFF', .60, ''),
+    'adobepremierepro': ('#00005B', None, 1.0, ''),
+    'capcut': ('#000000', '#FFFFFF', .62, ''),
+}
+ICON_ALIASES = {'ig': 'instagram', 'insta': 'instagram', 'tiktok': 'tiktok', 'yt': 'youtube', 'fb': 'facebook', 'twitter': 'x',
+                'wsp': 'whatsapp', 'whatsap': 'whatsapp', 'snap': 'snapchat', 'premiere': 'adobepremierepro',
+                'adobepremiere': 'adobepremierepro', 'premierepro': 'adobepremierepro', 'adobepremierepro': 'adobepremierepro',
+                'davinci': 'davinciresolve', 'resolve': 'davinciresolve', 'capcut': 'capcut'}
 NEAR = '0px 16px 30px 0px rgba(0,0,0,0.5), 0px 3px 7px 0px rgba(0,0,0,0.4)'
 FAR = '0px 80px 90px 0px rgba(0,0,0,0.2), 0px 34px 44px 0px rgba(0,0,0,0.1)'
 PNEAR = '0px 14px 26px 0px rgba(0,0,0,0.44), 0px 2px 6px 0px rgba(0,0,0,0.34)'
@@ -293,6 +321,27 @@ def schedule_icons(fr, nfr):
                  '(the last frames must be the plain clip). Make the slot longer or move the beats earlier')
     return dict(land=L, knock=K, f_in=f_in, f_out=f_out, rec=[], total=None, tag=None, wipe=None, strike=strike, word=word,
                 word_out=word_out)
+
+
+def app_icon(tile):
+    """the file in assets/icons for this tile: 'icon' when the tile names one ('' = none), else matched from the name"""
+    if 'icon' in tile:
+        slug = tile['icon'] or None
+    else:
+        key = re.sub(r'[^a-z0-9]', '', tile['text'].lower())
+        slug = key if key in ICON_SPECS else ICON_ALIASES.get(key)
+    if slug and (slug not in ICON_SPECS or not os.path.exists(os.path.join(HERE, 'assets/icons', slug + '.svg'))):
+        sys.exit(f'tile "{tile["text"]}": no app icon "{slug}" in assets/icons (the ones there: {", ".join(sorted(ICON_SPECS))})')
+    return slug
+
+
+def icon_svg(slug, color):
+    """the icon's SVG, inline (no file request at render time), sized to its box and in the given colour"""
+    s = open(os.path.join(HERE, 'assets/icons', slug + '.svg'), encoding='utf-8').read()
+    s = re.sub(r'<title>.*?</title>', '', s)
+    s = re.sub(r'\s(width|height)="[^"]*"', '', s, count=2)
+    style = f'width:100%;height:100%;display:block;fill:{color};color:{color}' if color else 'width:100%;height:100%;display:block'
+    return s.replace('<svg', f'<svg style="{style}"', 1)
 
 
 def initials(name):
@@ -513,6 +562,16 @@ def build_icons(P, lay, S):
         d = 'M ' + ' L '.join(f'{r1(x - cx)} {r1(yline(x) - cy)}' for x, _ in pts)
         ini = initials(t['text'])
         fs = r1(IW * (.6 if len(ini) == 1 else .46))
+        slug = app_icon(t)
+        if slug:                  # the real phone icon: its background and its symbol, white (or its own colours)
+            bg, col, scale, fx = ICON_SPECS[slug]
+            o = r1(IW * .018)
+            filt = {'tt': f'drop-shadow(-{o}px -{o}px 0 #25F4EE) drop-shadow({o}px {o}px 0 #FE2C55)',
+                    'outline': ' '.join(f'drop-shadow({dx}px {dy}px 0 #000)' for dx, dy in ((o, 0), (-o, 0), (0, o), (0, -o)))}.get(fx, 'none')
+            pad = r1((1 - scale) / 2 * IW)
+            face = f'<div class="glyph" style="inset:{pad}px;filter:{filt}">{icon_svg(slug, col)}</div><div class="gl"></div>'
+        else:
+            face = f'<div class="ini" style="font-size:{fs}px;color:{ink}">{esc(ini)}</div><div class="gl"></div>'
         strike = (f'<svg class="strike" id="sk-{k}" width="1" height="1">'
                   f'<path id="sk-{k}-u" d="{d}" pathLength="1000" fill="none" stroke="rgba(0,0,0,.42)" stroke-width="{sw}" '
                   f'stroke-linecap="round" stroke-linejoin="round" transform="translate(3 6)"/>'
@@ -521,8 +580,7 @@ def build_icons(P, lay, S):
                   f'<path id="sk-{k}-b" d="{d}" pathLength="1000" fill="none" stroke="#F2ECDF" stroke-opacity=".45" '
                   f'stroke-width="{max(2, round(sw * .28))}" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -2)"/></svg>')
         P.add(f'<div class="mover" id="mv-{k}" style="left:{cx}px;top:{cy}px"><div class="spin" id="sp-{k}" style="width:0;height:0">'
-              f'<div class="icon" style="left:{-IW / 2}px;top:{-IW / 2}px;width:{IW}px;height:{IW}px;background:{bg}">'
-              f'<div class="ini" style="font-size:{fs}px;color:{ink}">{esc(ini)}</div><div class="gl"></div></div>'
+              f'<div class="icon" style="left:{-IW / 2}px;top:{-IW / 2}px;width:{IW}px;height:{IW}px;background:{bg}">{face}</div>'
               f'<div class="ilabel" style="top:{IW / 2 + 10}px;font-size:{lab}px;line-height:{lab + 4}px">{esc(t["text"])}</div>'
               f'{strike}</div></div>')
         tL, tK = F(S['land'][k]), F(S['knock'][k])
@@ -832,6 +890,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .icon{{position:absolute;border-radius:23%;overflow:hidden;box-shadow:0 18px 34px rgba(0,0,0,.45),0 3px 8px rgba(0,0,0,.3),inset 0 0 0 1.5px rgba(242,236,223,.18)}}
 .icon .ini{{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;padding-top:.06em;letter-spacing:.01em}}
 .icon .gl{{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,0) 48%)}}
+.icon .glyph{{position:absolute}}
 .ilabel{{position:absolute;left:0;transform:translateX(-50%);white-space:nowrap;font-family:'Work Sans',sans-serif;font-weight:600;color:#F2ECDF;
   text-shadow:0 2px 8px rgba(0,0,0,.65),0 0 2px rgba(0,0,0,.4)}}
 .iword{{position:absolute;white-space:nowrap;font-family:'{s.get('word_font', 'Instrument Serif')}',serif;font-style:italic;font-weight:400;letter-spacing:-.01em}}
@@ -969,7 +1028,7 @@ window.__timelines["main"] = tl;
               f'strike f{S["strike"]}' + (f', word "{WORD}" f{S["word"]} to f{S["word_out"]}' if WORD else ', no word'))
     for k, (t, g) in enumerate(zip(TILES, lay['tiles'])):
         if VARIANT == 4:
-            print(f'  icon {k + 1} "{t["text"]}" ({initials(t["text"])})  lands f{S["land"][k]}  falls f{S["knock"][k]}')
+            print(f'  icon {k + 1} "{t["text"]}" ({app_icon(t) or "initial " + initials(t["text"])})  lands f{S["land"][k]}  falls f{S["knock"][k]}')
             continue
         print(f'  tile {k + 1} "{t["text"]}"  lands f{S["land"][k]}  knocked f{S["knock"][k]}  {g["spot"]:5s} {t.get("exit") or EXIT[g["spot"]]:7s} size {g["scale"]:.2f}')
     for i, f in enumerate(S['rec']):
