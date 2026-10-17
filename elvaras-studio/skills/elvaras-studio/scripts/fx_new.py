@@ -23,6 +23,9 @@ The slot then holds both shots, clip.json records the cut frame, and the cutout 
   --no-cutout             skip the cutout (effects that do not layer the speaker)
   --no-transcribe         skip words.json      --prompt "Claude, skill"   names for the transcription
   --picks <file>          read this picks file instead of the saved one (for the parts the buyer allowed)
+  --variant N             build version N of an effect that comes in versions (else the one picked in the Studio Picker).
+                          A version listed in the effect's "whole_reel_variants" (effects/index.json) is its own video, not
+                          a slot: its span may hold cuts and the buyer's parts do not apply (Antes y Después 2, Tarjetas)
   --buyer-files <folder>  for an effect that shows the buyer's own material (Couch Wall: their reel covers): copy the
                           files of that folder into the slot. The skill ships none; no material = no effect
   --force                 overwrite effect files that already exist in the slot (a CLIP block you filled is lost)
@@ -81,6 +84,7 @@ def parse():
     ap.add_argument('--prompt', default='Claude, Claude Code, skill.')
     ap.add_argument('--no-transcribe', action='store_true')
     ap.add_argument('--picks')
+    ap.add_argument('--variant', type=int)
     ap.add_argument('--buyer-files')
     ap.add_argument('--force', action='store_true')
     ap.add_argument('-h', '--help', action='store_true')
@@ -145,6 +149,12 @@ def main():
         segs = fxlib.read(os.path.join(proj, 'segments.json'), []) or []
         cut_frames = [s['frame'] - frame0 for s in segs if frame0 < s['frame'] < frame0 + n]
         two_shot = int(entry.get('segments') or 1) >= 2
+        _pv = (fxlib.read(skillenv.path_arg(a.picks) if a.picks else skillenv.picks_file(), {}) or {}).get('effectVariants') or {}
+        own_video = (a.variant or _pv.get(key)) in (entry.get('whole_reel_variants') or [])
+        if own_video:
+            print(f'version {a.variant or _pv.get(key)} of {entry["name"]} is its own video, not a slot in the reel: any span works, '
+                  'cuts included, and the parts of the reel do not apply')
+            cut_frames, two_shot = [], False
         if cut_frames and not two_shot:
             sys.exit(f'{entry["name"]} needs one continuous shot and this span crosses a cut at reel frame '
                      f'{cut_frames[0] + frame0} ({(cut_frames[0] + frame0) / 30:.2f}s). Move --from / --to to one side of it.')
@@ -164,6 +174,8 @@ def main():
         picks = fxlib.read(skillenv.path_arg(a.picks) if a.picks else skillenv.picks_file(), {}) or {}
         where, _ = fxlib.reel_parts(proj)
         ok, why = fxlib.part_verdict(picks, key, where, frame0 / 30, (frame0 + n) / 30)
+        if own_video:
+            ok, why = True, 'its own video (not laid into the reel)'
         if not ok:
             sys.exit(f'NOT ALLOWED HERE  {entry["name"]}: {why}. Pick another moment, or leave it out and tell the buyer.')
         print(f'parts: {why}')
@@ -188,14 +200,17 @@ def main():
     # an effect that comes in versions (Comentario): the version picked in the Studio Picker goes on the VARIANT line
     pick_v = (fxlib.read(skillenv.path_arg(a.picks) if a.picks else skillenv.picks_file(), {}) or {}).get('effectVariants') or {}
     bpy = os.path.join(slot, 'build.py')
-    if isinstance(pick_v.get(key), int) and os.path.exists(bpy):
+    want_v = a.variant if a.variant else pick_v.get(key)
+    if isinstance(want_v, int) and os.path.exists(bpy):
         with open(bpy, encoding='utf-8') as f:
             src_py = f.read()
-        new_py, hits = re.subn(r'^VARIANT = \d+', f'VARIANT = {pick_v[key]}', src_py, count=1, flags=re.M)
+        new_py, hits = re.subn(r'^VARIANT = \d+', f'VARIANT = {want_v}', src_py, count=1, flags=re.M)
         if hits:
             with open(bpy, 'w', encoding='utf-8', newline='') as f:
                 f.write(new_py)
-            print(f'version: {pick_v[key]} (from the Studio Picker)')
+            print(f'version: {want_v} ' + ('(--variant)' if a.variant else '(from the Studio Picker)'))
+        elif a.variant:
+            print(f'!! --variant {a.variant}: {key} has no VARIANT line, it comes in one version only')
     buyer = meta.get('buyer_folder')        # material only the buyer has (their own reel covers, ...): never shipped
     buyer_note = ''
     if buyer:

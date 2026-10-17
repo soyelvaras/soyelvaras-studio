@@ -37,7 +37,26 @@ ACCENT = None                # one caption word that turns yellow with an underl
 PUNCH = None                 # a word the speaker says, shown big BEHIND the speaker's head from its spoken moment (needs the cutout). None = off
 HANDLE_Y = 'auto'            # centre of the round handle on the line. 'auto' = below the chin and off the caption row
 OUT = 'auto'                 # when the after look eases off so the slot ends on plain footage. 'auto' = last 0.6 s, seconds, or None = ends on a cut
+# Look (picked in the Studio Picker; fx_new.py writes it):
+#   1 Barrido   everything above: a line sweeps the raw clip into the edit, inside the reel
+#   2 Tarjetas  a presentation video of the FINISHED reel, made after the final render: the raw cut small behind ("Antes"),
+#               the finished reel big in front ("Después"), on the brand's light page with the wordmark. Its own video, not a
+#               slot: make it over the whole reel (or the part to show) with fx_new.py --no-cutout, and never run fx_add.py.
+#               Only the lines below count for it (cards.py builds it)
+VARIANT = 1
+REEL = None                  # Tarjetas: the finished reel, relative to the project ('renders/<slug>-v2.mp4'). None = the newest full render
+TITLES = ('Antes', 'Después')  # Tarjetas: the two card titles, or None
+NAME = 'auto'                # Tarjetas: under the cards. 'auto' = the Soy Elvaras wordmark, a text of your own, or None
+CREDIT = None                # Tarjetas: a small line under the name, e.g. 'Edición para <cliente>'. None = none
+PROGRESS = True              # Tarjetas: a thin dorado progress line under the big card
 # ==== END CLIP ====
+
+if VARIANT == 2:             # Tarjetas: cards.py builds the presentation page, nothing below runs
+    import cards
+    cards.main(REEL, TITLES, NAME, CREDIT, PROGRESS)
+    sys.exit(0)
+if VARIANT != 1:
+    sys.exit('VARIANT must be 1 (Barrido) or 2 (Tarjetas)')
 
 FPS = 30
 YEL, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'

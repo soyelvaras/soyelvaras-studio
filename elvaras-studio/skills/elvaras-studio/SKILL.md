@@ -199,8 +199,11 @@ Las elecciones: `{"mode": "preset"|"custom", "style": key|null, "captionStyle": 
 sus propios subtítulos salvo que `captionStyle` sea distinto al que trae ese estilo (el usuario los cambió).
 `effectSections` con valor = cada efecto solo puede usarse en las partes indicadas para él (hook = gancho, middle =
 medio, end = final). `effectVariants` = la versión elegida de los efectos que vienen en versiones.
-Las transiciones (en `picker/data/effects.json` con `"category": "transition"`, hoy Corte en Zoom) van en `effects`
-como cualquier efecto: el archivo no cambia. Nunca tienen parte propia: con `effectSections` aparecen en las tres.
+Las transiciones (en `picker/data/effects.json` con `"category": "transition"`, hoy Corte en Zoom y Flicker) van en
+`effects` como cualquier efecto: el archivo no cambia. Nunca tienen parte propia: con `effectSections` aparecen en las tres.
+Una versión que es su propio video (`whole_reel_variants` en `effects/index.json`, hoy Antes y Después 2 "Tarjetas") no
+va dentro del reel: si está elegida, después del render final arma también esa presentación (su `effect.md` dice cómo) y
+entrégala aparte, junto al reel.
 
 Algo puntual ("prueba Karaoke en este") no cambia las elecciones guardadas: `build_reel.py --caption karaoke` o
 `--style glam-cam`.

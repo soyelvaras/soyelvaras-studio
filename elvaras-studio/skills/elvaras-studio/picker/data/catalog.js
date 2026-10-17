@@ -422,10 +422,23 @@ window.STUDIO_CATALOG = {
    "n": 19,
    "key": "before-and-after",
    "name": "Antes y Después",
-   "line": "Una línea barre la pantalla y convierte tu clip crudo en la edición.",
+   "line": "Una línea barre la pantalla y convierte tu clip crudo en la edición. Dos versiones: la 2 es un video aparte para mostrar el reel terminado.",
    "preview": "previews/effects/before-and-after.mp4",
    "poster": "previews/posters/effects/before-and-after.jpg",
-   "variants": [],
+   "variants": [
+    {
+     "n": 1,
+     "name": "Barrido",
+     "preview": "previews/effects/before-and-after.mp4",
+     "poster": "previews/posters/effects/before-and-after.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Tarjetas",
+     "preview": "previews/effects/before-and-after-2.mp4",
+     "poster": "previews/posters/effects/before-and-after-2.jpg"
+    }
+   ],
    "category": "effect"
   },
   {

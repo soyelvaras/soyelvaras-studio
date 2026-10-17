@@ -435,8 +435,11 @@
   {
    "n": 19,
    "key": "before-and-after",
+   "whole_reel_variants": [
+    2
+   ],
    "name": "Before and After",
-   "does": "A wipe line sweeps across your raw clip to reveal the edited version.",
+   "does": "A wipe line sweeps across your raw clip to reveal the edited version (version 2 Tarjetas: a presentation video of the finished reel, raw cut small behind, finished reel big in front, made after the final render).",
    "say": "do a before/after wipe on this line",
    "shot": [
     "wide",
@@ -454,7 +457,7 @@
    "tracking": "none (measure.py finds the head; both sides are the same frames)",
    "extra": [],
    "material": "nothing needed. Optional: the buyer's own finished version of the same frames",
-   "notes": "Any shot, any camera. Needs a line that is about a change. Weak when the payoff word comes in the first 0.3 s or less than 1.5 s of slot follows the sweep. On footage that is already dark the default grade may be too quiet: raise AFTER_GRADE. The buyer's own after file must be the same take with no punch-in, reframe or speed change.",
+   "notes": "Any shot, any camera. Needs a line that is about a change. Weak when the payoff word comes in the first 0.3 s or less than 1.5 s of slot follows the sweep. On footage that is already dark the default grade may be too quiet: raise AFTER_GRADE. The buyer's own after file must be the same take with no punch-in, reframe or speed change. Tarjetas is its own video, never laid into the reel (fx_add.py refuses it).",
    "status": "ready"
   },
   {

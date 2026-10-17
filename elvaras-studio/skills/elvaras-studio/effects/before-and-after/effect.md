@@ -49,6 +49,28 @@ tipografías y `whoosh-short.mp3` / `pop.mp3` vienen de la plantilla. Solo numpy
 | `PUNCH` | una palabra que dice la persona, grande detrás de su cabeza | la palabra de remate; necesita el recorte; por defecto `None` |
 | `HANDLE_Y` | altura del tirador | `'auto'` |
 | `OUT` | cuándo se suaviza el look "después" | `'auto'` (por defecto: últimos 0,6 s, el espacio termina en imagen simple); segundos; `None` = el espacio TERMINA EN UN CORTE con el look puesto (solo como lo último antes de un corte o del final del reel) |
+| `VARIANT` | 1 Barrido, 2 Tarjetas | lo escribe `fx_new.py` desde el selector, o `--variant 2` |
+| `REEL` | solo Tarjetas: el reel terminado, relativo al proyecto | `None` = el render completo más nuevo de `renders/` (sin `-phone`) |
+| `TITLES`, `NAME`, `CREDIT` | solo Tarjetas: títulos de las tarjetas, el nombre bajo ellas, una línea chica bajo el nombre | `('Antes', 'Después')`; `'auto'` = el logo Soy Elvaras; `'Edición para <cliente>'` o `None` |
+| `PROGRESS` | solo Tarjetas: línea dorada de avance bajo la tarjeta grande | `True` |
+
+## Versiones (`VARIANT` en el bloque CLIP)
+
+1. **Barrido:** todo lo de arriba. Una línea barre el clip crudo y deja la edición, dentro del reel.
+2. **Tarjetas:** un video de presentación del reel TERMINADO, para mostrar un trabajo (de un cliente o tuyo). En la página
+   crema, el corte crudo corre en una tarjeta chica atrás a la izquierda ("Antes") y el reel terminado en una tarjeta
+   grande adelante a la derecha ("Después"), los dos en el mismo cuadro todo el tiempo, con el sonido del reel. Bajo las
+   tarjetas va el logo Soy Elvaras y, si quieres, una línea como "Edición para <cliente>". Todo dentro de la zona segura.
+   - No es un espacio dentro del reel: es su propio video, y se arma DESPUÉS del render final. Nunca corre `fx_add.py`
+     (se niega). El render del espacio se entrega como `<proyecto>-antes-despues.mp4` en `renders/` del proyecto.
+   - Se crea sobre todo el reel, o sobre el tramo que quieras mostrar, y puede cruzar cortes:
+     `PY "SK/scripts/fx_new.py" before-and-after --project "<proyecto>" --from 0 --to <largo del reel> --no-cutout --no-transcribe --variant 2 --name antes-despues`
+     (sin `--variant` toma la versión elegida en el selector). Su `assets/aroll.mp4` es el lado "Antes"; el reel terminado
+     se lee desde el mismo segundo (`in` de clip.json), así que las dos tarjetas siempre muestran el mismo cuadro.
+   - Orden: `build.py SAFE=1`, `hf lint`, `hf snapshot --at <3 o 4 tiempos>`, `build.py`, `hf render`. No hay
+     `measure.py`, `prep_after.py` ni `check.py`. `cards.py` arma la página; build.py le pasa el control.
+   - Si el reel se volvió a cortar después de crear el espacio, crea el espacio de nuevo (build.py avisa cuando los
+     cuadros no calzan).
 
 ## Interruptores
 `SAFE=1` guía de zona segura (solo instantáneas). `CAPTIONS=0` sin palabras de subtítulo, acento ni palabra de golpe

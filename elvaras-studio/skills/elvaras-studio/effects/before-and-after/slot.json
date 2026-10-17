@@ -13,7 +13,8 @@
   "build with CAPTIONS=0: the buyer's captions carry the words on both sides of the line. The after look is the grade, the shade and the push-in; raise AFTER_GRADE if the change does not read at phone size",
   "OUT = 'auto' (the look eases off in the last 0.6 s and the slot ends on the plain picture). OUT = None only when the slot ends on a cut or at the end of the reel",
   "start the slot at least 0.3 s before the payoff word and leave 1.5 s or more after the sweep, or the after look has no time to be seen",
-  "the two tags say 'before' and 'after' or the buyer's own two words: no claim, number or result on screen that the buyer did not give"
+  "the two tags say 'before' and 'after' or the buyer's own two words: no claim, number or result on screen that the buyer did not give",
+  "Tarjetas (VARIANT 2) is its own video, not a slot: make it AFTER the final render over the whole reel (fx_new.py --from 0 --to <reel length> --no-cutout --no-transcribe --variant 2 --name antes-despues), build, render, and deliver renders/antes-despues.mp4 as <project>-antes-despues.mp4. Never fx_add.py (it refuses)"
  ],
  "sounds": {},
  "steps": [

@@ -92,6 +92,9 @@ def main():
         sys.exit(__doc__)
     proj, slot = os.path.abspath(skillenv.path_arg(pos[0])), os.path.abspath(skillenv.path_arg(pos[1]))
     name = os.path.basename(slot)
+    if os.path.exists(os.path.join(slot, 'work', 'presentation.json')):
+        sys.exit(f'{name} is a presentation video (Antes y Después, Tarjetas), not a slot: it is never laid into the reel. '
+                 'Deliver its render as its own video')
     plan_path = os.path.join(proj, 'plan.json')
     plan = fxlib.read(plan_path, {}) or {}
     slots = [s for s in (plan.get('slots') or []) if s.get('slot') != name]
