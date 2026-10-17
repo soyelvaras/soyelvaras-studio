@@ -76,7 +76,7 @@
    "n": 8,
    "key": "digital-zoom",
    "name": "Digital Zoom",
-   "does": "A slow creep onto your face, a hard snap on a key word, a whip back out.",
+   "does": "A slow creep onto your face, a hard snap on a key word, a whip back out (version 2 Medio rostro: one extreme zoom leaves half the face on one side, the room goes dark grey, a line outlines the speaker and the words stack on the empty side).",
    "say": "punch in on my face when I say X",
    "shot": [
     "wide",
@@ -94,7 +94,7 @@
    "tracking": "face (track.py)",
    "extra": [],
    "material": "none",
-   "notes": "One continuous shot with the face visible the whole time. With --hi a 1728 px source stays sharp to 1.6x; from a 1080 source every zoom is an upscale (capped at 1.5x).",
+   "notes": "One continuous shot with the face visible the whole time. With --hi a 1728 px source stays sharp to 1.6x; from a 1080 source every zoom is an upscale (capped at 1.5x; Medio rostro goes to 1.95x). Medio rostro brings its own words while HALF runs and hides the reel captions only there.",
    "status": "ready"
   },
   {

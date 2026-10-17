@@ -39,9 +39,24 @@
    "key": "digital-zoom",
    "name": "Zoom Digital",
    "job": "Gancho",
-   "line": "Un acercamiento lento a tu cara y un golpe seco en la palabra clave.",
+   "line": "Un acercamiento lento a tu cara y un golpe seco en la palabra clave. Dos versiones.",
    "preview": "previews/effects/digital-zoom.mp4",
-   "en": "Digital Zoom"
+   "poster": "previews/posters/effects/digital-zoom.jpg",
+   "en": "Digital Zoom",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Golpes",
+     "preview": "previews/effects/digital-zoom.mp4",
+     "poster": "previews/posters/effects/digital-zoom.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Medio rostro",
+     "preview": "previews/effects/digital-zoom-2.mp4",
+     "poster": "previews/posters/effects/digital-zoom-2.jpg"
+    }
+   ]
   },
   {
    "n": 16,

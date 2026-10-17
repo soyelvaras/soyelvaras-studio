@@ -11,9 +11,11 @@ Run order, from the slot folder (exact commands in effect.md):
   GRADE=0     no grade / vignette / flash (the main reel grades the slot: use this when the slot sits inside a graded reel)
   HI=0        ignore assets/aroll_hi.mp4 and work from the 1080 a-roll (scale is capped lower)
 """
+import hashlib
 import json
 import math
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -79,6 +81,22 @@ CAPS = [
 WHOOSH = 0.26
 # Grade on the picture (dropped with GRADE=0). A soft contrast base look, a touch lighter so skin stays natural.
 GRADE = 'contrast(1.06) saturate(.93) brightness(.98)'
+# Look (picked in the Studio Picker; fx_new.py writes it):
+#   1 Golpes        the zooms above, timed to the words; the reel's captions stay on
+#   2 Medio rostro  one extreme zoom leaves half the face on one side of the screen. While HALF runs the room goes dark
+#                   and grey, a thin line draws down around the speaker (who stays in colour) and the words of that moment
+#                   stack on the empty side with thin rules. ZOOMS = one snap or creep in (about 1.9) and a pull back out.
+#                   Needs assets/subject.webm. The reel's captions step aside only while HALF runs (build.py says so)
+VARIANT = 1
+# Medio rostro only ----------------------------------------------------------------------------------------------------
+HALF = None            # (first frame, last frame) of the look: from the landing of the zoom in to the start of the pull
+SIDE = 'left'          # where the face sits, 'left' or 'right'. A centred EYE x is moved there (150 / 930); words take the other side
+HALF_WORDS = []        # the words on the empty side, one group per tuple: (last frame on screen or None = until HALF ends, lines)
+                       #   line = (frame it is spoken, text, style), stacked top-down. style 'sm' Work Sans (reading size),
+                       #   'lg' Bebas Neue (the punch), 'it' Instrument Serif italic in dorado (the key word). Sizes shrink to fit
+HALF_TOP = 560         # y of the top of the word stack (near the eyes; build.py checks the safe zone)
+DIM = 'grayscale(1) brightness(.42) contrast(1.15)'    # the room while HALF runs
+LINE = '#F2ECDF'       # the outline and the rules (crema)
 # ==== END CLIP ====
 
 
@@ -99,6 +117,10 @@ DRIFT = {'creep': .022, 'snap': .035, 'pull': 0}   # default slow push after a l
 WHOOSH_FILE, WHOOSH_CREST = 'whoosh-short', .16     # stock template sound; its loudest point is 0.16s in
 SFX_GAIN = 0.75
 YEL = '#C9A15B'
+VARIANT_NAMES = {1: 'Golpes', 2: 'Medio rostro'}
+HALF_UPSCALE = 1.95    # Medio rostro: the scale cap rises to this much past the lossless zoom (the dark grey room hides the softness)
+FACE_K = .62           # half a head plus hair, in head widths: how far the face reaches past the eye point (word column)
+HALF_STYLE = {'sm': (74, .56, 1.12), 'lg': (200, .40, .86), 'it': (168, .40, .96)}   # base px, width per char per px, line height
 
 
 def probe(path, entries):
@@ -116,8 +138,21 @@ HW, HH = (int(v) for v in probe(SRC, 'stream=width,height').split(',')[:2])
 COVER = max(1080 / HW, 1920 / HH)                    # aroll.mp4 = the source scaled to cover 1080x1920, centre-cropped
 LOSSLESS = 1 / COVER
 OFFX, OFFY = (HW - 1080 / COVER) / 2, (HH - 1920 / COVER) / 2
-MAXS = LOSSLESS * MAX_UPSCALE
+if VARIANT not in VARIANT_NAMES:
+    sys.exit('VARIANT must be one of ' + ', '.join(f'{k} ({v})' for k, v in VARIANT_NAMES.items()))
+MAXS = LOSSLESS * (max(MAX_UPSCALE, HALF_UPSCALE) if VARIANT == 2 else MAX_UPSCALE)
 NOTES = []
+if VARIANT == 2:
+    if SIDE not in ('left', 'right'):
+        sys.exit("SIDE must be 'left' or 'right'")
+    if not HALF or len(HALF) != 2 or not 0 <= HALF[0] < HALF[1] <= NFR - 1:
+        sys.exit(f'Medio rostro needs HALF = (first frame, last frame) of the look, inside the clip (0 to {NFR - 1})')
+    HALF = (int(HALF[0]), int(HALF[1]))
+    if not os.path.exists(os.path.join(HERE, 'assets/subject.webm')):
+        sys.exit('Medio rostro needs the cutout (assets/subject.webm): make the slot without --no-cutout')
+    if 400 <= EYE[0] <= 680:
+        EYE = (150 if SIDE == 'left' else 930, EYE[1])
+        NOTES.append(f'Medio rostro: EYE moved to {EYE} so the face sits on the {SIDE} edge')
 
 # ---------------------------------------------------------------- checks on the CLIP block
 if not ZOOMS:
@@ -137,7 +172,7 @@ for i, z in enumerate(ZOOMS):
     if peak > MAXS + 1e-6:
         new = round(MAXS / (peak / z['scale']), 3)
         NOTES.append(f"zoom {i + 1}: {z['scale']}x capped to {new}x (source {HW}x{HH} is lossless to {LOSSLESS:.2f}x, "
-                     f"MAX_UPSCALE {MAX_UPSCALE} allows {MAXS:.2f}x at the peak)")
+                     + (f"Medio rostro allows {MAXS:.2f}x at the peak)" if VARIANT == 2 else f"MAX_UPSCALE {MAX_UPSCALE} allows {MAXS:.2f}x at the peak)"))
         z['scale'] = max(1.0, new)
 T_LAST = F(NFR - 1)
 
@@ -292,8 +327,11 @@ def solve():
 
 CAM = solve()
 os.makedirs(os.path.join(HERE, 'work'), exist_ok=True)
-json.dump({'name': NAME, 'src': SRC, 'w': 1080, 'h': 1920, 'fps': FPS, 'lossless': LOSSLESS, 'frames': CAM},
-          open(os.path.join(HERE, 'work/camera.json'), 'w'))
+HALF_WIN = [max(0, HALF[0] - 3), min(NFR - 1, HALF[1] + 3)] if VARIANT == 2 else None   # frames of assets/zoom_cut.webm
+# what zoom_cut.webm was baked from (bake.py copies it to work/zoom_cut.sig): the window and every crop in it
+HALF_SIG = hashlib.md5(json.dumps([HALF_WIN, [c['boxes'] for c in CAM[HALF_WIN[0]:HALF_WIN[1] + 1]]]).encode()).hexdigest()[:12] if HALF_WIN else ''
+json.dump({'name': NAME, 'src': SRC, 'w': 1080, 'h': 1920, 'fps': FPS, 'lossless': LOSSLESS, 'cover': COVER, 'offx': OFFX,
+           'offy': OFFY, 'half': HALF_WIN, 'half_sig': HALF_SIG, 'frames': CAM}, open(os.path.join(HERE, 'work/camera.json'), 'w'))
 SNAP_START = [round(z['t0'] * FPS) for z in ZOOMS if z['kind'] == 'snap']
 SNAP_LAND = [round(z['t1'] * FPS) for z in ZOOMS if z['kind'] == 'snap']
 PULL_START = [round(z['t0'] * FPS) for z in ZOOMS if z['kind'] == 'pull']
@@ -397,6 +435,95 @@ def look():
     return tw
 
 
+# ---------------------------------------------------------------- Medio rostro: dark grey room, outlined speaker, words aside
+def _identity(css):
+    """the same filter functions at their no-change values, so GSAP can tween between the two strings"""
+    zero = {'grayscale': '0', 'sepia': '0', 'invert': '0', 'blur': '0px', 'hue-rotate': '0deg'}
+    return ' '.join(f"{fn}({zero.get(fn, '1')})" for fn, _ in re.findall(r'([a-z-]+)\(([^)]*)\)', css))
+
+
+def _rgba(hexc, a):
+    h = hexc.lstrip('#')
+    return f'rgba({int(h[0:2], 16)},{int(h[2:4], 16)},{int(h[4:6], 16)},{a})'
+
+
+def half_column():
+    """left and right x of the word column: beside the face, on the side SIDE leaves empty"""
+    span = CAM[HALF[0]:HALF[1] + 1]
+    if SIDE == 'left':
+        edge = max(c['eye'][0] + FACE_K * HEAD_W * c['scale'] for c in span)
+        return int(min(620, max(330, edge + 44))), 1010, edge
+    edge = min(c['eye'][0] - FACE_K * HEAD_W * c['scale'] for c in span)
+    return 70, int(max(460, min(750, edge - 44))), edge
+
+
+def half_parts():
+    """-> html, tweens, report lines for the Medio rostro look"""
+    h0, h1 = HALF
+    col_l, col_r, edge = half_column()
+    left = SIDE == 'left'
+    base = (GRADE + ' ') if ON['GRADE'] and GRADE else ''
+    off, on = base + _identity(DIM), base + DIM
+    d5 = 5 / FPS
+    tw = [f"gsap.set('#bgv',{{filter:'{off}'}});",
+          f"tl.to('#bgv',{{filter:'{on}',duration:{d5:.4f},ease:'power2.out'}},{F(h0 - 2):.4f});",
+          f"tl.to('#bgv',{{filter:'{off}',duration:{d5:.4f},ease:'power2.in'}},{F(h1 - 3):.4f});",
+          "gsap.set('#cutv',{autoAlpha:0,'--wipe':'0%'});",
+          f"tl.set('#cutv',{{autoAlpha:1}},{F(h0 - 2):.4f});",
+          f"tl.to('#cutv',{{'--wipe':'118%',duration:{10 / FPS:.4f},ease:'power1.inOut'}},{F(h0 - 2):.4f});",
+          f"tl.to('#cutv',{{autoAlpha:0,duration:{d5:.4f},ease:'power2.in'}},{F(h1 - 3):.4f});"]
+    vx, vtop = (1022 if left else 56), HALF_TOP - 150
+    html = [f'<div id="hv" class="vrule" style="left:{vx}px;top:{vtop}px;height:{1440 - vtop}px"></div>']
+    tw += ["gsap.set('#hv',{scaleY:0});", f"tl.to('#hv',{{scaleY:1,duration:.6,ease:'power2.out'}},{F(h0 + 2):.4f});",
+           f"tl.to('#hv',{{autoAlpha:0,duration:{d5:.4f}}},{F(h1 - 3):.4f});"]
+    rep = [f'column x {col_l}-{col_r} (face reaches x {edge:.0f}), stack from y {HALF_TOP}']
+    for g, (last, lines) in enumerate(HALF_WORDS):
+        gid = f'h{g}'
+        y, rows, stops, colw = 0.0, [], [], col_r - col_l
+        for k, (fr, txt, st) in enumerate(lines):
+            if st not in HALF_STYLE:
+                sys.exit(f"HALF_WORDS group {g + 1}: style {st!r} is not 'sm', 'lg' or 'it'")
+            px0, kw, lh = HALF_STYLE[st]
+            if left and HALF_TOP + y + px0 * lh > 1155:
+                colw = min(colw, 975 - col_l)           # the right 100 px column is closed from y 1155 down
+            px = min(px0, int(colw / max(1, kw * len(txt))))
+            lid = f'{gid}l{k}'
+            rows.append(f'<div id="{lid}" class="hl {st}" style="top:{y:.0f}px;font-size:{px}px">{txt}</div>')
+            tgt = YEL if st == 'it' else LINE
+            tw += [f"gsap.set('#{lid}',{{autoAlpha:0}});",
+                   f"tl.fromTo('#{lid}',{{autoAlpha:0,x:{-16 if left else 16},filter:'blur(12px)',color:'#8C8C88'}},{{autoAlpha:1,x:0,"
+                   f"filter:'blur(0px)',duration:.22,ease:'power3.out',immediateRender:false}},{T(fr):.3f});",
+                   f"tl.to('#{lid}',{{color:'{tgt}',duration:.32,ease:'power1.out'}},{T(fr) + .1:.3f});"]
+            if not h0 <= fr <= h1:
+                rep.append(f'!! group {g + 1}: "{txt}" at frame {fr} is outside HALF {HALF}')
+            y += px * lh
+            stops.append((fr, y))
+        ry = y + 22                                     # the rule ends under the whole stack, and follows it down line by line
+        span = f'left:0;width:{1080 - col_l}px;transform-origin:0 50%' if left else f'left:{-col_l}px;width:{col_r}px;transform-origin:100% 50%'
+        rows.append(f'<div id="{gid}r" class="rule" style="top:{stops[0][1] + 22:.0f}px;{span}"></div>')
+        tw += [f"tl.to('#{gid}r',{{y:{sy - stops[0][1]:.0f},duration:.24,ease:'power3.out'}},{T(sf):.3f});" for sf, sy in stops[1:]]
+        html.append(f'<div id="{gid}" class="hg" style="left:{col_l}px;top:{HALF_TOP}px;width:{col_r - col_l}px">{"".join(rows)}</div>')
+        first = min(fr for fr, _, _ in lines)
+        tw += [f"gsap.set('#{gid}r',{{scaleX:0}});", f"tl.to('#{gid}r',{{scaleX:1,duration:.5,ease:'power2.out'}},{T(first):.3f});"]
+        t_out = F(h1 - 3) if last is None or last >= h1 else F(last) - .12
+        tw.append(f"tl.to('#{gid}',{{autoAlpha:0,y:-18,filter:'blur(10px)',duration:.14,ease:'power2.in'}},{t_out:.3f});")
+        bottom = HALF_TOP + ry
+        rep.append(f'group {g + 1}: {len(lines)} lines, down to y {bottom:.0f}' + ('  !! past the 1470 safe line' if bottom > 1470 else ''))
+    if ON['CAPTIONS'] and CAPS:
+        for g, (last, lines) in enumerate(CAPS):
+            f0 = min(fr for _, _, ws in lines for fr, _, _ in ws)
+            f1 = NFR - 1 if last is None else last
+            if f0 <= h1 and f1 >= h0:
+                rep.append(f'!! CAPS group {g + 1} (f{f0}-{f1}) runs into HALF {HALF}: end it before, or move its words into HALF_WORDS')
+    s_in = CAM[h0]['scale']
+    if s_in < 1.6:
+        rep.append(f'!! the zoom is only {s_in:.2f}x at frame {h0}: let the zoom in land before HALF starts (about 1.9x)')
+    ex = CAM[h0]['eye'][0]
+    if (left and ex > 330) or (not left and ex < 750):
+        rep.append(f'!! the eyes sit at x {ex:.0f} at frame {h0}: the face is not on the {SIDE} edge yet (more scale, or EYE x)')
+    return html, tw, rep
+
+
 def audio():
     wav = os.path.join(HERE, f'assets/sfx/{WHOOSH_FILE}.mp3')
     if not (ON['SFX'] and WHOOSH and os.path.exists(wav)):
@@ -443,6 +570,23 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .big{{font-size:236px;letter-spacing:-.04em}}
 .y{{color:{YEL}}}
 '''
+if VARIANT == 2:
+    _O = f'{LINE}'
+    CSS += f'''
+#cutv{{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover;--wipe:0%;
+  filter:{(GRADE + ' ') if ON['GRADE'] and GRADE else ''}saturate(.94) drop-shadow(2.5px 0 0 {_O}) drop-shadow(-2.5px 0 0 {_O}) drop-shadow(0 2.5px 0 {_O})
+    drop-shadow(0 -2.5px 0 {_O}) drop-shadow(0 0 16px {_rgba(LINE, .42)});
+  -webkit-mask-image:linear-gradient(180deg,#000 calc(var(--wipe) - 16%),rgba(0,0,0,0) var(--wipe));
+  mask-image:linear-gradient(180deg,#000 calc(var(--wipe) - 16%),rgba(0,0,0,0) var(--wipe))}}
+.hg{{position:absolute;z-index:8;height:10px}}
+.hl{{position:absolute;left:0;right:0;white-space:nowrap;text-align:{'left' if SIDE == 'left' else 'right'};color:{LINE};
+  text-shadow:0 8px 34px rgba(0,0,0,.5)}}
+.hl.sm{{font-family:'Work Sans';font-weight:600;letter-spacing:-.01em;line-height:1.1}}
+.hl.lg{{font-family:'Bebas Neue';font-weight:400;letter-spacing:.01em;line-height:.86}}
+.hl.it{{font-family:'Instrument Serif';font-style:italic;font-weight:400;letter-spacing:-.01em;line-height:.96}}
+.rule{{position:absolute;height:2px;background:{LINE};opacity:.72}}
+.vrule{{position:absolute;z-index:8;width:2px;background:{LINE};opacity:.5;transform-origin:50% 0}}
+'''
 
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'
               '<div style="position:absolute;left:0;right:0;top:0;height:220px;background:rgba(255,0,0,.28)"></div>'
@@ -463,7 +607,13 @@ def debug_tw():
 
 def build():
     c_html, c_tw = captions() if ON['CAPTIONS'] and CAPS else ([], [])
-    tweens = (look() if ON['GRADE'] else []) + c_tw + (debug_tw() if SAFE else [])
+    h_html, h_tw = HALF_HTML, HALF_TW
+    tweens = (look() if ON['GRADE'] else []) + h_tw + c_tw + (debug_tw() if SAFE else [])
+    cutv = ''
+    if VARIANT == 2:
+        w0, w1 = HALF_WIN
+        cutv = (f'\n    <video id="cutv" src="assets/zoom_cut.webm" muted playsinline data-start="{F(w0):.4f}" data-media-start="0" '
+                f'data-duration="{(w1 - w0 + 1) / FPS:.4f}" data-track-index="1"></video>')
     grade = ('<div id="tone" class="fx"></div><div id="vig" class="fx"></div><div id="vigin" class="fx"></div>'
              '<div id="grad" class="fx"></div>\n  <div id="flash" class="fx"></div>') if ON['GRADE'] else ''
     nl = '\n'
@@ -481,9 +631,10 @@ def build():
   <audio id="bga" src="assets/aroll.mp4" data-start="0" data-media-start="0" data-duration="{DUR:.3f}" data-track-index="2" data-volume="1"></audio>
 {nl.join(audio())}
   <div id="stage">
-    <video id="bgv" src="assets/zoom.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{DUR:.3f}" data-track-index="0"></video>
+    <video id="bgv" src="assets/zoom.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{DUR:.3f}" data-track-index="0"></video>{cutv}
   </div>
   {grade}
+{nl.join(h_html)}
 {nl.join(c_html)}
 {SAFE_GUIDE if SAFE else ''}
 </div>
@@ -498,7 +649,14 @@ window.__timelines["main"] = tl;
 '''
 
 
+HALF_HTML, HALF_TW, HALF_REP = half_parts() if VARIANT == 2 else ([], [], [])
 open(os.path.join(HERE, 'index.html'), 'w').write(build())
+# Medio rostro brings its own words while HALF runs: the reel's captions step aside for just that window (fx_add.py reads it)
+_RC = os.path.join(HERE, 'work/reel_captions.json')
+if VARIANT == 2:
+    json.dump({'hide': [[round(F(HALF[0] - 2), 3), round(F(HALF[1] + 2), 3)]]}, open(_RC, 'w'))
+elif os.path.exists(_RC):
+    os.remove(_RC)
 
 # frames worth looking at in the final render (post.py reads this)
 marks, stills = {0, NFR - 1}, []
@@ -511,11 +669,23 @@ for z in ZOOMS:
         stills.append(max(0, b - 1))
 if ON['CAPTIONS']:
     marks |= {min(NFR - 1, fr + 2) for _, lines in CAPS for _, _, ws in lines for fr, _, _ in ws[-1:]}
+if VARIANT == 2:
+    marks |= {HALF[0], min(NFR - 1, HALF[0] + 4), min(NFR - 1, HALF[0] + 10), HALF[1]}
+    marks |= {min(NFR - 1, fr + 3) for _, lines in HALF_WORDS for fr, _, _ in lines}
+    stills.insert(0, min(HALF[1], HALF[0] + 14))
 stills = list(dict.fromkeys(stills + sorted(marks)))         # no duplicates, landings first
 json.dump({'name': NAME, 'frames': NFR, 'marks': sorted(marks), 'stills': stills[:3]},
           open(os.path.join(HERE, 'work/marks.json'), 'w'))
 
-print(f'wrote index.html + work/camera.json   slot "{NAME}"  {NFR} frames  head width {HEAD_W:.0f}px')
+print(f'wrote index.html + work/camera.json   slot "{NAME}"  {NFR} frames  head width {HEAD_W:.0f}px   version {VARIANT} {VARIANT_NAMES[VARIANT]}')
+if VARIANT == 2:
+    print(f'  medio rostro: HALF frames {HALF[0]}-{HALF[1]} ({F(HALF[0]):.2f}-{F(HALF[1]):.2f}s), face on the {SIDE}, scale cap {MAXS:.2f}x')
+    for hline in HALF_REP:
+        print('  medio rostro: ' + hline)
+    print(f'  reel captions: hidden only {F(HALF[0] - 2):.2f}-{F(HALF[1] + 2):.2f}s of the slot (work/reel_captions.json), on everywhere else')
+    _sig = os.path.join(HERE, 'work/zoom_cut.sig')
+    if not os.path.exists(os.path.join(HERE, 'assets/zoom_cut.webm')) or not os.path.exists(_sig) or open(_sig).read().strip() != HALF_SIG:
+        print('  !! assets/zoom_cut.webm is missing or was baked for another camera or HALF: run bake.py')
 print(f'  picture: {SRC} {HW}x{HH}  lossless to {LOSSLESS:.2f}x, scale capped at {MAXS:.2f}x'
       + ('' if SRC.endswith('_hi.mp4') else '   (no aroll_hi: 1080 source, every zoom is an upscale, keep them modest)'))
 for nline in NOTES:
@@ -552,4 +722,4 @@ elif not ON['CAPTIONS'] and CLIPJ.get('project'):
                   'fill CAPS) and add the slot with fx_add.py --captions hide')
         else:
             print(f"  reel captions: the reel's own captions stay on (band y {_band}); the chin stays above y {_chin:.0f}, clear of them")
-print('next: bake.py (needed after any change to ZOOMS / EYE / FOLLOW / AIM / HI; not for captions, grade or sound)')
+print('next: bake.py (needed after any change to ZOOMS / EYE / FOLLOW / AIM / HI / VARIANT / HALF; not for captions, words, grade or sound)')

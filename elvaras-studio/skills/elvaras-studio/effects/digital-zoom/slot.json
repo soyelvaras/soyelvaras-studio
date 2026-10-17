@@ -13,7 +13,8 @@
  "in_a_reel": [
   "build with CAPTIONS=0: the reel's captions stay on over the zoom, so leave the CAPS list alone (it is only for a stand-alone clip)",
   "end the ZOOMS list with a pull back to 1.0 before the slot ends, unless the slot ends on a cut",
-  "make the slot with --hi when the original clip is wider than 1080 px"
+  "make the slot with --hi when the original clip is wider than 1080 px",
+  "Medio rostro (VARIANT 2): one snap in and one pull out; HALF from the landing to the pull; HALF_WORDS carries every word said inside HALF. The reel captions hide only for that window (work/reel_captions.json, read by fx_add.py); run bake.py again after any change to ZOOMS, EYE or HALF"
  ],
  "sounds": {},
  "steps": [

@@ -199,10 +199,23 @@ window.STUDIO_CATALOG = {
    "n": 8,
    "key": "digital-zoom",
    "name": "Zoom Digital",
-   "line": "Un acercamiento lento a tu cara y un golpe seco en la palabra clave.",
+   "line": "Un acercamiento lento a tu cara y un golpe seco en la palabra clave. Dos versiones.",
    "preview": "previews/effects/digital-zoom.mp4",
    "poster": "previews/posters/effects/digital-zoom.jpg",
-   "variants": [],
+   "variants": [
+    {
+     "n": 1,
+     "name": "Golpes",
+     "preview": "previews/effects/digital-zoom.mp4",
+     "poster": "previews/posters/effects/digital-zoom.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Medio rostro",
+     "preview": "previews/effects/digital-zoom-2.mp4",
+     "poster": "previews/posters/effects/digital-zoom-2.jpg"
+    }
+   ],
    "category": "effect"
   },
   {

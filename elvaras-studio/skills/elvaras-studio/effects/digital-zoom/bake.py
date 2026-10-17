@@ -6,6 +6,9 @@ Slow frames get one crop. Fast frames get up to 48 crops spread across the open 
 that is a real zoom blur (sharp at the point the camera aims at, streaking towards the edges), which CSS cannot do.
 Past the lossless range of the source a light unsharp mask keeps the upscale crisp.
 
+Medio rostro (VARIANT 2) also writes assets/zoom_cut.webm: the speaker alone (colour from the same baked frame, alpha from
+assets/subject.webm put through the same crop), only for the frames of the look, so the room can go grey under them.
+
 Usage (from the slot folder; 1 to 3 minutes of CPU, so put it behind the slot runner on a shared machine):
   PY bake.py                  full bake -> assets/zoom.mp4
   PY bake.py --frames 80-92   PNG previews of those frames -> work/bake/
@@ -60,8 +63,33 @@ else:
                             '-color_range', 'tv', '-movflags', '+faststart', out_path], stdin=subprocess.PIPE)
 
 TO_LIN = ((np.arange(256) / 255.0) ** 2.2).astype(np.float32)
+HALF = cam.get('half')
+mdec = menc = None
+if HALF:
+    sub = os.path.join(HERE, 'assets/subject.webm')
+    if not os.path.exists(sub):
+        sys.exit('Medio rostro needs assets/subject.webm (the cutout)')
+    mdec = subprocess.Popen([FFMPEG, '-v', 'error', '-c:v', 'libvpx-vp9', '-i', sub, '-vf', 'alphaextract,format=gray', '-f', 'rawvideo',
+                             '-pix_fmt', 'gray', '-'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL if args.frames else None)
+    if not args.frames:
+        menc = subprocess.Popen([FFMPEG, '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
+                                 '-c:v', 'libvpx-vp9', '-pix_fmt', 'yuva420p', '-b:v', '0', '-crf', '22', '-deadline', 'good', '-cpu-used', '4',
+                                 '-row-mt', '1', '-auto-alt-ref', '0', os.path.join(HERE, 'assets/zoom_cut.webm')], stdin=subprocess.PIPE)
+
+
+def cut_alpha(mbuf, c):
+    """the cutout's alpha through this frame's crop (middle of the shutter), edge tightened after the upscale"""
+    bx = c['boxes'][len(c['boxes']) // 2]
+    cov, ox, oy = cam['cover'], cam['offx'], cam['offy']
+    box = ((bx[0] - ox) * cov, (bx[1] - oy) * cov, (bx[2] - ox) * cov, (bx[3] - oy) * cov)
+    a = np.asarray(Image.frombuffer('L', (1080, 1920), mbuf, 'raw', 'L', 0, 1).resize((W, H), Image.BICUBIC, box=box), np.float32) / 255
+    a = np.clip((a - .3) / .4, 0, 1)
+    return (a * a * (3 - 2 * a) * 255 + .5).astype(np.uint8)
+
+
 done = 0
 for c in cam['frames']:
+    mbuf = mdec.stdout.read(1080 * 1920) if mdec else None
     buf = dec.stdout.read(sw * sh * 3)
     if len(buf) < sw * sh * 3:
         sys.exit(f"the source ended at frame {c['f']}: {cam['src']} has fewer frames than the clip ({len(cam['frames'])})")
@@ -87,10 +115,27 @@ for c in cam['frames']:
         enc.stdin.write(out.tobytes())
     else:
         out.save(os.path.join(HERE, f"work/bake/f{c['f']:03d}.png"))
+    if HALF and HALF[0] <= c['f'] <= HALF[1]:
+        if not mbuf or len(mbuf) < 1080 * 1920:
+            sys.exit(f"assets/subject.webm ended before frame {c['f']}: make the cutout again (fx_new.py)")
+        rgba = np.dstack([np.asarray(out), cut_alpha(mbuf, c)])
+        if menc:
+            menc.stdin.write(rgba.tobytes())
+        else:
+            Image.fromarray(rgba, 'RGBA').save(os.path.join(HERE, f"work/bake/f{c['f']:03d}_cut.png"))
     done += 1
 dec.stdout.close()
 dec.terminate()
 dec.wait()
+if mdec:
+    mdec.stdout.close()
+    mdec.terminate()
+    mdec.wait()
+if menc:
+    menc.stdin.close()
+    menc.wait()
+    open(os.path.join(HERE, 'work/zoom_cut.sig'), 'w').write(cam.get('half_sig', ''))
+    print(f'wrote assets/zoom_cut.webm: frames {HALF[0]}-{HALF[1]} (the speaker alone, for the Medio rostro look)')
 if enc:
     enc.stdin.close()
     enc.wait()

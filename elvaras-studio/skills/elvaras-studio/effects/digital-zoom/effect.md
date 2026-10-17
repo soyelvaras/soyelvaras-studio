@@ -35,6 +35,31 @@ recorte `assets/subject.webm`: sí (posición de la cabeza). `assets/aroll_hi.mp
 | `CAPS` | grupos de subtítulos `(último cuadro, [(top px, tamaño, [(cuadro, palabra, 'y' o '')])])`, tamaño `'sm'` / `'lg'` / `'big'` o px | cuadros de palabra de `onsets.py`; tops y tamaños desde el margen impreso (avisa: muy cerca de la barbilla, bajo 1470, muy ancho) |
 | `WHOOSH` | volumen del whoosh en cada golpe (0 = ninguno) | 0,26 queda bajo la voz a un volumen normal de habla |
 | `GRADE` | color CSS sobre la imagen | déjalo, o iguálalo al reel |
+| `VARIANT` | 1 Golpes, 2 Medio rostro | lo escribe `fx_new.py` desde el selector |
+| `HALF` | solo Medio rostro: (primer cuadro, último cuadro) del look | desde que aterriza el zoom de entrada hasta que empieza el regreso |
+| `SIDE` | solo Medio rostro: lado donde queda la cara, `'left'` o `'right'` | el lado contrario a donde hay más aire en la toma. Un `EYE` centrado se mueve solo a x 150 / 930; para dejar media cara exacta baja a x 90 (o 990) |
+| `HALF_WORDS` | solo Medio rostro: las palabras del lado vacío, `(último cuadro o None, líneas)`, línea = `(cuadro, texto, estilo)` | cuadros de `onsets.py`. Estilos: `'sm'` Work Sans (lectura), `'lg'` Bebas Neue (el golpe), `'it'` Instrument Serif cursiva en dorado (la palabra clave). Se achican solas para caber |
+| `HALF_TOP` | solo Medio rostro: y donde empieza la pila de palabras | cerca de los ojos, 560 |
+| `DIM`, `LINE` | solo Medio rostro: cómo queda el cuarto (filtro CSS) y el color del contorno y las líneas | gris oscuro y crema |
+
+## Versiones (`VARIANT` en el bloque CLIP)
+
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio.
+
+1. **Golpes:** todo lo de arriba. Acercamientos, golpes y regresos a la cara, sincronizados con las palabras. Los
+   subtítulos del reel siguen encima.
+2. **Medio rostro:** un zoom extremo (hasta 1,95x de la fuente, con un tope propio más alto que `MAX_UPSCALE` porque el
+   cuarto oscuro esconde la ampliación) deja media cara en un lado de la pantalla. Mientras dura `HALF`, el cuarto se
+   oscurece y pasa a gris, el color y una línea fina crema bajan alrededor de la persona, y las palabras de ese momento
+   se apilan en el lado vacío: entran desenfocadas y grises y se aclaran, con una línea horizontal que las sigue hacia
+   abajo y una línea vertical al borde. `ZOOMS` es un golpe (o acercamiento) de entrada y un regreso.
+   - `bake.py` hornea además `assets/zoom_cut.webm`: la persona sola, con el mismo encuadre, solo para los cuadros del
+     look. Si cambias `ZOOMS`, `EYE`, `HALF` o `VARIANT`, vuelve a hornear (build.py avisa).
+   - Sus palabras son el efecto: van siempre, también con `CAPTIONS=0`. Los subtítulos del reel se ocultan solo
+     mientras dura `HALF` (build.py escribe `work/reel_captions.json` y `fx_add.py` lo lee), así que `HALF_WORDS` tiene
+     que llevar todas las palabras dichas en ese tramo. `CAPS` solo para lo que se dice fuera de `HALF`.
+   - Un golpe desde 1,0 hasta la cara en el borde desliza la imagen en sus cuadros de viaje: se lee como un golpe con
+     desenfoque. Si molesta, entra con un acercamiento.
 
 ## Interruptores (variables de entorno de build.py)
 `SAFE=1` guía de zona segura + objetivo de los ojos + línea de la barbilla (solo instantáneas). `CAPTIONS=0` sin palabras
