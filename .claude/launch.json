@@ -31,11 +31,8 @@
       "name": "plantillas",
       "runtimeExecutable": "python",
       "runtimeArgs": [
-        "-m",
-        "http.server",
-        "4792",
-        "--directory",
-        "C:/Users/crist/Documents/soyelvaras-studio/dev/plantillas"
+        "C:/Users/crist/Documents/soyelvaras-studio/dev/plantillas/serve_dev.py",
+        "4792"
       ],
       "port": 4792
     }

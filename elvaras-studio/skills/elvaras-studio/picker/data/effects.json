@@ -48,9 +48,30 @@
    "key": "headline-wall",
    "name": "Muro de Titulares",
    "job": "Gancho",
-   "line": "La pared detrás de ti se llena de titulares.",
-   "preview": "previews/effects/headline-wall.mp4",
-   "en": "Headline Wall"
+   "line": "La pared detrás de ti se llena de titulares. Tres versiones.",
+   "preview": "previews/effects/headline-wall-1.mp4",
+   "en": "Headline Wall",
+   "poster": "previews/posters/effects/headline-wall-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Collage",
+     "preview": "previews/effects/headline-wall-1.mp4",
+     "poster": "previews/posters/effects/headline-wall-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Diarios en capas",
+     "preview": "previews/effects/headline-wall-2.mp4",
+     "poster": "previews/posters/effects/headline-wall-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Pantallas en capas",
+     "preview": "previews/effects/headline-wall-3.mp4",
+     "poster": "previews/posters/effects/headline-wall-3.jpg"
+    }
+   ]
   },
   {
    "n": 17,
@@ -139,27 +160,84 @@
    "key": "checklist",
    "name": "Checklist",
    "job": "Explicar",
-   "line": "Cada paso se marca a medida que lo dices.",
-   "preview": "previews/effects/checklist.mp4",
-   "en": "Checklist"
+   "line": "Cada paso se marca a medida que lo dices. Tres versiones.",
+   "preview": "previews/effects/checklist-1.mp4",
+   "en": "Checklist",
+   "poster": "previews/posters/effects/checklist-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Tarjeta",
+     "preview": "previews/effects/checklist-1.mp4",
+     "poster": "previews/posters/effects/checklist-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Libreta a mano",
+     "preview": "previews/effects/checklist-2.mp4",
+     "poster": "previews/posters/effects/checklist-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Notificaciones",
+     "preview": "previews/effects/checklist-3.mp4",
+     "poster": "previews/posters/effects/checklist-3.jpg"
+    }
+   ]
   },
   {
    "n": 21,
    "key": "pointer-callout",
    "name": "Llamadas",
    "job": "Explicar",
-   "line": "Tarjetas unidas a ti con líneas que te siguen.",
-   "preview": "previews/effects/pointer-callout.mp4",
-   "en": "Pointer Callout"
+   "line": "Tarjetas unidas a ti con líneas que te siguen. Tres versiones.",
+   "preview": "previews/effects/pointer-callout-1.mp4",
+   "en": "Pointer Callout",
+   "poster": "previews/posters/effects/pointer-callout-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Tarjetas",
+     "preview": "previews/effects/pointer-callout-1.mp4",
+     "poster": "previews/posters/effects/pointer-callout-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Etiquetas de museo",
+     "preview": "previews/effects/pointer-callout-2.mp4",
+     "poster": "previews/posters/effects/pointer-callout-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Notas a mano",
+     "preview": "previews/effects/pointer-callout-3.mp4",
+     "poster": "previews/posters/effects/pointer-callout-3.jpg"
+    }
+   ]
   },
   {
    "n": 10,
    "key": "odometer",
    "name": "Contador",
    "job": "Prueba",
-   "line": "Los números suben dígito por dígito, como un cuentakilómetros.",
-   "preview": "previews/effects/odometer.mp4",
-   "en": "Odometer"
+   "line": "Los números suben dígito por dígito, como un cuentakilómetros. Dos versiones.",
+   "preview": "previews/effects/odometer-1.mp4",
+   "en": "Odometer",
+   "poster": "previews/posters/effects/odometer-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Tambores",
+     "preview": "previews/effects/odometer-1.mp4",
+     "poster": "previews/posters/effects/odometer-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Anillo",
+     "preview": "previews/effects/odometer-2.mp4",
+     "poster": "previews/posters/effects/odometer-2.jpg"
+    }
+   ]
   },
   {
    "n": 19,
@@ -184,9 +262,30 @@
    "key": "freeze-sticker",
    "name": "Sticker Congelado",
    "job": "Llamado",
-   "line": "Tu cuadro congelado se vuelve un sticker recortado con notas a mano.",
-   "preview": "previews/effects/freeze-sticker.mp4",
-   "en": "Freeze Sticker"
+   "line": "Tu cuadro congelado se vuelve un sticker recortado con notas a mano. Tres versiones.",
+   "preview": "previews/effects/freeze-sticker-1.mp4",
+   "en": "Freeze Sticker",
+   "poster": "previews/posters/effects/freeze-sticker-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Página",
+     "preview": "previews/effects/freeze-sticker-1.mp4",
+     "poster": "previews/posters/effects/freeze-sticker-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Recorte de revista",
+     "preview": "previews/effects/freeze-sticker-2.mp4",
+     "poster": "previews/posters/effects/freeze-sticker-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Noche dorada",
+     "preview": "previews/effects/freeze-sticker-3.mp4",
+     "poster": "previews/posters/effects/freeze-sticker-3.jpg"
+    }
+   ]
   },
   {
    "n": 12,
@@ -292,9 +391,30 @@
    "key": "pull-back-reveal",
    "name": "Revelado",
    "job": "Prueba",
-   "line": "El video se achica en una ventana de app y ves cómo se edita.",
-   "preview": "previews/effects/pull-back-reveal.mp4",
-   "en": "Pull-Back Reveal"
+   "line": "El video se achica en una ventana de app y ves cómo se edita. Tres versiones.",
+   "preview": "previews/effects/pull-back-reveal-1.mp4",
+   "en": "Pull-Back Reveal",
+   "poster": "previews/posters/effects/pull-back-reveal-1.jpg",
+   "variants": [
+    {
+     "n": 1,
+     "name": "Ventana",
+     "preview": "previews/effects/pull-back-reveal-1.mp4",
+     "poster": "previews/posters/effects/pull-back-reveal-1.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Línea de pasos",
+     "preview": "previews/effects/pull-back-reveal-2.mp4",
+     "poster": "previews/posters/effects/pull-back-reveal-2.jpg"
+    },
+    {
+     "n": 3,
+     "name": "Ventanas apiladas",
+     "preview": "previews/effects/pull-back-reveal-3.mp4",
+     "poster": "previews/posters/effects/pull-back-reveal-3.jpg"
+    }
+   ]
   }
  ]
 }

@@ -33,6 +33,13 @@ FONT = 'assets/fonts/Caveat-600-normal.woff2'
 VP9 = ('-c:v', 'libvpx-vp9')
 
 block = open('build.py').read().split('# ==== CLIP (edit this) ====')[1].split('# ==== END CLIP ====')[0]
+LOOK_ONLY = ('VARIANT', 'MAG_PAPER', 'MAG_STRIP', 'NIGHT', 'SEAL_TEXT', '# added for the versions')
+
+
+def sig_block(b):
+    """the CLIP block without the look-only lines: changing the version or its colours never needs a new bake"""
+    return '\n'.join(l for l in b.split('\n') if not l.startswith(LOOK_ONLY))
+
 C = {}
 exec(block, C)
 N = json.load(open('clip.json'))['frames']
@@ -494,7 +501,7 @@ if C['TICKS']:
             ticks.append(f'M{p0[0]:.0f} {p0[1]:.0f} L {p1[0]:.0f} {p1[1]:.0f}')
 
 # ------------------------------------------------------------------ write
-meta = {'sig': hashlib.sha1((block + str(N)).encode()).hexdigest(), 'frame': F, 'S': round(S, 4), 'tilt': tilt,
+meta = {'sig': hashlib.sha1((sig_block(block) + str(N)).encode()).hexdigest(), 'frame': F, 'S': round(S, 4), 'tilt': tilt,
         'A': [round(float(A[0]), 1), round(float(A[1]), 1)], 'T': [round(float(T[0]), 1), round(float(T[1]), 1)],
         'pivot': [round(float(hcx), 1), float(hy1)], 'bleed': bleed, 'cuts': sorted(cuts), 'ragged': round(ragged, 3),
         'sticker': {'left': int(x0 - PAD), 'top': int(y0 - PAD), 'w': int(x1 - x0), 'h': int(y1 - y0)},

@@ -92,3 +92,14 @@ posterior lo sobrescribe).
 - `click-soft` es un archivo muy bajo (necesita ~,34 de volumen base); `impact-bass-short` viene en `assets_fx/`. Las
   tarjetas lejanas nunca entran a los 220 px superiores (revisado en cada cuadro); el sangrado lateral está encendido
   por defecto, `FAR_BLEED_SIDES = False` las mantiene completas dentro del cuadro.
+
+## Versiones (`VARIANT` en el bloque CLIP)
+
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Las tres usan
+el mismo reparto, las mismas capas (lejos oscuras y suaves, cerca nítidas) y los mismos tiempos: solo cambia el dibujo de
+las tarjetas (`cards.py`), así que no hace falta correr prep.py otra vez.
+
+1. **Collage**: papel, publicaciones, chats y tarjetas oscuras mezcladas (el original).
+2. **Diarios en capas**: todas las tarjetas son recortes de diario: papel de periódico, bordes rasgados, tinta y cinta.
+3. **Pantallas en capas**: todas las tarjetas son tarjetas oscuras de app en verde de marca; la frase marcada lleva el
+   destacador dorado en su mitad baja para que se lea siempre.

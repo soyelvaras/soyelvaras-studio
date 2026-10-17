@@ -48,6 +48,8 @@ SIZE = 'auto'     # 'auto' = as large as the measured open space allows, or a nu
 FLOOR = 0.82      # smallest size that still reads on a phone (36 px text). Under it the build stops instead of shrinking
 ACCENT, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'   # line / dots / icon tile, card text, card. Brand colours, never orange
 GRADE = 'none'    # CSS filter on the picture. Leave 'none': the reel grades, and anything else also changes frame 0
+VARIANT = 1       # look: 1 = Tarjetas (dark cards with an icon), 2 = Etiquetas de museo (numbered cream labels, serif), 3 = Notas a mano (handwriting and drawn arrows)
+ACCENT_WORD = 'Claude'   # versions 2 and 3: this word of a card is drawn in the accent colour. '' = none
 # ==== END CLIP ====
 
 FP = shutil.which('ffprobe') or 'ffprobe'
@@ -171,8 +173,15 @@ def text_w(t, px):
     return (w - .02 * len(t)) * px + 4
 
 
+VARIANT_NAMES = {1: 'Tarjetas', 2: 'Etiquetas de museo', 3: 'Notas a mano'}
+
+
 def dims(c, k):
-    icon = 0 if c.get('icon', 'check') == 'none' else 100
+    icon = 0 if c.get('icon', 'check') == 'none' or VARIANT > 1 else 100
+    if VARIANT == 2:
+        return math.ceil(64 * k + text_w(c['text'], 44 * k) * 1.1), round(118 * k)
+    if VARIANT == 3:
+        return math.ceil(24 * k + text_w(c['text'], 44 * k) * 1.32), round(112 * k)
     return math.ceil((22 + icon + 26 + (6 if not icon else 0)) * k + text_w(c['text'], 44 * k)), round((124 if ANY_SUB else 104) * k)
 
 
@@ -387,6 +396,13 @@ def sub_tweens(c):
             f"tl.to('#{i}ic',{{keyframes:{{scale:[1,1.2,1]}},duration:.36,ease:'power2.out'}},{end:.3f});"]
 
 
+def label_html(t):
+    t = html.escape(t)
+    if VARIANT > 1 and ACCENT_WORD and ACCENT_WORD in t:
+        t = t.replace(ACCENT_WORD, f'<span class="acc">{ACCENT_WORD}</span>')
+    return t
+
+
 def callout(c):
     """One callout: card (fixed) + line whose end follows the track + dot. -> card html, svg, dots, tweens, frame data"""
     i, track, f_in = c['id'], c['track'], c['f_in']
@@ -424,12 +440,12 @@ def callout(c):
     print(f"  {i} '{c['text']}' -> {c['anchor']}: card x {left}..{left + w} y {top}..{top + h}, on at frame {f_in} "
           f"(word at {c['f_word']}), line lands {f_land}, length {min(lens):.0f}..{max(lens):.0f} px, "
           f"{100 * float(occ[0] / occ[1]):.0f}% of the card over the speaker")
-    icon = c.get('icon', 'check')
+    icon = c.get('icon', 'check') if VARIANT == 1 else 'none'
     ic = f'<div id="{i}ic" class="ic"><svg viewBox="0 0 48 48">{ICONS[icon]}</svg></div>' if icon != 'none' else f'<div id="{i}ic"></div>'
     sub = f'<div class="sub">{sub_html(c)}</div>' if c.get('sub', 'none') != 'none' else ''
     card = (f'<div id="{i}" class="card{"" if icon != "none" else " noic"}" style="left:{left}px;top:{top}px;width:{w}px;'
             f'transform-origin:{px - left:.1f}px {py - top:.1f}px">{ic}'
-            f'<div class="tx"><div class="lbm"><div id="{i}lb" class="lb">{html.escape(c["text"])}</div></div>{sub}</div></div>')
+            f'<div class="tx"><div class="num">{CARDS.index(c) + 1:02d}</div><div class="lbm"><div id="{i}lb" class="lb">{label_html(c["text"])}</div></div>{sub}</div></div>')
     d0 = frames[0][0]
     svg = f'<g id="{i}g"><path class="lc ln-{i}" d="{d0}"/><path class="ll ln-{i}" d="{d0}"/></g>'
     dots = (f'<div id="{i}port" class="port" style="left:{px:.1f}px;top:{py:.1f}px"></div>'
@@ -534,7 +550,31 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .core{{width:{px(22)};height:{px(22)};left:{px(-11)};top:{px(-11)};background:{ACCENT};border:{px(3.5)} solid {INK};box-shadow:0 2px 10px rgba(0,0,0,.45)}}
 .halo{{width:{px(40)};height:{px(40)};left:{px(-20)};top:{px(-20)};border:2.5px solid {ACCENT};opacity:.75;box-shadow:0 0 0 1.5px rgba(16,17,22,.28)}}
 .ring{{width:{px(88)};height:{px(88)};left:{px(-44)};top:{px(-44)};border:3px solid {ACCENT}}}
-'''
+.num{{display:none}}
+''' + {2: f'''
+.card{{border-radius:{px(4)};padding:0 {px(26)};background:{CREAM};border:0;box-shadow:0 16px 36px rgba(0,0,0,.40),0 3px 10px rgba(0,0,0,.25);
+  flex-direction:column;align-items:flex-start;justify-content:center;gap:0}}
+.num{{display:block;font:500 {px(17)} 'JetBrains Mono';letter-spacing:.16em;color:#7D7566;margin-bottom:{px(4)}}}
+.lbm{{height:{px(58)}}}
+.lb{{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-size:{px(56)};line-height:{px(58)};letter-spacing:0;color:{INK}}}
+.lb .acc{{color:#8A6A35}}
+.sub{{display:none}}
+.lc{{stroke:rgba(16,17,22,.42);stroke-width:{5 * K:.1f}}}
+.ll{{stroke:{CREAM};stroke-width:{2.6 * K:.1f}}}
+.port{{width:{px(11)};height:{px(11)};margin:{px(-5.5)} 0 0 {px(-5.5)};background:{CREAM};border:0}}
+.core{{width:{px(18)};height:{px(18)};left:{px(-9)};top:{px(-9)};background:{ACCENT};border:{px(3)} solid {CREAM}}}
+.halo,.ring{{border-color:{CREAM}}}
+''', 3: f'''
+.card{{background:none;border:0;box-shadow:none;padding:0;gap:0}}
+.lbm{{height:{px(84)}}}
+.lb{{font-family:'Caveat';font-weight:600;font-size:{px(70)};line-height:{px(84)};letter-spacing:0;color:{CREAM};text-shadow:0 3px 14px rgba(0,0,0,.72),0 1px 3px rgba(0,0,0,.6)}}
+.lb .acc{{color:{ACCENT}}}
+.tx::after{{content:'';display:block;height:{px(16)};margin-top:{px(-8)};background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M2 9 C 30 3, 55 12, 85 7 S 140 3, 198 6' fill='none' stroke='%23C9A15B' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 0 0/100% 100%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}}
+.sub{{display:none}}
+.lc{{stroke:rgba(10,10,10,.34);stroke-width:{9 * K:.1f}}}
+.ll{{stroke:{CREAM};stroke-width:{5 * K:.1f};marker-end:url(#ah)}}
+.port,.dot{{display:none}}
+'''}.get(VARIANT, '')
 
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'
               '<div style="position:absolute;left:0;right:0;top:0;height:220px;background:rgba(255,0,0,.28)"></div>'
@@ -588,7 +628,8 @@ drawFrame(0);
   <div id="cards">
 {nl.join(cards)}
   </div>
-  <svg id="lines" viewBox="0 0 1080 1920">{''.join(svgs)}</svg>
+  <svg id="lines" viewBox="0 0 1080 1920"><defs><marker id="ah" viewBox="0 0 12 12" refX="8" refY="6" markerWidth="4.2" markerHeight="4.2" orient="auto">
+    <path d="M1.5 1.5 L9 6 L1.5 10.5" fill="none" stroke="{CREAM}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>{''.join(svgs)}</svg>
   <div id="dots">
 {nl.join(dots)}
   </div>

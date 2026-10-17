@@ -89,3 +89,15 @@ archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de
   muestra su borde recto de corte en esos cuadros (desenfocado, a propósito).
 - `GRADE` queda puesto en cada cuadro en vivo, incluidos los simples: déjalo apagado salvo que el reel tenga el mismo
   color. Los sonidos son los de la plantilla a 0,75x de volumen, bajo la voz.
+
+## Versiones (`VARIANT` en el bloque CLIP)
+
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Cambiar la
+versión o sus colores NO pide volver a correr bake.py: esas líneas quedan fuera de la firma del bloque CLIP.
+
+1. **Página**: página de color (`PAGE`) con rayos que giran y notas a mano (el original).
+2. **Recorte de revista**: papel con trama de puntos (`MAG_PAPER`), una franja rasgada que gira (`MAG_STRIP`), estrellas,
+   notas en Bebas con las palabras *marcadas* sobre un bloque dorado y el sello en tinta.
+3. **Noche dorada**: fondo negro (`NIGHT`) con luz dorada detrás del sticker y rayos finos, notas en Instrument Serif
+   cursiva (las *marcadas* en Bebas dorado) y un sello redondo que gira con `STAMP` + `SEAL_TEXT` alrededor y el número
+   de la nota al centro.

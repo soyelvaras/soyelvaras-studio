@@ -88,3 +88,14 @@ Un espacio de 4 s toma unos 6 minutos de punta a punta (render cerca de 1 minuto
 - Decodifica el recorte con `-c:v libvpx-vp9` ANTES de `-i` o se pierde el alfa (measure.py lo hace).
 - Texto en pantalla: solo las palabras de la persona, sin guiones largos, nunca "gratis" ni "curso", ningún número que
   la persona no dijo.
+
+## Versiones (`VARIANT` en el bloque CLIP)
+
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio.
+
+1. **Tambores**: el panel oscuro con un tambor por dígito que gira y frena (el original).
+2. **Anillo**: un disco verde oscuro con marcas; un anillo dorado se llena mientras el número sube y un punto crema
+   recorre su borde. Un número con % llena el anillo hasta ese valor; cualquier otro lo llena completo. La etiqueta va
+   en una sola línea dentro del disco (la última palabra en dorado). El anillo no se achica a una ficha: con un segundo
+   número, `then='dock'` se trata como `'out'`. Para el clip de muestra se usó `ROLL = 2.4`, así el número sube durante
+   más tiempo; en un reel usa lo normal salvo que la frase dé tiempo.

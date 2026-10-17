@@ -116,7 +116,12 @@ def body(kind, lines, src):
     raise ValueError(kind)
 
 
-def css(accent):
+def css(accent, variant=1):
+    S = SPEC
+    return base_css(accent) + LOOKS.get(variant, lambda a: '')(accent)
+
+
+def base_css(accent):
     S = SPEC
     return f'''
 .c{{position:absolute}}
@@ -182,3 +187,54 @@ def css(accent):
 .b1{{background:#fff;border-radius:26px 26px 26px 8px;padding:14px {S['chat']['padx']}px 15px;font-size:{S['chat']['size']}px;line-height:{S['chat']['lh']};letter-spacing:{S['chat']['ls']}em;font-weight:500}}
 .b2{{background:{INK};color:{CREAM};border-radius:22px 22px 8px 22px;padding:10px 18px 11px;font-size:22px;line-height:26px;margin:10px 0 0 auto;white-space:nowrap}}
 '''
+
+
+VARIANT_NAMES = {1: 'Collage', 2: 'Diarios en capas', 3: 'Pantallas en capas'}
+PAPER = '#EDE5D3'
+TEAR = "polygon(0 4px,6% 0,13% 3px,21% 1px,30% 4px,39% 0,48% 3px,57% 1px,66% 4px,75% 0,84% 3px,92% 1px,100% 3px,100% calc(100% - 4px),93% 100%,85% calc(100% - 3px),76% 100%,67% calc(100% - 4px),58% 100%,49% calc(100% - 3px),40% 100%,31% calc(100% - 4px),22% 100%,13% calc(100% - 3px),5% 100%,0 calc(100% - 4px))"
+
+
+def _diarios(accent):
+    """every card a newspaper clipping: newsprint, torn edges, ink type, tape"""
+    return f'''
+.k{{color:{INK}}}
+.news,.post,.dark,.video,.mail,.quote,.clip{{background:{PAPER};border-radius:0;clip-path:{TEAR};
+  background-image:repeating-linear-gradient(0deg,rgba(20,22,21,.035) 0 2px,transparent 2px 5px)}}
+.c.near .k,.c.mid .k,.c.far .k{{box-shadow:none}}
+.c .ci{{filter:drop-shadow(0 16px 22px rgba(0,0,0,.42))}}
+.dark{{color:{INK};border:0;border-top:3px solid {INK}}}
+.dark .kick,.kick{{color:#6D6457}}
+.av{{border-radius:2px;background:radial-gradient(circle,rgba(20,22,21,.6) 1.2px,transparent 1.4px) 0 0/5px 5px,#CFC6B4}}
+.post,.mail{{border-top:3px double {INK}}}
+.ic{{stroke:#8A8172}}
+.thumb{{border-radius:0;background:radial-gradient(circle,rgba(20,22,21,.55) 1.3px,transparent 1.5px) 0 0/6px 6px,#C9BFAB}}
+.play{{background:{PAPER}}}
+.search{{background:{PAPER};border:2.5px solid {INK};box-shadow:none}}
+.b1{{background:{PAPER};border-radius:4px;box-shadow:0 10px 20px rgba(0,0,0,.38)}}
+.b2{{background:{INK};border-radius:4px}}
+.tape{{background:rgba(242,236,223,.7)}}
+'''
+
+
+def _pantallas(accent):
+    """every card a dark social / app card in the brand greens, the marked phrase in a gold pill"""
+    deep, line = '#12241B', 'rgba(242,236,223,.13)'
+    return f'''
+.k{{color:{CREAM}}}
+.news,.post,.dark,.video,.mail,.quote,.clip{{background:{deep};border:1.5px solid {line};border-radius:22px;clip-path:none}}
+.mast{{border-color:{CREAM}}}
+.kick,.dark .kick{{color:rgba(242,236,223,.55)}}
+.av{{background:linear-gradient(135deg,{accent},#5B3F2C)}}
+.bar{{background:rgba(242,236,223,.14)}}
+.ic{{stroke:rgba(242,236,223,.5)}}
+.thumb{{background:linear-gradient(160deg,#3B5A4A,#152B21)}}
+.play{{background:{CREAM}}}
+.tape{{display:none}}
+.mk{{top:.56em;border-radius:.12em}}
+.search{{background:{CREAM};color:{INK}}}
+.b1{{background:{deep};color:{CREAM};border:1.5px solid {line}}}
+.b2{{background:{accent};color:{INK}}}
+'''
+
+
+LOOKS = {2: _diarios, 3: _pantallas}

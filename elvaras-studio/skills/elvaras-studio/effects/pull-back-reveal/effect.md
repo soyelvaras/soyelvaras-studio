@@ -113,3 +113,16 @@ archivo solo, se niega a correr con la guía roja puesta y revisa la cantidad de
 - Los sonidos son solo de stock a 0,75x del volumen de la plantilla (`whoosh-short`, `click-soft`, `impact-bass-1`,
   `pop`). Colores: nunca naranjo. `F_OUT = 'cut'` solo donde el reel realmente corta en el último cuadro del espacio;
   si no, la ventana sale de golpe. Un espacio de 5 s toma unos 5 minutos (no hay recorte que esperar).
+
+## Versiones (`VARIANT` en el bloque CLIP)
+
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Las tres usan
+los mismos tiempos, la misma ventana y el mismo contador.
+
+1. **Ventana**: la ventana con la lista de pasos en tarjeta y la barra de sonido (el original).
+2. **Línea de pasos**: los pasos como línea de tiempo con su segundo (`0:01`...) y nodos que se marcan en dorado; la barra
+   de abajo muestra una tira de cuadros del propio clip con el cabezal encima.
+3. **Ventanas apiladas**: la lista en su propia ventana (`STEPS_TITLE`), una segunda ventana con tres cuadros del clip
+   (`FRAMES_TITLE`), y un aviso (`TOAST`) que cae desde la barra de título en `DONE_AT`.
+
+Las versiones 2 y 3 sacan los cuadros de `assets/aroll.mp4` solas (`assets/thumbs/strip.jpg`).

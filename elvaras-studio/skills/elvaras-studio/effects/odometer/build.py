@@ -52,13 +52,16 @@ ROLL = 0.44        # seconds the drums spin before the lock (0.35 to 0.5; shorte
 OUT = None         # seconds: every panel leaves by this time. None = they hold to the last frame (end the slot on a cut, or set this ~0.25 s before the slot ends)
 DOCK_CORNER = 'auto'   # where a docked chip goes: 'auto' (top corner away from the next panel), 'top-left', 'top-right', or (x, y)
 GRADE = 'contrast(1.05) saturate(.92) brightness(.99)'    # light grade on the footage (plate + cutout). 'none' when the main reel grades it
+VARIANT = 1        # look: 1 = Tambores (dark panel, each digit a drum that spins), 2 = Anillo (dark disc, a gold ring fills while the number counts up)
 # ==== END CLIP ====
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FP = shutil.which('ffprobe') or 'ffprobe'
 SLOT = os.path.basename(HERE)
 FPS = 30
-YEL, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'
+YEL, CREAM, INK, DEEP = '#C9A15B', '#F2ECDF', '#141615', '#13281F'
+VARIANT_NAMES = {1: 'Tambores', 2: 'Anillo'}
+RING_D, RING_W, RING_FS, RING_LS = 360, 22, 118, 22   # Anillo: disc diameter, ring stroke, number size, label size (px at scale 1)
 SAFE = (35, 220, 1045, 1470)          # Instagram: top 220, nothing below 1470, 35 px sides (+ right 100 from y 1155)
 EDGE = 10                             # breathing room inside the safe zone
 CAPTIONS = os.environ.get('CAPTIONS', '1') != '0'
@@ -278,6 +281,8 @@ def resolve_times(counters):
         nxt = counters[k + 1] if k + 1 < len(counters) else None
         c['t_end'] = DUR if OUT is None else min(DUR, OUT)
         c['mode'] = c.get('then', 'dock') if nxt else 'hold'
+        if VARIANT == 2 and c['mode'] == 'dock':
+            c['mode'] = 'out'                    # Anillo: a ring does not shrink into a chip, it makes room
         if nxt and c['mode'] == 'dock':
             c['t_dock'] = max(c['t_lock'] + .25, nxt['t_in'] - .04)
             c['dock_dur'] = .34
@@ -291,6 +296,8 @@ def resolve_times(counters):
 
 # ------------------------------------------------------------------ geometry of one panel at scale 1
 def geometry(c):
+    if VARIANT == 2:
+        return ring_geometry(c)
     c['inner'] = inner = odo_width(c['text'])
     wrapped = []
     while len(c['l1']) > 1 and line_w([w for _, w in c['l1']], L1_FS, L1_TR) > inner:
@@ -326,6 +333,8 @@ def geometry(c):
 
 def readable(c, align):
     """rects (local px, scale 1) that must never be behind the speaker: the digits and the label text"""
+    if VARIANT == 2:
+        return [(RING_D * .2, RING_D * .3, RING_D * .8, RING_D * .74)]
     ox = PAD if align == 'left' else PAD + c['cw'] - c['inner']
     r = [(ox + 8, PAD + 16, ox + c['inner'] - 2, PAD + DH - 16)]
     for y, h, w in ((c['y_l1'], L1_H, c['l1w']), (c['y_l1'] + L1_H, L2_H, c['l2w'])):
@@ -390,7 +399,7 @@ def place(c, field, subj, avoid):
     """Biggest panel whose digits and label are never behind the speaker, as close to their head as it gets, tucked so their
     head overlaps an empty corner of it (that overlap is the depth). Returns x, y, scale, label align, cover."""
     sit, size = c.get('sit', 'auto'), c.get('size', 'auto')
-    smax = min(1.5, MAX_W / c['W']) if size == 'auto' else float(size)
+    smax = min(1.5 if VARIANT == 1 else 1.1, MAX_W / c['W']) if size == 'auto' else float(size)
     scales = [smax - .05 * i for i in range(40) if smax - .05 * i >= .55] if size == 'auto' else [smax]
     ax, ay = subj['ax'], subj['ay']
     sh = subj['box'][3] - subj['box'][1]
@@ -503,7 +512,77 @@ def words_line(pid, k, words, cls, fs_scale=1.0):
     return f'<div class="{cls}"{st}>{spans}</div>'
 
 
+def ring_geometry(c):
+    """Anillo: a square of RING_D. The label (all its words, one line) sits inside the disc under the number."""
+    c['inner'] = c['cw'] = RING_D - 2 * PAD
+    c['W'] = c['H'] = c['H0'] = c['H1'] = c['H2'] = RING_D
+    c['l1'] = c['l1'] + [x for r in c['l2'] for x in r][-3:]       # one line only inside the disc
+    c['l2'] = []
+    c['l1w'] = c['l2w'] = 0
+    c['y_rule'] = c['y_l1'] = 0
+    c['chip_w'] = c['chip_h'] = 0
+    c['chip_lines'] = []
+
+
+def ring_panel(c):
+    """Anillo: dark disc with tick marks, a gold arc that fills while the number counts up, a dot riding its end,
+    the number at the centre and the label inside. % numbers fill to their value; any other number fills the ring."""
+    pid, S = c['id'], c['scale']
+    pre, body, suf = split(c['text'])
+    target = float(body.replace(',', ''))
+    dec = len(body.split('.')[1]) if '.' in body else 0
+    frac = min(1.0, target / 100.0) if '%' in suf else 1.0
+    D, R0 = RING_D, RING_D / 2 - 34
+    C = 2 * math.pi * R0
+    ticks = ''.join(f'<line x1="{D / 2:.0f}" y1="10" x2="{D / 2:.0f}" y2="22" transform="rotate({a} {D / 2:.0f} {D / 2:.0f})"/>' for a in range(0, 360, 12))
+    words = ''.join(f'<span class="mk"><span id="{pid}-a-{j}" class="ch">{w}</span></span>' for j, (_, w) in enumerate(c['l1']))
+    html = [f'<div id="{pid}" class="panel" style="left:0;top:0"><div id="{pid}-in" class="pin" style="width:{D}px;height:{D}px">',
+            f'<div class="rbg" style="width:{D}px;height:{D}px"></div>',
+            f'<svg class="rsv" width="{D}" height="{D}" viewBox="0 0 {D} {D}"><g class="rtk">{ticks}</g>'
+            f'<circle cx="{D / 2}" cy="{D / 2}" r="{R0:.1f}" class="rtr"/>'
+            f'<circle id="{pid}-arc" cx="{D / 2}" cy="{D / 2}" r="{R0:.1f}" class="rarc" stroke-dasharray="{C:.1f}" stroke-dashoffset="{C:.1f}" transform="rotate(-90 {D / 2} {D / 2})"/>'
+            f'<circle id="{pid}-dot" cx="{D / 2}" cy="{D / 2 - R0:.1f}" r="13" class="rdot"/></svg>',
+            f'<div class="rmid"><div id="{pid}-nw" class="rnum">{pre}<span id="{pid}-n">0</span><span class="rsuf">{suf}</span></div>'
+            + (f'<div class="rlab">{words}</div>' if c['l1'] else '') + '</div>']
+    tw = [f"gsap.set('#{pid}',{{x:{c['x'] + c['from_x']:.1f},y:{c['y']:.1f},scale:{S}}});",
+          f"gsap.set('#{pid}-in',{{autoAlpha:0,scale:.86,filter:'blur(14px)'}});",
+          f"tl.to('#{pid}-in',{{autoAlpha:1,duration:.12,ease:'none'}},{c['t_in']:.3f});",
+          f"tl.to('#{pid}-in',{{scale:1,filter:'blur(0px)',duration:.4,ease:'expo.out'}},{c['t_in']:.3f});"]
+    if c['from_x']:
+        tw.append(f"tl.to('#{pid}',{{x:{c['x']:.1f},duration:.42,ease:'expo.out'}},{c['t_in']:.3f});")
+    t0, t1 = c['t_start'], c['t_lock']
+    f0, f1 = int(t0 * FPS), int(math.ceil(t1 * FPS))
+
+    def u(f):
+        x = min(1.0, max(0.0, (f / FPS - t0) / max(.1, t1 - t0)))
+        return 1 - (1 - x) ** 2.2                                 # quick start, soft landing on the lock
+
+    def num(f):
+        v = target * u(f)
+        return f'{v:.{dec}f}' if dec else str(int(round(v)))
+    tw += frame_sets(f'#{pid}-n', f0, f1 + 1, lambda f: {'innerText': num(f)})
+    tw += frame_sets(f'#{pid}-arc', f0, f1 + 1, lambda f: {'strokeDashoffset': round(C * (1 - frac * u(f)), 2)})
+
+    def dot(f):
+        a = 2 * math.pi * frac * u(f) - math.pi / 2
+        return {'attr': {'cx': round(D / 2 + R0 * math.cos(a), 2), 'cy': round(D / 2 + R0 * math.sin(a), 2)}}
+    tw += frame_sets(f'#{pid}-dot', f0, f1 + 1, dot)
+    tw += [f"tl.fromTo('#{pid}-nw',{{color:'{YEL}',scale:1.08}},{{color:'{CREAM}',scale:1,duration:.55,ease:'expo.out',immediateRender:false}},{t1:.3f});",
+           f"tl.fromTo('#{pid}-in',{{scale:1.04}},{{scale:1,duration:.45,ease:'expo.out',immediateRender:false}},{t1:.3f});"]
+    for j, (t, _) in enumerate(c['l1']):
+        tw += [f"gsap.set('#{pid}-a-{j}',{{yPercent:112}});",
+               f"tl.to('#{pid}-a-{j}',{{yPercent:0,duration:.42,ease:'expo.out'}},{t - .03:.3f});"]
+    sfx = [('click-soft', t1, TICK)]
+    if c['t_end'] < DUR - .01:
+        tw += [f"tl.to('#{pid}-in',{{autoAlpha:0,scale:.92,filter:'blur(10px)',duration:.2,ease:'power2.in'}},{c['t_end'] - .2:.3f});",
+               f"tl.set('#{pid}-in',{{autoAlpha:0}},{c['t_end']:.3f});"]
+    html.append('</div></div>')
+    return html, [], tw, sfx
+
+
 def panel(c):
+    if VARIANT == 2:
+        return ring_panel(c)
     pid, S, al = c['id'], c['scale'], c['align']
     odo, defs, tw, locks = odometer(pid + 'o', c['text'], c['t_start'], c['t_lock'])
     W, cw, inner = c['W'], c['cw'], c['inner']
@@ -631,7 +710,7 @@ svg.defs{{position:absolute;width:0;height:0}}
 
 .panel{{position:absolute;transform-origin:0 0}}
 .pin{{position:relative;transform-origin:50% 45%}}
-.pbg{{position:absolute;left:0;top:0;transform-origin:0 0;border-radius:32px;background:linear-gradient(180deg,{INK} 0%,#1A1D25 55%,#262B36 100%);
+.pbg{{position:absolute;left:0;top:0;transform-origin:0 0;border-radius:32px;background:linear-gradient(180deg,{INK} 0%,{DEEP} 55%,#1B3528 100%);
   box-shadow:0 30px 70px rgba(20,22,28,.42),0 6px 18px rgba(20,22,28,.34),inset 0 1.5px 0 rgba(255,255,255,.10),
   inset 0 0 0 1.5px rgba(255,248,239,.07)}}
 .pdr{{position:absolute;transform-origin:0 0}}
@@ -681,6 +760,20 @@ svg.defs{{position:absolute;width:0;height:0}}
 .c2{{font:600 {C2_FS}px/{C2_H}px Montserrat;letter-spacing:{C2_TR}em;color:rgba(255,248,239,.86)}}
 .clab.right .c1{{margin-right:-{C1_TR}em}}
 .clab.right .c2{{margin-right:-{C2_TR}em}}
+
+/* ---- Anillo (VARIANT 2) ---- */
+.rbg{{position:absolute;left:0;top:0;border-radius:50%;background:radial-gradient(circle at 50% 38%,#1B3528 0%,{DEEP} 62%,#0E1F17 100%);
+  box-shadow:0 30px 70px rgba(10,20,15,.45),0 6px 18px rgba(10,20,15,.35),inset 0 0 0 2px rgba(242,236,223,.08)}}
+.rsv{{position:absolute;left:0;top:0;overflow:visible}}
+.rtk line{{stroke:rgba(242,236,223,.32);stroke-width:3}}
+.rtr{{fill:none;stroke:rgba(242,236,223,.12);stroke-width:{RING_W}}}
+.rarc{{fill:none;stroke:{YEL};stroke-width:{RING_W};stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(201,161,91,.65))}}
+.rdot{{fill:{CREAM};filter:drop-shadow(0 0 8px rgba(242,236,223,.8))}}
+.rmid{{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}}
+.rnum{{font-family:'Work Sans';font-weight:800;font-size:{RING_FS}px;line-height:.9;letter-spacing:-.045em;color:{CREAM};font-variant-numeric:tabular-nums;transform-origin:50% 60%}}
+.rsuf{{font-size:.46em;color:{YEL};margin-left:4px;letter-spacing:0}}
+.rlab{{margin-top:14px;font-family:'JetBrains Mono';font-weight:500;font-size:{RING_LS}px;letter-spacing:.16em;color:rgba(242,236,223,.78);white-space:nowrap}}
+.rlab .mk:last-child .ch{{color:{YEL}}}
 '''
 
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'

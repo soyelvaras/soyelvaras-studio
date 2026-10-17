@@ -92,6 +92,8 @@ TRACK_YMAX = None    # px: only wall above this line is used for the camera trac
                      # of a sofa / desk if the track wobbles (layout.jpg cards slide off the wall on early frames)
 REF = None           # reference frame the layout is drawn in. None = 4 frames before the end (a settled frame)
 SEED = 7             # change it to reshuffle tilts and far-card positions
+VARIANT = 1          # look of the cards: 1 = Collage (paper, posts, chats, dark cards), 2 = Diarios en capas (every card a
+                     # newspaper clipping), 3 = Pantallas en capas (every card a dark app card). Same layout and depth in all three
 # (sound, frame, base volume). Base volumes are the template's; everything is played at 0.75x. click-soft is a very
 # quiet file, hence .36. Files: assets/sfx/<name>.mp3 or assets_fx/<name>.mp3
 SOUNDS = [('whoosh-short', F_START - 1, .22), ('impact-bass-short', F_ACCENT, .10)] + \
@@ -309,7 +311,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 #fgwrap{{position:absolute;inset:0;z-index:5;filter:drop-shadow(0px 22px 46px rgba(0,0,0,0))}}
 #vig{{position:absolute;inset:0;z-index:6;pointer-events:none;
   background:radial-gradient(120% 85% at 50% 38%,rgba(0,0,0,0) 58%,rgba(0,0,0,.30) 100%)}}
-{C.css(ACCENT)}'''
+{C.css(ACCENT, VARIANT)}'''
     nl = '\n'
     # GRADE=0: the main reel grades everything once, so the effect's own vignette is left out (the room dim stays:
     # it is part of the effect, not a grade)

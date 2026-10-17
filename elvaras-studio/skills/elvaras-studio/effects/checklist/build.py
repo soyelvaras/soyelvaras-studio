@@ -48,6 +48,12 @@ GRADE = ''          # CSS filter on the footage. '' = leave it (the main reel gr
 VIGNETTE = 0        # 0 to .4 edge darkening. 0 inside a reel that has its own vignette. Standalone clip: .30
 PUSH = 1.0          # slow push-in across the slot (1.0 = none). Only above 1.0 (demo: 1.03) on a locked-off shot that does not cut back to plain a-roll.
 KEEP_OUT = []       # [(x0, y0, x1, y1), ...] px rects the main reel uses (its label pill, its caption band): the card never enters them.
+VARIANT = 1         # look: 1 = Tarjeta (dark glass card), 2 = Libreta a mano (lined paper, handwriting, drawn ticks), 3 = Notificaciones (each step a phone notification)
+PAPER = '#F6F0E2'   # Libreta: paper colour
+MARGIN = '#C9A15B'  # Libreta: margin line and ticks
+HAND_INK = '#141615'  # Libreta: handwriting colour
+TITLE_INK = '#5B3F2C'  # Libreta: title colour
+APP_NAME = 'Claude'   # Notificaciones: the app name on every notification
 # ==== END CLIP ====
 
 FF = shutil.which('ffmpeg') or 'ffmpeg'
@@ -399,9 +405,55 @@ def hexrgb(h):
 
 
 AR = hexrgb(ACCENT)
+VARIANT_NAMES = {1: 'Tarjeta', 2: 'Libreta a mano', 3: 'Notificaciones'}
+TEXT_COL = HAND_INK if VARIANT == 2 else CREAM            # row text once its tick has flashed
+RING_ON = 'rgba(20,22,21,.75)' if VARIANT == 2 else 'rgba(255,248,239,.8)'
+CHECK_D = ('M14 40 C 22 46, 27 54, 31 60 C 40 42, 54 22, 70 6' if VARIANT == 2 else 'M22.5 39.5 L33.5 50.5 L54.5 27.5')
+CHECK_STROKE = (MARGIN, 8.5, 120) if VARIANT == 2 else (INK, 7.5, 50)
 Z = 6 if CARD['layer'] == 'front' else 2
 TILT_Y = -4.5 if CX + CW / 2 >= 540 else 4.5
 CNT_H = 38
+
+
+# ---------------------------------------------------------------- the versions: the same card skeleton, restyled
+def _variant_css():
+    lh = PITCH
+    paper = f"""
+.card{{background:{PAPER};border-radius:10px;box-shadow:0 26px 60px rgba(0,0,0,.42);
+  background-image:linear-gradient(90deg,transparent {PADX + BOX + 16}px,{MARGIN} {PADX + BOX + 16}px,{MARGIN} {PADX + BOX + 19}px,transparent {PADX + BOX + 19}px),
+    repeating-linear-gradient(180deg,transparent 0 {lh - 3}px,rgba(91,63,44,.20) {lh - 3}px {lh}px);background-position:0 0,0 {HEAD_H + 6}px;
+  background-repeat:no-repeat,repeat}}
+#cls{{transform:scale({K:.4f}) rotate(-2.2deg)}}
+.tint,.edge,#sheen,.segs,#glow,.star,.disc,.rip,.spk{{display:none!important}}
+#clsh{{background:rgba(0,0,0,.45);filter:blur(36px)}}
+.tape{{display:block;position:absolute;left:50%;top:-22px;width:180px;height:50px;margin-left:-90px;background:rgba(201,161,91,.58);transform:rotate(-3deg);z-index:3}}
+.eyebrow{{font:400 58px/1 'Bebas Neue';letter-spacing:.04em;color:{TITLE_INK};top:40px}}
+.eyebrow i{{display:none}}
+#pill{{background:none;border:3px solid {HAND_INK};color:{HAND_INK};font:600 44px 'Caveat';top:34px;border-radius:50% 46% 52% 44%}}
+#hl{{background:linear-gradient(90deg,rgba(201,161,91,.0),rgba(201,161,91,.26) 20%,rgba(201,161,91,.18));border:0;border-radius:6px}}
+.ring{{border-radius:8px;border:4px solid rgba(20,22,21,.55)}}
+.ck{{overflow:visible;transform:translate(6px,-14px) scale(1.25)}}
+.skb{{background:rgba(20,22,21,.10)}}
+.tx{{font:600 {FS * 1.12:.0f}px 'Caveat';letter-spacing:0;color:{HAND_INK}}}
+.tx .acc{{color:{TITLE_INK}}}
+"""
+    notes = f"""
+.card{{background:none;box-shadow:none;overflow:visible}}
+.tint,.edge,#sheen,.segs,#glow,#hl,#pill,#clsh,.sk,.ring{{display:none!important}}
+.nb{{display:block;position:absolute;left:0;right:0;top:10px;bottom:10px;border-radius:40px;background:rgba(20,28,24,.80);
+  border:1.5px solid rgba(242,236,223,.14);box-shadow:0 22px 50px rgba(0,0,0,.40);backdrop-filter:blur(22px) saturate(1.3)}}
+.eyebrow{{font:500 26px/34px 'JetBrains Mono';letter-spacing:.16em;color:rgba(255,248,239,.85);text-shadow:0 2px 10px rgba(0,0,0,.6)}}
+.box{{border-radius:24%;overflow:hidden}}
+.disc{{border-radius:24%}}
+.rip{{border-radius:24%}}
+.tx{{font:700 {FS * .82:.0f}px 'Work Sans';letter-spacing:-.01em}}
+.tx::before{{content:'{APP_NAME}  ·  ahora';display:block;font:600 {FS * .42:.0f}px 'Work Sans';letter-spacing:0;color:rgba(150,150,140,.95);margin-bottom:6px}}
+.nb.on{{background:rgba(242,236,223,.95)}}
+"""
+    return {2: paper, 3: notes}
+
+
+VARIANT_CSS = _variant_css()
 
 
 def words_html(text, k):
@@ -464,17 +516,19 @@ def checklist():
 .tx .w{{display:inline-block}}
 .tx .acc{{color:{ACCENT}}}
 .star{{position:absolute;z-index:{Z};color:{ACCENT};line-height:1;text-shadow:0 0 18px rgba({AR},.55)}}
-'''
+.nb,.tape{{display:none}}
+''' + VARIANT_CSS.get(VARIANT, '')
     row_html = []
     for k, (text, _, _) in enumerate(ROWS):
         sparks = ''.join(f'<div class="spk" style="transform:rotate({a}deg)"><i id="spk{k}-{j}"></i></div>'
                          for j, a in enumerate((-158, -112, -68, -22, 28, 74, 118, 164)))
         row_html.append(f'''
         <div class="row" id="row{k}" style="top:{ROW_TOP[k]}px;height:{ROW_H[k]}px">
+          <div class="nb" id="nb{k}"></div>
           <div class="box" id="box{k}" style="top:{(ROW_H[k] - BOX) / 2:.0f}px">
             <div class="rip" id="rip{k}"></div>{sparks}
             <div class="ring"></div><div class="disc" id="disc{k}"></div>
-            <svg class="ck" viewBox="0 0 76 76"><path id="ck{k}" d="M22.5 39.5 L33.5 50.5 L54.5 27.5" fill="none" stroke="{INK}" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="50" stroke-dashoffset="50"/></svg>
+            <svg class="ck" viewBox="0 0 76 76"><path id="ck{k}" d="{CHECK_D}" fill="none" stroke="{CHECK_STROKE[0]}" stroke-width="{CHECK_STROKE[1]}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{CHECK_STROKE[2]}" stroke-dashoffset="{CHECK_STROKE[2]}"/></svg>
           </div>
           <div class="sk" id="sk{k}" style="height:{ROW_H[k]}px">{''.join(f'<div class="skb" style="width:{row_width(l) * .78:.0f}px"></div>' for l in ROW_LINES[k])}</div>
           <div class="tx" id="tx{k}" style="height:{ROW_H[k]}px">{words_html(text, k)}</div>
@@ -483,6 +537,7 @@ def checklist():
     html = f'''
     <div id="clw"><div id="clf"><div id="cl3"><div id="cln"><div id="cls">
       <div id="clsh"></div>
+      <div class="tape"></div>
       <div class="card">
         <div class="tint"></div>
         <div id="hl"></div>
@@ -541,7 +596,7 @@ def checklist():
                f"tl.fromTo('#tx{k} .w',{{autoAlpha:0,y:26,filter:'blur(10px)'}},{{autoAlpha:1,y:0,filter:'blur(0px)',duration:.22,"
                f"ease:'power3.out',stagger:.045,immediateRender:false}},{ts:.3f});",
                f"tl.set('#tx{k} .w',{{filter:'none'}},{ts + .045 * nw + .26:.3f});",
-               f"tl.to('#box{k} .ring',{{borderColor:'rgba(255,248,239,.8)',duration:.25}},{ts:.3f});"]
+               f"tl.to('#box{k} .ring',{{borderColor:'{RING_ON}',duration:.25}},{ts:.3f});"]
         # ---- the tick: anticipation, disc pops, check draws, ripple + sparks, text flashes in the accent colour ----
         tw += [f"tl.to('#box{k}',{{scale:.84,duration:.062,ease:'power2.in'}},{tt - .066:.3f});",
                f"tl.to('#box{k}',{{scale:1.22,duration:.1,ease:'power3.out'}},{tt:.3f});",
@@ -551,12 +606,18 @@ def checklist():
                f"tl.to('#ck{k}',{{strokeDashoffset:0,duration:.2,ease:'power2.out'}},{tt + .033:.3f});",
                f"tl.fromTo('#rip{k}',{{autoAlpha:.9,scale:.8}},{{autoAlpha:0,scale:2.05,duration:.5,ease:'power2.out',immediateRender:false}},{tt + .02:.3f});",
                f"tl.fromTo('#box{k} .spk i',{{autoAlpha:1,x:34,scaleX:1}},{{autoAlpha:0,x:70,scaleX:.25,duration:.42,ease:'power3.out',immediateRender:false}},{tt + .03:.3f});",
-               f"tl.fromTo('#tx{k} .w:not(.acc)',{{color:'{ACCENT}'}},{{color:'{CREAM}',duration:.55,ease:'power2.inOut',immediateRender:false}},{tt:.3f});",
+               f"tl.fromTo('#tx{k} .w:not(.acc)',{{color:'{ACCENT}'}},{{color:'{TEXT_COL}',duration:.55,ease:'power2.inOut',immediateRender:false}},{tt:.3f});",
                f"tl.fromTo('#tx{k}',{{x:12}},{{x:0,duration:.5,ease:'elastic.out(1,.55)',immediateRender:false}},{tt:.3f});",
                f"tl.to('#segf{k}',{{scaleX:1,duration:.42,ease:'power3.out'}},{tt + .03:.3f});",
                f"tl.to('#cnt',{{y:{-(k + 1) * CNT_H},duration:{max(.12, min(.4, gap - .05)):.3f},ease:'back.out(1.7)'}},{tt + .03:.3f});",
                f"tl.to('#cln',{{scale:1.014,y:3,duration:.08,ease:'power2.out'}},{tt:.3f});",
                f"tl.to('#cln',{{scale:1,y:0,duration:{max(.05, min(.2, gap - .1)):.3f},ease:'power2.out'}},{tt + .082:.3f});"]
+    if VARIANT == 3:
+        tw.append("gsap.set('.row',{autoAlpha:0,y:-34,scale:.96});")
+        for k, (_, f_say, _) in enumerate(ROWS):
+            tw.append(f"tl.to('#row{k}',{{autoAlpha:1,y:0,scale:1,duration:.36,ease:'back.out(1.6)'}},{max(t0, F(f_say) - .16):.3f});")
+        tw += [f"tl.to('#nb{n - 1}',{{backgroundColor:'rgba(242,236,223,.95)',duration:.25,ease:'power2.out'}},{td:.3f});",
+               f"tl.to('#tx{n - 1} .w:not(.acc)',{{color:'{INK}',duration:.25,ease:'power2.out'}},{td:.3f});"]
     # ---- finish: counter pill fills (hard swap on the frame, a fade hides the digits), sheen, edge glow, settle ----
     tw += [f"tl.to('#hl',{{autoAlpha:0,duration:.3,ease:'power2.out'}},{td:.3f});",
            f"tl.to(['.tx','.box'],{{opacity:1,duration:.26,ease:'power2.out'}},{td:.3f});",

@@ -44,6 +44,12 @@ CHOKE = 2          # px shaved off the cutout edge. 3 or 4 if a rim of the room 
 HEAD = None        # (top_y, chin_y) in a-roll px, only when the green box on work/check.jpg is not on the head
 GRADE = ''         # '' = off: the live frames are handed back untouched. A css filter only if the whole reel has it
 SOUNDS = True      # shutter click on the freeze, a pop as it lands, soft clicks on the notes, a whoosh on the way out
+VARIANT = 1        # look: 1 = Página (colour page with turning rays, handwriting), 2 = Recorte de revista (dotted paper,
+                   # torn strip, block title), 3 = Noche dorada (black, gold light behind, serif notes, round seal)
+MAG_PAPER = '#EFE7D6'   # Revista: paper
+MAG_STRIP = '#13281F'   # Revista: torn strip across the page
+NIGHT = '#0E0F0E'       # Noche dorada: background
+SEAL_TEXT = 'Soy Elvaras'   # Noche dorada: words around the seal, after STAMP. '' = STAMP only
 # ==== END CLIP ====
 
 PEEL = .2                  # seconds the sticker takes to fly off before F_OUT
@@ -52,12 +58,18 @@ SFX_LEN = {'whoosh-short': .57, 'pop': .72, 'click': .36, 'click-soft': .36}
 
 src = open(os.path.join(HERE, 'build.py')).read()
 block = src.split('# ==== CLIP (edit this) ====')[1].split('# ==== END CLIP ====')[0]
+LOOK_ONLY = ('VARIANT', 'MAG_PAPER', 'MAG_STRIP', 'NIGHT', 'SEAL_TEXT', '# added for the versions')
+
+
+def sig_block(b):
+    """the CLIP block without the look-only lines: changing the version or its colours never needs a new bake"""
+    return '\n'.join(l for l in b.split('\n') if not l.startswith(LOOK_ONLY))
 N = json.load(open('clip.json'))['frames']
 DUR = N / 30
 if not os.path.exists('assets/sticker/sticker.json'):
     sys.exit('no assets/sticker/sticker.json: run bake.py first')
 M = json.load(open('assets/sticker/sticker.json'))
-if M['sig'] != hashlib.sha1((block + str(N)).encode()).hexdigest():
+if M['sig'] != hashlib.sha1((sig_block(block) + str(N)).encode()).hexdigest():
     sys.exit('the CLIP block changed since bake.py ran: run bake.py again (it re-measures the sticker and the notes)')
 CAPS = os.environ.get('CAPTIONS') != '0'
 TF = F_FREEZE / 30 - .002
@@ -118,7 +130,17 @@ def ink():
     for k, n in enumerate(notes):
         t, nid, size = note_time(n, k), f"n{n['i']}", n['size']
         top = .03 * n['w']
-        if n['stamp']:
+        if n['stamp'] and VARIANT == 3:
+            words = (n['stamp'] + (' · ' + SEAL_TEXT if SEAL_TEXT else '') + ' · ').upper()
+            h.append(f'<div id="seal" class="ann" style="left:{SEAL_X}px;top:{SEAL_Y}px"><svg width="250" height="250" viewBox="0 0 250 250">'
+                     f'<defs><path id="sealp" d="M125 125 m -92 0 a 92 92 0 1 1 184 0 a 92 92 0 1 1 -184 0"/></defs>'
+                     f'<circle cx="125" cy="125" r="118" fill="none" stroke="{ACCENT}" stroke-width="4"/><circle cx="125" cy="125" r="68" fill="{ACCENT}"/>'
+                     f'<text font-family="JetBrains Mono" font-size="20" letter-spacing="4" fill="{CREAM_}"><textPath href="#sealp" textLength="570">{html.escape(words * 2)}</textPath></text>'
+                     f'<text x="125" y="141" text-anchor="middle" font-family="Bebas Neue" font-size="50" fill="{NIGHT}">{html.escape(SEAL_MID)}</text></svg></div>')
+            tw += ["gsap.set('#seal',{autoAlpha:0});",
+                   f"tl.fromTo('#seal',{{autoAlpha:0,scale:1.5,rotation:-40}},{{autoAlpha:1,scale:1,rotation:-12,duration:.4,ease:'back.out(1.8)',immediateRender:false}},{max(TF + .05, t - .06):.3f});",
+                   f"tl.to('#seal',{{rotation:12,duration:{max(.2, END - t):.3f},ease:'none'}},{t + .4:.3f});"]
+        elif n['stamp']:
             h.append(f'<div class="ann" style="left:{n["x"] + 10}px;top:{n["y"] + top:.0f}px;transform:rotate({n["rot"] - 4}deg);transform-origin:0 50%">'
                      f'<div id="stamp" style="font-size:{size * .40:.0f}px;border-width:{max(4, size * .045):.0f}px"><span>{html.escape(n["stamp"])}</span></div></div>')
             tw += ["gsap.set('#stamp',{autoAlpha:0});",
@@ -192,6 +214,45 @@ else:
     BACK = '<div id="bd" style="background:#101114"><img id="turn" class="bk" src="assets/sticker/back.jpg" /></div>'
 G_ = f'filter:{GRADE};' if GRADE else ''
 SHAD = shade(PAGE, .18) if BACKDROP == 'page' else '#000000'
+# ---------------------------------------------------------------- the versions: page, notes and stamp restyled
+CREAM_ = '#F2ECDF'
+HEAD_S = M.get('head_screen') or [400, 600, 800, 1000]
+_NX = min((n['x'] for n in M['notes']), default=100)
+SEAL_X, SEAL_Y = (790, 385) if _NX < 540 else (40, 385)      # away from the notes, under them, above the shoulders
+SEAL_MID = next((w.strip('*') for n in M['notes'] for ln in n['lines'] for w, em in ln if any(ch.isdigit() for ch in w)), '')[:5]
+NOTES_X = min((n['x'] for n in M['notes']), default=100)
+STAR_X = 830 if NOTES_X < 540 else 60           # stars on the side away from the notes, above the shoulder line
+if VARIANT == 2:
+    BACK = (f'<div id="bd" style="background:radial-gradient(circle,rgba(91,63,44,.22) 1.6px,transparent 1.9px) 0 0/16px 16px,{MAG_PAPER}">'
+            f'<div id="turn" class="strip" style="background:{MAG_STRIP}"></div>'
+            '<svg class="stars" width="1080" height="1920" viewBox="0 0 1080 1920">'
+            f'<path transform="translate({STAR_X} 400) scale(4.6)" fill="{ACCENT}" d="M12 1l2.6 7.4H22l-6 4.6 2.3 7.4L12 16l-6.3 4.4L8 13 2 8.4h7.4z"/>'
+            f'<path transform="translate({STAR_X - 70} 530) scale(2.3)" fill="#5B3F2C" d="M12 1l2.6 7.4H22l-6 4.6 2.3 7.4L12 16l-6.3 4.4L8 13 2 8.4h7.4z"/></svg></div>')
+    SHAD = '#3A2A1C'
+elif VARIANT == 3:
+    cx, cy = (HEAD_S[0] + HEAD_S[2]) / 2 + 60, HEAD_S[3] - 40
+    BACK = (f'<div id="bd" style="background:radial-gradient(560px 700px at {cx:.0f}px {cy:.0f}px,rgba(201,161,91,.46),rgba(201,161,91,0) 70%),{NIGHT}">'
+            f'<div id="turn" class="rays gold" style="left:{cx - 1240:.0f}px;top:{cy - 1240:.0f}px"></div>'
+            '<div class="grain"></div></div>')
+    SHAD = '#000000'
+VARIANT_CSS = {2: f'''
+.strip{{position:absolute;left:-200px;top:720px;width:1600px;height:440px;transform-origin:50% 50%;
+  clip-path:polygon(0 6%,5% 0,11% 5%,18% 1%,26% 6%,33% 2%,41% 7%,49% 1%,57% 6%,64% 2%,72% 7%,80% 1%,88% 6%,95% 2%,100% 5%,100% 95%,94% 100%,87% 94%,79% 99%,71% 93%,63% 99%,55% 94%,47% 100%,39% 94%,31% 99%,23% 93%,15% 99%,8% 94%,0 99%)}}
+.stars{{position:absolute;left:60px;top:60px}}
+.note{{font-family:'Bebas Neue';font-weight:400;line-height:.98;letter-spacing:.01em;color:#141615;text-shadow:none}}
+.note .ln{{font-size:.78em}}
+.em{{color:#141615;background:{ACCENT};padding:.04em .16em 0;margin:0 .04em}}
+.ul{{display:none}}
+#stamp{{border-color:#141615;color:#141615;font-family:'Bebas Neue';font-weight:400;letter-spacing:.06em}}
+#ink path[id^="a"]{{stroke:#141615}}
+''', 3: f'''
+.rays.gold{{width:2480px;height:2480px;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(201,161,91,.075) 0deg 4deg,rgba(201,161,91,0) 4deg 12deg)}}
+.grain{{position:absolute;inset:0;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}}
+.note{{font-family:'Instrument Serif';font-style:italic;font-weight:400;line-height:.95;letter-spacing:0;color:{CREAM_}}}
+.note .ln{{font-size:.96em}}
+.em{{font-family:'Bebas Neue';font-style:normal;color:{ACCENT};letter-spacing:.03em}}
+#seal{{transform-origin:125px 125px}}
+'''}
 CSS = f'''
 *{{margin:0;padding:0;box-sizing:border-box}}
 html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
@@ -219,7 +280,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
   font-family:'Inter Tight';font-weight:900;line-height:1;transform-origin:50% 50%;box-shadow:0 6px 18px {SHAD}40;white-space:nowrap}}
 #stamp span{{display:inline-block;letter-spacing:.02em;text-transform:uppercase}}
 #flash{{position:absolute;inset:0;z-index:9;background:#fff}}
-'''
+''' + VARIANT_CSS.get(VARIANT, '')
 
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'
               '<div style="position:absolute;left:0;right:0;top:0;height:220px;background:rgba(255,0,0,.28)"></div>'

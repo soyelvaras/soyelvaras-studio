@@ -98,3 +98,14 @@ cuadro).
   anterior para siempre (el contador decía "2 de 3" desde el cuadro 0). En cambio, las duraciones se acortan al hueco.
 - Plano medio centrado (sillón): el único espacio libre es una columna de ~340 px al lado de la cabeza. Parte las filas
   con `|`; espera una escala ~0,6 (texto de fila de 37 a 39 px).
+
+## Versiones (`VARIANT` en el bloque CLIP)
+
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Las tres usan
+los mismos tiempos (`ROWS`, `F_DONE`) y el mismo lugar.
+
+1. **Tarjeta**: la tarjeta de vidrio oscura con contador (el original).
+2. **Libreta a mano**: hoja de libreta (`PAPER`) con margen dorado (`MARGIN`), título en Bebas (`TITLE_INK`), letra a
+   mano Caveat (`HAND_INK`), casillas cuadradas con un ticket dibujado y cinta arriba.
+3. **Notificaciones**: cada paso es una notificación de vidrio que entra cuando se dice, con el nombre de la app
+   (`APP_NAME`) arriba; la última se vuelve crema cuando la lista termina.

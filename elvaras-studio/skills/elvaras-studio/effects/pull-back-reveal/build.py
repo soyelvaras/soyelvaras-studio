@@ -20,14 +20,14 @@ import sys
 
 # ==== STYLE (the reel's look wins: when the reel has a caption or overall style, match this block to it) ====
 # Every word this effect draws takes its typeface, case, weight, colours and placement from here. The defaults are a
-# light, neutral window. Fonts must be families that assets/fonts/fonts.css provides.
+# light window in the Soy Elvaras colours. Fonts must be families that assets/fonts/fonts.css provides.
 STYLE = dict(
-    ui_font='Inter',               # checklist rows, panel title, window title
+    ui_font='Work Sans',               # checklist rows, panel title, window title
     ui_weight=500,                 # its weight (use one the font file has; the window title is drawn at 600)
     ui_case='as-typed',            # 'as-typed', 'upper' or 'lower'
     mono_font='JetBrains Mono',    # small technical text: tag pill, status line, frame counter, file name
     mono_weight=500,
-    num_font='DM Serif Display',   # the big counter digits, the unit badge and the highlighted name
+    num_font='Instrument Serif',   # the big counter digits, the unit badge and the highlighted name
     num_weight=400,
     label_font='Instrument Serif',  # the line under the counter
     label_weight=400,
@@ -38,21 +38,21 @@ STYLE = dict(
     cap_case='as-typed',           # 'as-typed', 'upper' or 'lower'
     cap_size=62,                   # px on screen
     cap_tracking=-0.04,            # letter spacing, em
-    cap_color='#FFFFFF',
+    cap_color='#F2ECDF',
     cap_mark='#C9A15B',            # colour of the words listed in CAP_MARK (the reel's accent; never orange)
     cap_words=3,                   # most words shown at once
     cap_y=None,                    # y of the top of the caption line. None = just above the timeline strip
     width_factor=1.0,              # raise to 1.1 when another typeface runs wider and a text touches its edge
-    page='#F1EEE6',                # the page behind the window
-    window='#FAF9F5',              # title bar and timeline strip
+    page='#F2ECDF',                # the page behind the window
+    window='#FAF7F0',              # title bar and timeline strip
     panel='#FFFFFF',               # checklist panel
     line='#E4DFD4',                # hairlines
-    ink='#1F1E1D',                 # main text and the digits
+    ink='#141615',                 # main text and the digits
     muted='#6F6C66',               # secondary text
     faint='#A7A195',               # steps that have not started yet
-    accent='#3D6FE0',              # "working" colour: progress, playhead, tag pill, unit badge (never orange)
-    accent_text='#FFFFFF',         # text on the accent colour
-    done='#3F8F5A',                # "done" colour: ticks, the finished timeline
+    accent='#2C4A3B',              # "working" colour: progress, playhead, tag pill, unit badge (never orange)
+    accent_text='#F2ECDF',         # text on the accent colour
+    done='#C9A15B',                # "done" colour: ticks, the finished timeline
     highlight='#C9A15B',           # slab behind the highlighted name
     track='#DDD4C3',               # timeline blocks before they fill
     dots='#D8D3C8',                # the three window buttons (plain on purpose)
@@ -102,11 +102,18 @@ CAP_MARK = []           # caption words drawn in STYLE['cap_mark'], e.g. the one
 SOUNDS = 'auto'         # 'auto' = short whoosh on the shrink and on the way back, a soft click per tick, a low hit on
                         # DONE_AT, a pop on the name. Or a list of (name, frame, volume) with stock names; [] = none
 SEED = 7                # shuffles the little bars drawn inside the timeline blocks
+VARIANT = 1             # look: 1 = Ventana (window, checklist card, sound bars), 2 = Línea de pasos (the steps as a
+                        # timeline with times, a strip of the clip's own frames in the window), 3 = Ventanas apiladas
+                        # (the checklist in its own window, a window of the clip's frames, a "done" notice on DONE_AT)
+STEPS_TITLE = 'Pasos'   # Ventanas apiladas: title bar of the checklist window
+FRAMES_TITLE = 'Cuadros'   # Ventanas apiladas: title bar of the window that shows frames of this clip
+TOAST = 'Tu reel está listo'   # Ventanas apiladas: the notice that drops in on DONE_AT. '' = none
 # ==== END CLIP ====
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FPS = 30
 SHRINK, GROW = 12, 12            # frames the shrink and the grow-back take
+VARIANT_NAMES = {1: 'Ventana', 2: 'Línea de pasos', 3: 'Ventanas apiladas'}
 CY, CW, CH = 250, 670, 1190      # the card (the live picture) on screen: top, width, height. Its left is window_x
 WIN_TOP, BAR_H, STRIP_H = 222, 70, 148
 SFX_GAIN = 0.75
@@ -282,7 +289,7 @@ def layout(S):
     pw = int(min(443, max(300, widest * rf / 30 + 100, head_w + 52)))
     if head_w + 48 > 443:
         stop('PANEL_TITLE and PANEL_TAG together are too long: about 24 characters in all')
-    ph = 118 + 64 * len(rows)
+    ph = (30 + 96 * len(rows)) if VARIANT == 2 else 118 + 64 * len(rows) + (52 if VARIANT == 3 else 0)
     top_min = (readout_bottom + 20) if readout_bottom else 250
     top_max = WIN_TOP + (CH + 28) - STRIP_H - 22 - ph        # stays above the timeline strip
     if top_max < top_min:
@@ -511,6 +518,8 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .ck .m{{position:absolute;inset:0}}
 .row .rt{{position:relative;font-size:{L['rf']}px;line-height:1;letter-spacing:-.014em;color:{st['faint']};white-space:nowrap}}
 #readdrift,#digdrift{{position:absolute;left:0;top:0;width:1080px;height:1920px}}
+.wbar,.tc{{display:none}}
+.rtw{{display:contents}}
 '''
     if 'cols' in L:
         cell, b = L['cell'], L['badge']
@@ -538,6 +547,39 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 #slab{{position:absolute;inset:0;background:{st['highlight']};border-radius:10px;transform-origin:0 50%;box-shadow:0 8px 18px -8px rgba(60,50,0,.45)}}
 #nclip{{position:relative;height:{h}px;padding:0 16px}}
 #nword{{display:block;{num};font-size:{L['name_fs']}px;line-height:{round(h * .95)}px;color:{st['ink']};letter-spacing:-.005em;white-space:nowrap}}
+'''
+    if VARIANT == 2:
+        c += f'''#panel{{background:none;border:0;box-shadow:none;padding:12px 0 0 0}}
+#phead,#prog{{display:none}}
+#rows{{margin-top:0;position:relative;padding-left:56px}}
+#rows::before{{content:'';position:absolute;left:16px;top:44px;bottom:44px;width:3px;border-radius:2px;background:{rgba(st['done'], .55)}}}
+.row{{height:96px}}
+.ck{{position:absolute;left:-56px;top:31px}}
+.ck .e{{background:{st['page']}}}
+.rtw{{display:flex;flex-direction:column;gap:6px;background:{rgba(st['page'], .93)};padding:8px 14px 9px;margin-left:-14px;border-radius:14px}}
+.tc{{display:block;{mono};font-size:18px;letter-spacing:.06em;color:{st['muted']}}}
+.row .rt{{font-size:{round(L['rf'] * 1.12)}px;font-weight:600}}
+.row .flash{{left:-66px}}
+.blk{{background:url(assets/thumbs/strip.jpg) 0 0/auto 100% repeat-x}}
+.blk .bar{{display:none}}
+.blk .fill{{opacity:.42}}
+'''
+    if VARIANT == 3:
+        c += f'''#panel{{padding:0 24px;overflow:hidden;border-radius:20px}}
+.wbar{{display:flex;align-items:center;gap:9px;height:52px;margin:0 -24px 14px;padding:0 20px;background:{st['window']};
+  border-bottom:1.5px solid {st['line']};font-weight:600;font-size:22px;color:{st['ink']}}}
+.wbar i{{display:block;width:13px;height:13px;border-radius:50%;background:{st['dots']}}}
+.wbar span{{margin-left:auto}}
+#frames{{position:absolute;left:{L['px']}px;width:{min(L['pw'], 360)}px;background:{st['panel']};border-radius:20px;overflow:hidden;
+  border:1.5px solid {st['line']};box-shadow:0 30px 60px -14px rgba(40,30,15,.30),0 6px 14px rgba(40,30,15,.10);transform-origin:0 50%}}
+#frames .wbar{{margin:0}}
+.cgrid{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}}
+.cgrid i{{display:block;aspect-ratio:9/12;border-radius:10px;background:url(assets/thumbs/strip.jpg) 0 0/800% 100% no-repeat}}
+.cgrid i.on{{box-shadow:0 0 0 4px {st['done']}}}
+#toast{{position:absolute;top:{WIN_TOP + BAR_H + 24}px;display:flex;align-items:center;gap:16px;background:{st['ink']};color:{st['page']};
+  border-radius:999px;padding:14px 30px 14px 14px;font-weight:600;font-size:28px;white-space:nowrap;box-shadow:0 20px 40px rgba(20,22,21,.35)}}
+#toast em{{display:block;width:44px;height:44px;border-radius:50%;background:{st['done']};padding:8px}}
+#toast svg{{display:block;width:100%;height:100%}}
 '''
     return c
 
@@ -590,7 +632,7 @@ def page(S, L, dur):
                  f'<div class="g" id="ckg{i}"></div><svg class="m" width="34" height="34" viewBox="0 0 34 34"><path id="ckm{i}" '
                  f'd="M10 17.6 L15.2 22.6 L24.4 12.2" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" '
                  f'stroke-linejoin="round" stroke-dasharray="22" stroke-dashoffset="22"/></svg></div>'
-                 f'<span class="rt" id="rt{i}">{esc(t)}</span></div>\n')
+                 f'<span class="rtw"><small class="tc">0:{S["ticks"][i] // FPS:02d}</small><span class="rt" id="rt{i}">{esc(t)}</span></span></div>\n')
     pill = f'<span id="pill">{esc(PANEL_TAG)}</span>' if PANEL_TAG else ''
     fname = (f'<div id="fname"><i class="fic"></i><span>{esc(WINDOW_FILE)}</span></div>' if L['show_file'] else '')
     digits = readout = ''
@@ -733,6 +775,24 @@ def page(S, L, dur):
         tw += [f"tl.fromTo('#cc{i}',{{autoAlpha:0,scale:1.14}},{{autoAlpha:1,scale:1,duration:.13,ease:'power3.out',immediateRender:false}},{max(0, F(c['f0']) - .03):.3f});",
                f"tl.set('#cc{i}',{{autoAlpha:0}},{F(c['f1']):.3f});"]
 
+    # ---- Ventanas apiladas: the frames window rides in under the checklist, the notice drops on DONE_AT
+    extra_html = ''
+    if VARIANT == 3:
+        fy = L['py'] + L['ph'] + 22
+        extra_html = (f'<div id="frames" style="top:{fy}px"><div class="wbar"><i></i><i></i><i></i><span>{esc(FRAMES_TITLE)}</span></div>'
+                      '<div class="cgrid">' + ''.join(f'<i class="{"on" if j == 1 else ""}" style="background-position:{j * 2 * 100 / 7:.3f}% 0"></i>' for j in range(3))
+                      + '</div></div>')
+        tw += ["gsap.set('#frames',{opacity:0,x:-70,scale:.94});",
+               f"tl.to('#frames',{{opacity:1,duration:.14,ease:'power1.out'}},{T0 + .27:.3f});",
+               f"tl.to('#frames',{{x:0,scale:1,duration:.32,ease:'expo.out'}},{T0 + .271:.3f});"]
+        if TOAST:
+            extra_html += (f'<div id="toast" style="left:{cx + CW // 2}px"><em><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" fill="none" '
+                           f'stroke="{st["ink"]}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></em>{esc(TOAST)}</div>')
+            tw += ["gsap.set('#toast',{opacity:0,y:-40,xPercent:-50,scale:.9});",
+                   f"tl.to('#toast',{{opacity:1,y:0,scale:1,duration:.4,ease:'back.out(2)'}},{TD:.3f});"]
+        if S['f_out'] is not None:
+            tw.append(f"tl.to(['#frames','#toast'],{{opacity:0,duration:.12,ease:'power1.in'}},{OUT - .03:.3f});")
+
     # ---- slow drift while it holds, then the way back to the plain picture
     hold = OUT - (T0 + .55)
     side = "['#readdrift','#digdrift']" if digits else "'#readdrift'"
@@ -788,12 +848,14 @@ def page(S, L, dur):
     </div>
 {cap_html}
     <div id="paneldrift"><div id="panel">
+      <div class="wbar"><i></i><i></i><i></i><span>{esc(STEPS_TITLE)}</span></div>
       <div id="phead"><i class="pd"></i><span class="lbl">{esc(L['title'])}</span>{pill}</div>
       <div id="prog"><div id="progfill"></div></div>
       <div id="rows">
 {rows}      </div>
     </div></div>
     <div id="readdrift">{readout}</div>
+{extra_html}
   </div>
 {SAFE_GUIDE if os.environ.get('SAFE') else ''}
 </div>
@@ -818,6 +880,13 @@ def main():
     dur = n / FPS
     S = schedule(n)
     L = layout(S)
+    if VARIANT in (2, 3):
+        os.makedirs('assets/thumbs', exist_ok=True)
+        ff = shutil.which('ffmpeg') or 'ffmpeg'
+        step = max(1, n // 8)
+        subprocess.run([ff, '-v', 'error', '-y', '-i', 'assets/aroll.mp4', '-vf',
+                        f"select='not(mod(n\\,{step}))',scale=180:320:force_original_aspect_ratio=increase,crop=180:320,tile=8x1",
+                        '-frames:v', '1', '-q:v', '4', 'assets/thumbs/strip.jpg'], check=True)
     doc, caps = page(S, L, dur)
     open('index.html', 'w').write(doc)
     slot = os.path.basename(HERE)
