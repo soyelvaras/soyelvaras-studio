@@ -297,6 +297,10 @@ def page(key, caption=None, safe=False):
         NOTES.append('Bold puts words behind the head of the untouched footage, so it cannot ride on an overall style. '
                      "The style's own captions were used.")
         caption = None
+    if caption == 'negativo':
+        NOTES.append('Negativo puts words behind the head of the untouched footage and inverts what is under them, so it '
+                     "cannot ride on an overall style. The style's own captions were used.")
+        caption = None
     b = Build()
     b.css.append('.shot{position:absolute;inset:0;overflow:hidden}')
     body = PRESETS[key](b, caption)
