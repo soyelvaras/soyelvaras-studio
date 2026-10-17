@@ -33,6 +33,16 @@ El hilo de app genérico se reemplazó por cinco versiones propias, todas como s
 Picker con cinco puntitos bajo la tarjeta y se guardan en `effectVariants`. Colores, letras, nombre de marca, inicial y
 sitio son variables en `effects/comment-bubble/build.py`, así que sirven para cualquier marca de cliente.
 
+## Resuelto: Fichas Fuera (16-10-2026)
+
+Tres versiones propias (Etiqueta de precio tachada, Post-it a mano con X, Ventana que se parte por la mitad) y un zoom
+suave en todo el efecto. Se eligen con tres puntitos en el selector.
+
+## Hoja para elegir
+
+`dev/plantillas/index.html` (servidor local "plantillas", puerto 4792): tres momentos de cada efecto, cuáles están
+resueltos y una línea para copiar con las que se quieren cambiar.
+
 ## Pendiente
 
 Repetir lo mismo (alternativas propias y elegibles) con el resto de la tabla, empezando por titulares, llamadas y

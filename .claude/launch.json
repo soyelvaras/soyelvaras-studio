@@ -26,6 +26,18 @@
         "C:/Users/crist/Documents/soyelvaras-studio/dev/maquetas"
       ],
       "port": 4791
+    },
+    {
+      "name": "plantillas",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4792",
+        "--directory",
+        "C:/Users/crist/Documents/soyelvaras-studio/dev/plantillas"
+      ],
+      "port": 4792
     }
   ]
 }
