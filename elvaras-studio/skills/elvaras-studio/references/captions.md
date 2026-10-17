@@ -1,6 +1,6 @@
-# Subtítulos: los 20 estilos, las marcas de palabras, dónde van
+# Subtítulos: los 19 estilos, las marcas de palabras, dónde van
 
-Un solo motor (`SK/engine/captions.py`), 20 estilos, todos manejados por el mismo `words.json`. `build_reel.py` elige
+Un solo motor (`SK/engine/captions.py`), 19 estilos, todos manejados por el mismo `words.json`. `build_reel.py` elige
 el estilo según las elecciones guardadas. Nunca editas el motor para un reel: limpias las palabras, las marcas y
 escribes el título. Un usuario con estilo propio (un ejemplo que mostró, un look que describió) usa en cambio un
 estilo de subtítulos a medida, una especificación que el mismo motor dibuja: `references/replicate.md`. Las marcas y
@@ -9,7 +9,7 @@ las franjas de abajo funcionan igual.
 Todos los estilos usan por defecto los colores de Soy Elvaras: texto crema #F2ECDF y acento dorado #C9A15B donde el
 original usaba blanco y amarillo.
 
-## Los 20
+## Los 19
 
 | Clave | Nombre | El look | Usa las marcas | Dónde va | Necesita |
 |---|---|---|---|---|---|
@@ -32,14 +32,8 @@ original usaba blanco y amarillo.
 | `weight-shift` | Contraste | Entrada fina, palabra de golpe gruesa | num / emph / cta son el golpe | pecho (un bloque alto) | |
 | `terminal` | Terminal | Entrada en letra de código, una palabra grande en serif itálica | num / emph / cta son el golpe | pecho (un bloque alto) | |
 | `outline` | Contorno | Mayúsculas altas y condensadas, la palabra de golpe dibujada hueca | num / emph / cta son el golpe | pecho (un bloque alto) | |
-| `negativo` | Negativo | Minúsculas enormes en Work Sans 900 que muestran el negativo de lo que hay detrás (oscuras sobre una pared clara, claras sobre lo oscuro, colores invertidos sobre la persona); una palabra grande por frase y las chicas al lado | toda palabra marcada hace de palabra grande y va DETRÁS de la cabeza; en una frase sin marca, la palabra más larga es la grande y va adelante sobre el pecho | detrás de la cabeza + pecho | recorte limpio y espacio sobre la cabeza (si no, todo va al pecho). No va sobre un estilo completo. El color no es de marca: es el inverso de lo que hay detrás |
 
 `none` = sin subtítulos (solo títulos y efectos).
-
-Negativo dibuja cada frase dos veces: una copia en modo *overlay* empuja la imagen bajo las letras a sus extremos y la
-de encima, en modo *diferencia*, la da vuelta. Solo con diferencia, una pared de tono medio (como el crema de la pieza)
-deja las letras grises y casi invisibles. Un efecto que mueve la capa de subtítulos (`caption_y`) la deja como letras
-blancas mientras dura, sin el negativo.
 
 ## Marcar las palabras (en cada reel)
 

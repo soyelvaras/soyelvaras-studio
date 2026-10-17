@@ -1,6 +1,6 @@
 ---
 name: elvaras-studio
-description: "Soy Elvaras Studio. Convierte clips verticales 9:16 de alguien hablando a cámara en un reel de Instagram terminado, con el look guardado en el selector de estilo: uno de 20 estilos de subtítulos o uno de 3 estilos completos, más los efectos y transiciones elegidos. Elige la toma más limpia de cada frase, corta los silencios, transcribe con tiempo por palabra, ubica los subtítulos según dónde está la persona en el cuadro y revisa todo dentro de la zona segura de Reels. Responde siempre en español. Úsala cuando el usuario diga 'edítalo', 'edita estos clips', 'dejé clips en descargas', 'arma un reel con esto', 'cambia mis subtítulos', 'cambia mis efectos', 'cambia mi estilo', 'abre el selector', 'actualiza el Studio', o sus versiones en inglés ('edit it', 'open the picker'), o cuando ejecute /elvaras-studio."
+description: "Soy Elvaras Studio. Convierte clips verticales 9:16 de alguien hablando a cámara en un reel de Instagram terminado, con el look guardado en el selector de estilo: uno de 19 estilos de subtítulos o uno de 3 estilos completos, más los efectos y transiciones elegidos. Elige la toma más limpia de cada frase, corta los silencios, transcribe con tiempo por palabra, ubica los subtítulos según dónde está la persona en el cuadro y revisa todo dentro de la zona segura de Reels. Responde siempre en español. Úsala cuando el usuario diga 'edítalo', 'edita estos clips', 'dejé clips en descargas', 'arma un reel con esto', 'cambia mis subtítulos', 'cambia mis efectos', 'cambia mi estilo', 'abre el selector', 'actualiza el Studio', o sus versiones en inglés ('edit it', 'open the picker'), o cuando ejecute /elvaras-studio."
 ---
 
 # Soy Elvaras Studio (elvaras-studio)
@@ -10,7 +10,7 @@ selector de estilo y desde ahí basta con dejar los clips y decir "edítalo". El
 copia para el celular y da notas. Puede cambiar su estilo de edición cuando quiera, con solo pedirlo.
 
 Lee antes de la primera edición: `references/cutting.md` (tomas, silencios, corregir la transcripción),
-`references/captions.md` (los 20 estilos de subtítulos, cómo marcar palabras, dónde van los subtítulos),
+`references/captions.md` (los 19 estilos de subtítulos, cómo marcar palabras, dónde van los subtítulos),
 `references/checks.md` (chequeo de toma, autorrevisión, zona segura). Lee `references/styles.md` cuando las
 elecciones tengan un estilo completo, `effects/INDEX.md` cuando tengan efectos y `references/gotchas.md` cuando un
 armado o render falle. Lee `references/replicate.md` apenas el usuario muestre un ejemplo o describa un look propio.
@@ -40,9 +40,8 @@ se comparte, publica ni entrega a otra persona, y su repositorio de GitHub es pr
 - Clientes: "edita esto para <cliente>" usa `brands/clientes/<cliente>/brand.json` (copia `_plantilla`). Cada
   cliente tiene además sus propios archivos de estilo: guárdalos como `ST/clients/<cliente>/my-style.{md,json}`.
 - Formatos: el render principal es 9:16 para Instagram. Cuando pida la versión web, renderiza también en 16:9.
-- Los 20 clips de `captions/previews` (y sus fotos en `picker/previews/posters/captions`) ya son de él: una sola
-  escena de 1016(3), armada en `~/reel-edits/subtitulos-base` (todo el texto abajo, salvo Negativo, que usa el recorte
-  limpio del proyecto para poner sus palabras grandes detrás de la cabeza). Los de `picker/previews/effects`
+- Los 19 clips de `captions/previews` (y sus fotos en `picker/previews/posters/captions`) ya son de él: una sola
+  escena de 1016(3), todo el texto abajo, armada en `~/reel-edits/subtitulos-base`. Los de `picker/previews/effects`
   (los 26) y `picker/previews/styles` (los 3) también son suyos. Los de `effects/*/example` siguen siendo de relleno
   hasta que él grabe los suyos: nunca los presentes como trabajo suyo.
 - Lo que ya se aprendió con sus tomas (detalle en la memoria del proyecto): usa lentes, y la medición de la cabeza

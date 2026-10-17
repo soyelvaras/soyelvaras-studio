@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Soy Elvaras Studio: the twenty caption styles, one engine, all driven by the same word timings.
+"""Soy Elvaras Studio: the nineteen caption styles, one engine, all driven by the same word timings.
 
 This file is a library. scripts/build_reel.py is what you run: it reads the buyer's picks, calls load(project) and
 then page(<caption style key>) (or engine/styles.py for an overall style) and writes <project>/index.html.
@@ -823,102 +823,7 @@ def outline(b):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# 20 NEGATIVO: huge heavy lowercase that shows the inverse of what is behind it (dark on a light wall, light on a dark
-# chair, colours turned over on the speaker). One big word per phrase and the small words beside it; a phrase with a marked
-# word puts its big word BEHIND the head (the head covers its lower third), the rest ride in front over the chest.
-# Two copies of every phrase: the first, in overlay, pushes the picture under the letters to its extremes; the second, in
-# difference, turns that over. Pure difference alone goes grey on a mid-tone wall (145 -> 110): this keeps it readable.
-# ----------------------------------------------------------------------------------------------------------------------
-NG_FONT = 'WorkSans-100-900-normal.woff2'
-NG_ASC, NG_DESC = .93, .243             # Work Sans ascent / descent (em): where the baseline sits in a line-height:1 box
-_ng_fonts = {}
-
-
-def ng_len(text, weight, px):
-    """px width of text in Work Sans at this weight (read from the font; a rough table if it cannot be read)"""
-    try:
-        from PIL import ImageFont
-        key = (weight, int(px))
-        if key not in _ng_fonts:
-            f = ImageFont.truetype(os.path.join(HERE, 'fonts', NG_FONT), int(px))
-            f.set_variation_by_axes([weight])
-            _ng_fonts[key] = f
-        return _ng_fonts[key].getlength(text)
-    except Exception:
-        return (.53 if weight >= 800 else .52) * px * len(text)
-
-
-def ng_height(text):
-    """height of the glyphs above the baseline, in em (an x-height word is low, a word with an l, d or capital is tall)"""
-    try:
-        from PIL import ImageFont
-        if 'h' not in _ng_fonts:
-            f = ImageFont.truetype(os.path.join(HERE, 'fonts', NG_FONT), 1000)
-            f.set_variation_by_axes([900])
-            _ng_fonts['h'] = f
-        return -_ng_fonts['h'].getbbox(text, anchor='ls')[1] / 1000
-    except Exception:
-        return .72 if any(c in text for c in 'bdfhklt0123456789%') or text[:1].isupper() else .52
-
-
-def negativo(b):
-    b.cutout = bool(CUTOUT) and not FACELESS
-    b.css.append('''
-.ng{position:absolute;left:0;width:1080px;text-align:center;white-space:nowrap;color:#FFFFFF;line-height:1;font-family:'Work Sans'}
-.ng.u{mix-blend-mode:overlay}
-.ng.d{mix-blend-mode:difference}
-.ng span{display:inline-block;position:relative;transform-origin:50% 75%}
-.ng .L{font-weight:900;letter-spacing:-.05em}
-.ng .s{font-weight:500;letter-spacing:-.02em;margin:0 .3em}''')
-    for g, t0, t1 in windows(chunk(W, 3, 18)):
-        marked = [i for i, w in enumerate(g) if w.get('e')]
-        texts = [low(w) for w in g]
-        k = marked[0] if marked else max(range(len(g)), key=lambda i: (bare(g[i]['text']).lower() not in WEAK, len(texts[i])))
-        big, before, after = texts[k], texts[:k], texts[k + 1:]
-        gh = ng_height(big)
-
-        def fit(cap):
-            """big size: as large as cap allows, with the whole line (small words included) inside 960 px"""
-            for px in range(int(cap), 59, -4):
-                s = max(52, round(px * .3))
-                w = ng_len(big, 900, px) - .05 * px * len(big)
-                w += sum(ng_len(t, 500, s) - .02 * s * len(t) + .6 * s for t in before + after)
-                if w <= 960:
-                    return px, s
-            return 60, 52
-
-        head = head_top_at(t0)
-        room = (head - 236) / (.7 * gh) if b.cutout and marked else 0      # the glyph top stays under y 236
-        behind = room >= 150
-        if behind:
-            px, s = fit(min(340, room))
-            base = head + .30 * gh * px                                      # the head covers the lower 30% of the word
-            if before:                                                       # raised small words must stay under y 236 too
-                base = max(base, 236 + .58 * gh * px + .74 * s)
-        else:
-            px, s = fit(210 if marked else 180)
-            base = Y_CHEST - 20 + gh * px
-        top = base - (1 - NG_ASC - NG_DESC) / 2 * px - NG_ASC * px          # line box top, so the baseline lands on base
-        gid = b.nid('g')
-        parts = []                                                           # (id, class, style, text) of each word
-        for j, (w, t) in enumerate(zip(g, texts)):
-            wid = b.nid('w')
-            if j == k:
-                parts.append((wid, 'L', f'font-size:{px}px', t))
-                b.tween_in(f'#{wid}u,#{wid}d', w['start'], {'scale': 1.2, 'filter': 'blur(18px)'}, {'scale': 1, 'filter': 'blur(0px)'}, .2, 'power3.out')
-            else:
-                dy = -.58 * gh * px if j < k else .1 * px                    # before the big word: up high; after it: dropped low
-                parts.append((wid, 's', f'font-size:{s}px;top:{dy:.0f}px', t))
-                b.tween_in(f'#{wid}u,#{wid}d', w['start'], {'y': 12, 'filter': 'blur(10px)'}, {'y': 0, 'filter': 'blur(0px)'}, .16, 'power3.out')
-        for layer in ('u', 'd'):                                             # the overlay copy first, the difference copy over it
-            body = ''.join(f'<span id="{i}{layer}" class="{c}" style="{st}">{esc(t)}</span>' for i, c, st, t in parts)
-            (b.back if behind else b.html).append(f'<div id="{gid}{layer}" class="ng {layer}" style="top:{top:.0f}px;font-size:{px}px">{body}</div>')
-        b.cut(f'#{gid}u,#{gid}d', t0)
-        b.out(f'#{gid}u,#{gid}d', t1, fade=.1)
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-# CUSTOM: the buyer's own caption style, built from a spec (references/replicate.md). Same code path as the twenty:
+# CUSTOM: the buyer's own caption style, built from a spec (references/replicate.md). Same code path as the nineteen:
 # the same words.json, marks, phrase windows, hide windows and caption_y. build_reel.py fills CUSTOM and EXTRA from
 # <project>/plan.json and the buyer's my-style.json.
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1131,7 +1036,6 @@ STYLES = {
     'weight-shift': ('17', 'Weight Shift', weightshift),
     'terminal': ('18', 'Terminal', terminal),
     'outline': ('19', 'Outline', outline),
-    'negativo': ('20', 'Negativo', negativo),
 }
 
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'
@@ -1158,7 +1062,7 @@ def lifted(inner):
 # Bubblegum above the head, so those two are worked out in cap_top().
 CAP_OFFSET = {'arcade': 82, 'low-key': 120, 'field-notes': 96, 'anchor': 40, 'loud-lowercase': -6, 'vanity': 30,
               'moodboard': 56, 'spec-sheet': -30, 'bold': 50, 'cool-girl': -40, 'cool-dude': -70, 'karaoke': 96,
-              'signature': 70, 'keyword': -40, 'weight-shift': -50, 'terminal': -40, 'outline': -70, 'negativo': -20}
+              'signature': 70, 'keyword': -40, 'weight-shift': -50, 'terminal': -40, 'outline': -70}
 
 
 def cap_top(key):

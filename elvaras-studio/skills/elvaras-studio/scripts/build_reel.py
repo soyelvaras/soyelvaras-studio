@@ -161,9 +161,6 @@ def main():
         if caption == 'bold' and not cap.CUTOUT:
             notes.append('Bold puts its big words BEHIND the head, which needs a person cutout (rvm_cut.py for a clean '
                          'edge, cutout.py for a quick one). There is none yet, so the big words sit over the chest.')
-        if caption == 'negativo' and not cap.CUTOUT:
-            notes.append('Negativo puts the big word of a marked phrase BEHIND the head, which needs a person cutout '
-                         '(rvm_cut.py for a clean edge, cutout.py for a quick one). There is none yet, so every phrase sits over the chest.')
         html = cap.page(caption, safe=safe)
         what = f'style=none captions={caption}'
     notes += cap.NOTES

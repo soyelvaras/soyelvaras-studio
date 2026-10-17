@@ -155,14 +155,6 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/captions/outline.jpg"
   },
   {
-   "key": "negativo",
-   "name": "Negativo",
-   "label": "Ideal para",
-   "line": "Ganchos con impacto, frases cortas, marca personal",
-   "preview": "../captions/previews/negativo.mp4",
-   "poster": "previews/posters/captions/negativo.jpg"
-  },
-  {
    "key": "none",
    "name": "Sin subtítulos",
    "label": "",
