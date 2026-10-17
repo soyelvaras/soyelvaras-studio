@@ -25,7 +25,7 @@ F_DIM = 40           # first frame the room starts to dim: onset of the first wo
                      # (onsets.py, "onset" column). 3 or later, so the slot opens on the plain picture.
 DIM_FRAMES = 24      # frames the dim takes (24 = 0.8 s). Shorter when the line is short: it should be down by F_PUNCH.
 F_PUNCH = 70         # frame the punch word is said (its onset): word, flash and camera kick all land on this frame
-PUNCH = 'word'       # the punch word, typed the way the speaker says it (a full stop after it is fine). One word,
+PUNCH = 'palabra'       # the punch word, typed the way the speaker says it (a full stop after it is fine). One word,
                      # two at most, and only what the speaker really says. '' = no word.
 F_SNAP = 'auto'      # frame the lights snap back on. 'auto' = the first cut after F_PUNCH (clip.json "cut_frames").
                      # No cut in the slot: the onset of the first word of the next line. 12+ frames after F_PUNCH and

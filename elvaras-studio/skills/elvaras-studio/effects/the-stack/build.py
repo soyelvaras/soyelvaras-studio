@@ -28,12 +28,12 @@ import subprocess
 import sys
 
 # ==== CLIP (edit this) ====
-TITLE = 'PLACEHOLDER TITLE'   # bold line above the cards (the question the cards answer). '' = no title line.
+TITLE = 'TÍTULO DE RELLENO'   # bold line above the cards (the question the cards answer). '' = no title line.
                               # Keep it under 30 characters; it is words the user says or gives, not a claim you add
 CARDS = [                     # one dict per card, in the order they land. 1 to 3 cards, 1 to 5 rows each.
-    dict(title='PLACEHOLDER CARD',      # card heading: what is being compared
-         sub='your own numbers go here',  # small grey line under it (the source or the unit in words). '' = none
-         rows=[('Label A', 0), ('Label B', 0), ('Label C', 0)],
+    dict(title='TARJETA DE RELLENO',      # card heading: what is being compared
+         sub='aquí van tus propias cifras',  # small grey line under it (the source or the unit in words). '' = none
+         rows=[('Etiqueta A', 0), ('Etiqueta B', 0), ('Etiqueta C', 0)],
                                         # (label, value): the user's OWN figures, as said in the clip or given in
                                         # chat. A number (12400, 2.5) or a string shown as typed ('12,400', '2.50')
          unit=('', ''),                 # (before, after) every value: ('$', ''), ('', '%'), ('', ' hrs')

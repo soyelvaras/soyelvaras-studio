@@ -55,17 +55,17 @@ VARIANT = 1          # the look: 1 Etiqueta de precio (struck through), 2 Post-i
 # 'shatter'; default by spot), 'spot' ('left', 'right', 'above'; default STYLE order), 'knock' (frame or word it is
 # knocked away on; default = when the next tile lands, the last one 21 frames after it lands).
 TILES = [
-    {'text': 'Tool one', 'at': 12},        # placeholder: replace with the first name the speaker says
-    {'text': 'Tool two', 'at': 36},        # placeholder
-    {'text': 'Tool three', 'at': 60},      # placeholder
+    {'text': 'Herramienta uno', 'at': 12},        # placeholder: replace with the first name the speaker says
+    {'text': 'Herramienta dos', 'at': 36},        # placeholder
+    {'text': 'Herramienta tres', 'at': 60},      # placeholder
 ]
 TILE_LABEL = ''      # small line under every name saying what these things are ('' = none). The speaker's own words
 RECEIPTS_ON = False  # the switch for the second half. False = tiles only (the fields below are ignored)
 # One entry per receipt, in spoken order: a frame or word (uses the three defaults below), or a dict with 'at' and
 # any of 'title', 'item', 'amount' for a receipt that differs. Up to 8; they alternate sides of the head.
 RECEIPTS = []
-RECEIPT_TITLE = 'Receipt'   # placeholder: bold first line (what is being paid for, in the speaker's words)
-RECEIPT_ITEM = '1 item'     # placeholder: the line item
+RECEIPT_TITLE = 'Recibo'   # placeholder: bold first line (what is being paid for, in the speaker's words)
+RECEIPT_ITEM = '1 ítem'     # placeholder: the line item
 RECEIPT_AMOUNT = 0          # whole number per receipt. ONLY an amount the speaker says or the user gave you
 CURRENCY = ''        # printed before every amount, e.g. '$' ('' = bare numbers)
 RECEIPT_FIRST_SIDE = 'left'   # side of the head the first receipt lands on
@@ -99,7 +99,7 @@ SAFE = dict(top=220, bottom=1470, left=35, right=1045, right_low=980, low_y=1155
 ROT = {'left': -5.0, 'right': 4.0, 'above': -2.5}
 EXIT = {'left': 'drop', 'right': 'flick', 'above': 'shatter'}
 RW, RH, RSTEP = 300, 136, 70          # receipt size and how far the next one on a side lands above the last
-PLACEHOLDERS = ('Tool one', 'Tool two', 'Tool three', 'Receipt', '1 item')
+PLACEHOLDERS = ('Herramienta uno', 'Herramienta dos', 'Herramienta tres', 'Recibo', '1 ítem')
 NEAR = '0px 16px 30px 0px rgba(0,0,0,0.5), 0px 3px 7px 0px rgba(0,0,0,0.4)'
 FAR = '0px 80px 90px 0px rgba(0,0,0,0.2), 0px 34px 44px 0px rgba(0,0,0,0.1)'
 PNEAR = '0px 14px 26px 0px rgba(0,0,0,0.44), 0px 2px 6px 0px rgba(0,0,0,0.34)'

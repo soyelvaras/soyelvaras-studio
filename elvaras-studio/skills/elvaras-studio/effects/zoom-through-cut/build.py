@@ -33,14 +33,14 @@ GRADE_B = None        # same for shot B. None when the main reel grades the foot
 #   top    y of the block top. None = measured by prep.py (just under the speaker's chin); the block is dropped if no room
 #   lead / punch / tail   [(time, 'word'), ...]: small line above, the big word(s), small line below
 CAP_A = {'style': 'girl', 'top': None,
-         'lead': [(0.42, 'you'), (0.52, 'can'), (0.64, 'get'), (0.80, 'the')],
-         'punch': [(0.92, 'cool'), (1.10, 'girl')],
-         'tail': [(1.32, 'aesthetic')]}
+         'lead': [(0.42, 'puedes'), (0.52, 'tener'), (0.64, 'el'), (0.80, 'look')],
+         'punch': [(0.92, 'chica'), (1.10, 'cool')],
+         'tail': [(1.32, 'estético')]}
 CAP_B = {'style': 'dude', 'top': None,
-         'lead': [(2.29, 'or'), (2.55, 'you'), (2.67, 'can'), (2.79, 'get'), (2.95, 'the')],
+         'lead': [(2.29, 'o'), (2.55, 'puedes'), (2.67, 'tener'), (2.79, 'el'), (2.95, 'look')],
          'lead_rides': True,      # True = the whole lead line arrives with the picture, spreading out of the point
-         'punch': [(3.11, 'cool'), (3.31, 'dude')],
-         'tail': [(3.53, 'aesthetic')]}
+         'punch': [(3.11, 'chico'), (3.31, 'cool')],
+         'tail': [(3.53, 'estético')]}
 WHOOSH_VOL = 0.30     # template volume of the one whoosh (x0.75 is applied below). Its peak lands on the cut
 # ==== END CLIP ====
 

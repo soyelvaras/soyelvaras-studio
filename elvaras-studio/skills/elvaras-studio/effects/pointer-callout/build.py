@@ -37,9 +37,9 @@ FPS = 30
 #   sub     small detail under the text: 'lines', 'thumbs', 'progress' or 'none'.
 #   optional: at=seconds (overrides say when the printed onset is wrong), pos=(left, top) to place one card by hand.
 CARDS = [
-    dict(text='First thing', say='', anchor='head_left', side='auto', icon='check', sub='lines'),
-    dict(text='Second thing', say='', anchor='head_right', side='auto', icon='check', sub='lines'),
-    dict(text='Third thing', say='', anchor='chest', side='auto', icon='check', sub='lines'),
+    dict(text='Primera cosa', say='', anchor='head_left', side='auto', icon='check', sub='lines'),
+    dict(text='Segunda cosa', say='', anchor='head_right', side='auto', icon='check', sub='lines'),
+    dict(text='Tercera cosa', say='', anchor='chest', side='auto', icon='check', sub='lines'),
 ]
 IN_F = 4          # first frame a card may appear: the slot starts on the plain picture. Keep 4 or more
 OUT_F = None      # frame by which everything is gone. None = 6 frames before the slot ends (it ends on the plain picture)

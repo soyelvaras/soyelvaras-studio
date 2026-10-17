@@ -20,7 +20,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # ==== CLIP (edit this) ====
 TAGS = [
     dict(
-        text='YOUR TAG',     # the words on the tag, caps, 1 to 3 words the speaker actually says or that name the thing
+        text='TU ETIQUETA',     # the words on the tag, caps, 1 to 3 words the speaker actually says or that name the thing
         say='',              # spoken word it lands on, as track.py prints it ('' = lands at IN_F). Onset comes from the audio
         anchor='cap',        # 'cap' = on the speaker's cap / forehead, above the brows | 'head' = beside the speaker's head, tucked behind it | 'chest'
         # optional keys (leave them out for the defaults):

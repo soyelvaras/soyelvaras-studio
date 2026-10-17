@@ -27,14 +27,14 @@ NAME = os.path.basename(HERE)
 
 # ==== CLIP (edit this) ====
 # Frames are 30 fps frames of assets/aroll.mp4 (frame 0 = first frame of the slot). Get them from `python3 onsets.py`.
-TITLE = 'All you need to do'       # eyebrow line, shown in caps. Use words the speaker says in the clip. Keep it under ~22 characters.
+TITLE = 'Solo tienes que'       # eyebrow line, shown in caps. Use words the speaker says in the clip. Keep it under ~22 characters.
 ROWS = [                           # 2 to 5 rows: (text, f_say, f_tick). *word* = yellow accent word.
     # f_say  = frame the speaker STARTS the phrase (the row's text lands): onsets.py column "say"
     # f_tick = frame the check starts drawing, one frame before the stressed vowel of the word that
     #          finishes the phrase: onsets.py column "tick"
-    ('Drop your clips',        28, 39),
-    ('Trigger the skill',      55, 69),
-    ('*Claude* does the rest', 83, 97),
+    ('Soltar tus clips',        28, 39),
+    ('Activar la skill',      55, 69),
+    ('*Claude* hace el resto', 83, 97),
 ]
 F_IN = 2            # frame the card starts building. First frame of speech, or ~20 frames before the first f_say.
 F_DONE = 108        # frame the card completes (pill, sheen, glow). A stressed word 8+ frames after the last tick, or None = last tick + 10.

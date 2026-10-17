@@ -23,7 +23,7 @@ COMMIT = 'edited'            # payoff word: the line sweeps across on it. A word
 PEEK = 'into'                # lead-in word: the line peeks in, eases back and waits beside the head. Same forms. None = one straight sweep
 REST = 'auto'                # x where the line waits between peek and commit. 'auto' = measured (clear of head, captions, labels), a number, or None = no peek
 SWEEP = 0.5                  # seconds the commit sweep takes. 0.4 when the next word comes fast, 0.6 for a slow line
-LABELS = ('before', 'after')  # the two tags that ride the line. Your own two words, or None. No claims or numbers unless the speaker says them
+LABELS = ('antes', 'después')  # the two tags that ride the line. Your own two words, or None. No claims or numbers unless the speaker says them
 LABEL_IN = 'auto'            # seconds the first tag pops in. 'auto' = half a second before the line (never in the first 4 frames)
 LABEL_Y = 232                # top of the tags (220 is the top of the safe zone). Move only if build.py says a tag sits on the head
 AFTER = None                 # None = the look below is made here. 'after/mine.mp4' = your finished version of the SAME frames (see effect.md)

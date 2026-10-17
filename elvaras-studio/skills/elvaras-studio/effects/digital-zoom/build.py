@@ -67,13 +67,13 @@ MAX_UPSCALE = 1.5
 #   Keep every top below the chin: build.py prints "clearance" per group and warns when a group is too close, too low or too wide.
 #   A group that ends where a snap starts is pushed through, one that ends where a pull starts is left behind.
 CAPS = [
-    (54, [(1000, 'sm', [(8, 'you', ''), (13, 'don’t', ''), (18, 'need', ''), (23, 'to', ''), (26, 'be', '')]),
-          (1082, 'big', [(33, 'techy', 'y')])]),
-    (83, [(1000, 'sm', [(56, 'or', ''), (59, 'know', ''), (65, 'anything', ''), (78, 'about', '')])]),
-    (108, [(1062, 'lg', [(86, 'video', '')]),
-           (1228, 'lg', [(95, 'editing', 'y')])]),
-    (None, [(1000, 'sm', [(110, 'in', ''), (113, 'order', ''), (120, 'to', '')]),
-            (1082, 'big', [(123, 'use', ''), (130, 'it.', '')])]),
+    (54, [(1000, 'sm', [(8, 'no', ''), (13, 'necesitas', ''), (18, 'ser', ''), (23, 'un', ''), (26, 'experto', '')]),
+          (1082, 'big', [(33, 'técnico', 'y')])]),
+    (83, [(1000, 'sm', [(56, 'ni', ''), (59, 'saber', ''), (65, 'nada', ''), (78, 'de', '')])]),
+    (108, [(1062, 'lg', [(86, 'edición', '')]),
+           (1228, 'lg', [(95, 'de video', 'y')])]),
+    (None, [(1000, 'sm', [(110, 'para', ''), (113, 'poder', ''), (120, 'lo', '')]),
+            (1082, 'big', [(123, 'usar', ''), (130, 'así.', '')])]),
 ]
 # Whoosh volume on each snap, relative to the template (0.75 gain is applied on top). 0 = none. Keep it under the speaker's voice.
 WHOOSH = 0.26

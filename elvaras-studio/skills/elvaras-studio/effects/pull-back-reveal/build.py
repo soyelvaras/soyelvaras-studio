@@ -68,19 +68,19 @@ STYLE = dict(
 # Everything on screen must be TRUE of this reel. Read the steps and the shot lengths from the reel's own edit list
 # (edl.json / plan.json: clips used, shots, frames). Never invent a step, a count or a number.
 STEPS = [               # the checklist, in the order the work was done. 2 to 7 short lines, about 22 characters each.
-    'Step one',         # placeholder: replace with a real step of this edit, e.g. how many clips were transcribed
-    'Step two',         # placeholder
-    'Step three',       # placeholder. A line can also be ('text', frame) to pin the frame it ticks on
+    'Paso uno',         # placeholder: replace with a real step of this edit, e.g. how many clips were transcribed
+    'Paso dos',         # placeholder
+    'Paso tres',       # placeholder. A line can also be ('text', frame) to pin the frame it ticks on
 ]
 SHOTS = []              # length of every shot of the finished reel, in frames (seconds x 30), in order. The timeline
                         # strip draws one block per shot and counts frames up to their sum (computed, never typed).
                         # [] = one plain bar with no frame count
-WINDOW_TITLE = 'Assistant'   # text at the right of the title bar. Plain text only: no logo, no product interface
+WINDOW_TITLE = 'Asistente'   # text at the right of the title bar. Plain text only: no logo, no product interface
 WINDOW_FILE = ''        # small file name in the middle of the title bar, e.g. the reel's own file name. '' = none
-PANEL_TITLE = 'Working on'   # small grey line at the top of the checklist
+PANEL_TITLE = 'Trabajando en'   # small grey line at the top of the checklist
 PANEL_TAG = ''          # pill beside it: what is doing the work, in the user's words. '' = no pill
-STATUS_RUN = 'rendering'     # status word in the timeline strip while it plays
-STATUS_DONE = 'done'    # and once it has finished
+STATUS_RUN = 'editando'     # status word in the timeline strip while it plays
+STATUS_DONE = 'listo'    # and once it has finished
 COUNT_TO = None         # the number the counter rolls up to (0 to 9999). ONLY a number the speaker says in this
                         # clip, e.g. 100 for "one hundred percent". None = no counter
 COUNT_UNIT = '%'        # one or two characters in the round badge beside the number. '' = no badge
@@ -110,7 +110,7 @@ SHRINK, GROW = 12, 12            # frames the shrink and the grow-back take
 CY, CW, CH = 250, 670, 1190      # the card (the live picture) on screen: top, width, height. Its left is window_x
 WIN_TOP, BAR_H, STRIP_H = 222, 70, 148
 SFX_GAIN = 0.75
-PLACEHOLDERS = ('Step one', 'Step two', 'Step three')
+PLACEHOLDERS = ('Paso uno', 'Paso dos', 'Paso tres')
 SAFE_GUIDE = ('<div style="position:absolute;inset:0;z-index:99;pointer-events:none">'
               '<div style="position:absolute;left:0;right:0;top:0;height:220px;background:rgba(255,0,0,.28)"></div>'
               '<div style="position:absolute;left:0;right:0;top:1470px;bottom:0;background:rgba(255,0,0,.28)"></div>'

@@ -30,12 +30,12 @@ SCREEN_START = 0.0        # recordings: second of the recording that plays at sl
 SCREEN_POS = 'center'     # which part survives the crop to the tall glass: 'center', 'top' or 'bottom'
 # The packaged card (used when SCREEN is None). Type what the speaker says or means; '' or [] hides that part.
 CARD = dict(
-    app='Your app',                                      # name in the top bar: the thing the speaker is talking about
+    app='Tu app',                                      # name in the top bar: the thing the speaker is talking about
     intro='',                                            # small message bubble above the card
-    label='STEP',                                        # small caps line on the card
-    title='Your title here',                             # the big line: the thing being approved / shown
-    rows=['First line', 'Second line', 'Third line'],    # up to 4 short lines; a tap on 'row1', 'row2'.. ticks one
-    button='Approve', button_done='Approved',            # main button, and what it says after it is tapped
+    label='PASO',                                        # small caps line on the card
+    title='Tu título aquí',                             # the big line: the thing being approved / shown
+    rows=['Primera línea', 'Segunda línea', 'Tercera línea'],    # up to 4 short lines; a tap on 'row1', 'row2'.. ticks one
+    button='Aprobar', button_done='Aprobado',            # main button, and what it says after it is tapped
     button_alt='',                                       # quiet second button beside it
     done='',                                             # message bubble after the button is tapped
 )
@@ -46,7 +46,7 @@ ROWS_FOLLOW_BUTTON = True # after 'button' is tapped, rows nobody tapped tick th
 #           A word lands on its stressed syllable; measure.py prints the frame for every word.
 #   where = 'button' / 'row1' / 'row2'.. on the packaged card, or (x, y) as FRACTIONS of the glass for a recording or
 #           picture: (0, 0) top left, (1, 1) bottom right. GRID=1 draws the fractions on the glass in a snapshot.
-TAPS = [('approve', 'button')]
+TAPS = [('aprobar', 'button')]
 TURN = None               # optional: word / frame where the phone turns to face the viewer (at least 1 s after it lands)
 IN_FRAME = 3              # frame the phone starts flying in. Keep it 2 or more: frame 0 must be the plain clip
 OUT_FRAME = None          # frame the phone starts leaving. None = 16 frames before the end (it needs 12 to be gone)

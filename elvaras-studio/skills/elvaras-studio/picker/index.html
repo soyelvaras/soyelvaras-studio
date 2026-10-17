@@ -779,10 +779,10 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
 
   function pasteLine(p) {
     var fx = p.effectSections
-      ? 'effects by part: ' + PARTS.map(function (pt) { return pt.key + ' = ' + (p.effectSections[pt.key].join(', ') || 'none'); }).join('; ')
-      : 'effects = ' + (p.effects.join(', ') || 'none');
+      ? 'efectos por parte: ' + PARTS.map(function (pt) { return pt.key + ' = ' + (p.effectSections[pt.key].join(', ') || 'ninguno'); }).join('; ')
+      : 'efectos = ' + (p.effects.join(', ') || 'ninguno');
     var vs = Object.keys(p.effectVariants || {}).map(function (k) { return k + ' ' + p.effectVariants[k]; }).join(', ');
-    return 'Use these picks: ' + (p.mode === 'preset' ? 'style = ' + p.style + '; ' : '') + 'captions = ' + p.captionStyle + '; ' + fx + (vs ? '; versions: ' + vs : '');
+    return 'Usa estas elecciones: ' + (p.mode === 'preset' ? 'estilo = ' + p.style + '; ' : '') + 'subtítulos = ' + p.captionStyle + '; ' + fx + (vs ? '; versiones: ' + vs : '');
   }
 
   function sync() {

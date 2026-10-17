@@ -31,17 +31,17 @@ COUNTERS = [    # one dict per number the speaker says, in the order the speaker
         text='10',                    # what locks on screen: digits with an optional prefix / suffix ("10", "$200K", "87%", "100s", "1,250"). Only a number the speaker SAYS.
         say='10',                     # the spoken words for that number exactly as words.json has them; the last drum locks as the last word ends (measured on the audio)
         lock=None,                    # override in seconds if `say` cannot find it or measure.py shows the end is wrong (the END of the spoken number)
-        label=[('YEARS', 'years'), ('RUNNING', 'running'), ('ADS', 'ads')],   # words under the drums: (WORD, when). when = a spoken word from words.json, seconds, or None (right after the lock). Wraps to a second line by itself. [] = no label
+        label=[('AÑOS', 'años'), ('HACIENDO', 'haciendo'), ('ANUNCIOS', 'anuncios')],   # words under the drums: (WORD, when). when = a spoken word from words.json, seconds, or None (right after the lock). Wraps to a second line by itself. [] = no label
         label2=None,                  # OPTIONAL extra line, off by default: [[('FUNNELS', 'funnels')], [('FUNNELS', 5.8), ('+', 5.8), ('BUDGETS', 5.8)]]  each inner list replaces the one before with a roll
         sit='auto',                   # where the panel sits: 'auto' (free wall nearest the speaker's head), 'right', 'left', 'above', or (x, y) px of its top-left corner
         size='auto',                  # 'auto' = as big as fits (max 1.5), or a scale number (1.0 = 150 px wide drums)
         then='dock',                  # when the NEXT counter arrives: 'dock' (shrink into a corner chip), 'stay' (both full size), 'out' (leave). Ignored for the last one
     ),
     dict(                             # second counter: same fields. Delete this dict for a single number
-        text='100s',
-        say='hundreds',
+        text='100+',
+        say='cientos',
         lock=None,
-        label=[('OF', 'of'), ('OFFERS', 'offers')],
+        label=[('DE', 'de'), ('OFERTAS', 'ofertas')],
         label2=None,
         sit='auto',
         size='auto',

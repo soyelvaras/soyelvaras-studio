@@ -26,36 +26,36 @@ import sys
 # Put the phrase to highlight in [brackets] (one per headline). Keep them under ~40 characters; the list is cycled
 # if the wall needs more cards than you wrote. No real outlets, people, numbers or results the speaker did not say.
 HEADLINES = [
-    '[Claude] cut my whole reel.',
-    '[Claude] edits everyone’s videos now',
-    '[Claude] is the new video editor',
-    '[Claude] edits video now',
-    'POV: [Claude] edits your reel',
-    'Dropped my clips in. [Claude] did the edit.',
-    '[Claude] just edited my video',
-    'Editors are talking about [Claude]',
-    'wait, [Claude] edits videos??',
-    '[Claude] video editing',
-    'So [Claude] edits videos now',
-    'Edited by [Claude].',
-    'Your next video editor is [Claude]',
-    'I had [Claude] edit this',
-    'ok [Claude] can edit video',
-    'Re: [Claude] edits videos?',
-    '[Claude] edits. You post.',
-    'Video editing, by [Claude]',
-    'did [Claude] edit this??',
-    '[Claude] can cut your reel',
+    '[Claude] cortó todo mi reel.',
+    '[Claude] ya edita los videos de todos',
+    '[Claude] es el nuevo editor de video',
+    '[Claude] ya edita video',
+    'POV: [Claude] edita tu reel',
+    'Dejé mis clips. [Claude] hizo la edición.',
+    '[Claude] acaba de editar mi video',
+    'Los editores hablan de [Claude]',
+    'espera, ¿[Claude] edita videos??',
+    'Edición de video con [Claude]',
+    'O sea que [Claude] ya edita videos',
+    'Editado por [Claude].',
+    'Tu próximo editor es [Claude]',
+    'Esto lo editó [Claude]',
+    'ok, [Claude] sí edita video',
+    'Re: ¿[Claude] edita videos?',
+    '[Claude] edita. Tú publicas.',
+    'Edición de video, por [Claude]',
+    '¿esto lo editó [Claude]??',
+    '[Claude] puede cortar tu reel',
 ]
 # Hero cards: (headline, frame of the spoken word it lands on). 2 to 4 of them, in spoken order. They alternate
 # sides of the speaker's head, so each needs clear wall beside the speaker. Frames come from `python onsets.py`.
 HEROES = [
-    ('[Claude] can edit your videos now', 42),                        # "Claude"
-    ('I let AI edit my reel. [Claude] did the whole thing.', 56),     # "edit"
-    ('[Claude] edits video now?', 65),                                # "your"
-    ('[Claude] edited this entire reel', 71),                         # "videos"
+    ('[Claude] ya puede editar tus videos', 42),                        # "Claude"
+    ('Dejé que la IA editara mi reel. [Claude] hizo todo.', 56),     # "edit"
+    ('¿[Claude] ya edita video?', 65),                                # "your"
+    ('[Claude] editó este reel completo', 71),                         # "videos"
 ]
-SEARCH = 'can [claude] edit videos'   # a search-bar pill opposite the first hero, lowercase like a real query. None = no pill
+SEARCH = '¿[claude] puede editar videos?'   # a search-bar pill opposite the first hero, lowercase like a real query. None = no pill
 F_START = 2          # frame of the speaker's first syllable: the first card starts here
 F_PEAK = 28          # frame where the opening phrase ends ("everybody's talking"): the last pile card starts here
 F_ACCENT = 42        # frame of the key word (the [bracketed] one): highlighter + bump + hit. Usually = HEROES[0] frame
@@ -79,9 +79,9 @@ PUSH = 1.06          # slow push-in over the whole slot (1 = none; keep under 1.
 BUMP = 1.032         # camera bump on the accent word (1 = none)
 DIM = 1.0            # how much the room dims as the wall fills (0 = not at all; raise to 1.3 on a white wall)
 ACCENT = '#C9A15B'   # highlighter colour (butter yellow; never orange)
-OUTLETS = ['Tech newsletter', 'Creator briefing', 'Trade magazine', 'Weekly roundup', 'Local paper', 'Marketing blog',
-           'Business desk', 'Industry memo']                     # placeholder source labels, must stay generic
-PEOPLE = ['A founder', 'Agency owner', 'A creator', 'Video editor', 'Founder']   # placeholder "who posted it" labels
+OUTLETS = ['Boletín de tecnología', 'Resumen para creadores', 'Revista del rubro', 'Resumen semanal', 'Diario local', 'Blog de marketing',
+           'Sección negocios', 'Nota interna']                     # placeholder source labels, must stay generic
+PEOPLE = ['Un fundador', 'Dueña de agencia', 'Una creadora', 'Editor de video', 'Fundadora']   # placeholder "who posted it" labels
 CHAT_REPLIES = ['¿desde cuándo?', 'no puede ser', 'espera, ¿qué?']             # second bubble on chat cards
 DARK_LABEL = 'Chat del grupo'                                        # small label on the dark cards
 FOREGROUND = []      # polygons [(x, y), ...] in reference-frame px of furniture that stands IN FRONT of the wall (a

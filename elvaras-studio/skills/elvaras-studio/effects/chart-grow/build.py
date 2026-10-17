@@ -21,7 +21,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 os.chdir(HERE)
 
 # ==== CLIP (edit this) ====
-KICK = 'scale'            # the spoken word the line takes off on, as measure.py prints it. ('scale', 2) = the 2nd time. Or a frame number
+KICK = 'escalar'            # the spoken word the line takes off on, as measure.py prints it. ('scale', 2) = the 2nd time. Or a frame number
 KICK_LEAD = 2             # frames the kick starts BEFORE that word's measured start, so the line is already moving on the word
 SHAPE = [.04, .09, .055, .12, .16, .56, 1.0]   # height of each point, 0 = floor, 1 = top. A shape, not data: flat with small wobbles, then the kick
 KICK_FROM = 4             # index of the point the line kicks from; the points after it rise on the word (measure nothing, count in SHAPE)

@@ -27,9 +27,9 @@ import sys
 #   'hit': True marks the word that matters: all rows snap to it, the wall punches, the row over the speaker's head turns yellow.
 #   Skip the small words. Split a word that is wider than the frame (EVERY / BODY'S); build.py tells you which.
 PHRASES = [
-    {'words': [(3, 'EVERY'), (11, 'BODY’S'), (21, 'TALKING')]},
+    {'words': [(3, 'TODOS'), (11, 'ESTÁN'), (21, 'HABLANDO')]},
     {'words': [(42, 'CLAUDE')], 'hit': True},
-    {'words': [(56, 'EDIT'), (65, 'YOUR'), (71, 'VIDEOS')]},
+    {'words': [(56, 'EDITA'), (65, 'TUS'), (71, 'VIDEOS')]},
 ]
 IN_FRAME = 0        # frame the wall arrives (hard cut from the room, rows whip in). 0 = it is up from the first frame. Normally the frame of the first wall word
 OUT_FRAME = None    # frame the wall is gone and the room is back. None = it stays up to the end of the slot

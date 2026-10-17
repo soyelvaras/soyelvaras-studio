@@ -31,8 +31,8 @@ FREEZE = ''          # spoken word the picture freezes on: 'word', 'word#2' (sec
 HOLD = 'auto'        # the frame that is held: 'auto' = sharpest of the 6 frames from the freeze word on, or frames after it (0 to 5). Check the eyes in work/freeze_pick.jpg
 RELEASE = ''         # word the live picture comes back on (hard cut + punch), or a frame number. None = stay frozen to the last frame: the slot then ENDS on a cut
 LABELS = [           # (text, word it lands on, what it points at) + optional 'left' / 'right' to force the chip's side
-    ('First label', '', 'head'),     # text = the speaker's own words, 1 to 3 words. word '' = one after the other from the freeze
-    ('Second label', '', 'chest'),   # points at: head, cap, chest, shoulder, hand (or head_left, hand_right ... as seen on screen), or (fx, fy) = a spot as a fraction of the speaker's box
+    ('Primera etiqueta', '', 'head'),     # text = the speaker's own words, 1 to 3 words. word '' = one after the other from the freeze
+    ('Segunda etiqueta', '', 'chest'),   # points at: head, cap, chest, shoulder, hand (or head_left, hand_right ... as seen on screen), or (fx, fy) = a spot as a fraction of the speaker's box
 ]
 ZOOM = 1.12          # punch-in of the frozen picture, 1.0 = none. Wide shot: up to 1.2. Close shot: 1.0 to 1.06 (build.py prints the shot)
 DRIFT = 0.03         # slow extra push during the hold so the still breathes. 0 = dead still

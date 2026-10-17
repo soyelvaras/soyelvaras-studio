@@ -23,8 +23,8 @@ F_OUT = None       # None = the sticker stays to the last frame: the reel ends o
                    # frame, 24+ after F_FREEZE and 2+ before the last: the sticker is flung off, live picture from there
 NOTES = [          # the user's OWN words, as (text, frame, side). frame = onset of the word the note is written on,
                    # None = right after the freeze. side = 'auto', 'top', 'left' or 'right'. *stars* = accent + underline
-    ('your *note* here', None, 'auto'),          # placeholder: ask the user. Never a number, result, handle or keyword
-    ('a second one', None, 'auto'),              # the speaker does not say. [] = sticker only
+    ('tu *nota* aquí', None, 'auto'),          # placeholder: ask the user. Never a number, result, handle or keyword
+    ('otra más', None, 'auto'),              # the speaker does not say. [] = sticker only
 ]
 STAMP = ''         # one short word of the user's in a boxed stamp above the first note. '' = off
 ARROW = True       # hand-drawn arrow from the first note to the speaker's body (left out when it has no clear path)

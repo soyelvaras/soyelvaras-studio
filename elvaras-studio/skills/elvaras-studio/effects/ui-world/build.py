@@ -29,22 +29,22 @@ import sys
 SCREEN = 'chat'
 APP_NAME = 'Claude'      # chat: the name in the header (your app, your tool, your page)
 APP_MARK = None          # chat: small logo next to the name, an svg / png you supply in assets_fx/. None = no logo
-GREETING = 'What are we making today?'   # chat: line in the empty screen before anything happens. None = none
-PLACEHOLDER = 'How can I help you today?'  # chat: grey text in the empty message box
+GREETING = '¿Qué hacemos hoy?'   # chat: line in the empty screen before anything happens. None = none
+PLACEHOLDER = 'Escribe aquí...'  # chat: grey text in the empty message box
 # Chat story. Every frame number is the frame of the spoken word the thing lands on (from `python onsets.py`).
 # Any part can be None and is then left out. REPLY and STEPS need SEND.
 ATTACH = (25, ['Clip 1', 'Clip 2', 'Clip 3', 'Clip 4', 'Clip 5'])   # (frame, 1 to 5 things that fly into the box).
 #                          Each thing is a short label, or the path of a picture ('assets/screen/a.jpg') for a thumbnail
-TYPE = (54, '/edit-my-reel')   # (frame, text typed into the box, max ~30 characters). A leading "/" gets a tinted pill
+TYPE = (54, '/edita-mi-reel')   # (frame, text typed into the box, max ~30 characters). A leading "/" gets a tinted pill
 SEND = 74                # frame the message is sent (button click, the box drops away, the message moves up)
-REPLY = (79, 'On it. Editing your reel.')   # (frame, the answer that streams in word by word, max ~34 characters)
-STEPS = ('Editing your reel', [(87, 'Picked your best takes'), (93, 'Cut the dead air'),
-                               (99, 'Cut you out of the background'), (105, 'Added captions and sound')])
+REPLY = (79, 'Listo. Editando tu reel.')   # (frame, the answer that streams in word by word, max ~34 characters)
+STEPS = ('Editando tu reel', [(87, 'Elegí tus mejores tomas'), (93, 'Corté los silencios'),
+                               (99, 'Te recorté del fondo'), (105, 'Agregué subtítulos y sonido')])
 #                          (card title, [(frame, row text), ...]) 1 to 4 rows: each row appears on its frame and
 #                          ticks 5 frames later. Rows max ~30 characters
-RESULT = (112, 'reel-final.mp4', None, 'Ready')   # (frame, title, picture path or None, badge text): the card that
+RESULT = (112, 'reel-final.mp4', None, 'Listo')   # (frame, title, picture path or None, badge text): the card that
 #                          pops in beside the speaker's head on the payoff word. A 9:16 picture works best
-LABELS = [(39, 'RAW CLIPS', 'attach'), (67, 'ONE COMMAND', 'text')]   # highlighter tags: (frame, TEXT, where).
+LABELS = [(39, 'CLIPS CRUDOS', 'attach'), (67, 'UN COMANDO', 'text')]   # highlighter tags: (frame, TEXT, where).
 #                          where = 'attach' (beside the attachments), 'text' (after the typed text) or (x, y) frame px
 #                          read off a SAFE=1 snapshot. [] = none. Tags placed before SEND leave when it sends
 

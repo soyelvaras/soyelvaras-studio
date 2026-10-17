@@ -57,13 +57,13 @@ LIGHT_FROM = 'right'
 # Chest band, in front of the speaker, never over the speaker's face. Dropped with CAPTIONS=0.
 CAP_X = 540                  # x the captions are centred on (the speaker's chest centre)
 CAPS = [
-    (1078, [('you', 1, ''), ('need', 3, ''), ('edits', 13, '')], 24),
-    (1078, [('like', 25, ''), ('this', 36, 'y')], 54),
-    (1078, [('like', 57, ''), ('this', 68, 'y')], 88),
-    (1052, [('or', 91, ''), ('like', 104, '')], None),
+    (1078, [('necesitas', 1, ''), ('ediciones', 3, ''), ('así', 13, '')], 24),
+    (1078, [('como', 25, ''), ('esta', 36, 'y')], 54),
+    (1078, [('como', 57, ''), ('esta', 68, 'y')], 88),
+    (1052, [('o', 91, ''), ('como', 104, '')], None),
 ]
 # Big accent word on the payoff: (word, frame, top y px, frame it clears or None). None instead of the tuple = no word.
-PUNCH = ('that', 115, 1118, None)
+PUNCH = ('esa', 115, 1118, None)
 
 ACCENT = '#C9A15B'           # butter yellow (accent words, flash tint)
 VIGNETTE = 0.0               # 0 for a reel slot (the slot must match the a-roll around it); 0.22 for a stand-alone clip
