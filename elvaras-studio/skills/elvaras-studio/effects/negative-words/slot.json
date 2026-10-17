@@ -1,0 +1,32 @@
+{
+ "key": "negative-words",
+ "pack": "negative-words",
+ "imported": "2026-10-17",
+ "cutout": "layer",
+ "hi": "optional",
+ "reel_captions": "hide",
+ "captions_note": "the cards ARE the words while the slot plays: only what matters, never the whole sentence, so the reel's captions are hidden for the whole slot. Every word said in the slot that matters goes into a card; the rest is simply not on screen",
+ "reel_env": [
+  "GRADE=0"
+ ],
+ "in_a_reel": [
+  "pick a line with one or two words that carry it (a number, a name, the payoff): WORDS holds only those, e.g. 'tenemos un 15% de margen en todas nuestras ventas' -> '15%' big + 'margen' small",
+  "build with GRADE=0 so the slot matches the reel's colour",
+  "keep the zooms gentle (1.1 to 1.3): a tight zoom leaves no room above the head and the cards drop to the chest",
+  "end the ZOOMS list with a pull back to 1.0 before the slot ends, unless the slot ends on a cut",
+  "make the slot with --hi when the original clip is wider than 1080 px"
+ ],
+ "sounds": {},
+ "steps": [
+  "run onsets.py      # 1. onset frame of every word; then edit the CLIP block (ZOOMS, WORDS)",
+  "run track.py      # 2. eye track. LOOK at work/track_check.jpg (cross between the speaker's eyes in every tile)",
+  "run build.py GRADE=0      # 3. camera + cards + index.html. Read the card lines: behind or front, sizes, any !!",
+  "run bake.py      # 4. assets/zoom.mp4 + assets/zoom_cut.webm (the speaker through the same crop), 1 to 3 min",
+  "hf lint      # 5. must be 0 errors",
+  "run build.py SAFE=1 GRADE=0",
+  "hf snapshot --at <one time just after each card's big word>",
+  "run build.py GRADE=0      # 6. guide off again",
+  "hf render --video-frame-format png",
+  "run post.py      # 7. frame count, phone copy, stills, work/qa/sheet_*.jpg"
+ ]
+}

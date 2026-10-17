@@ -631,6 +631,16 @@ window.STUDIO_CATALOG = {
     }
    ],
    "category": "transition"
+  },
+  {
+   "n": 28,
+   "key": "negative-words",
+   "name": "Negativo",
+   "line": "Solo las palabras clave, enormes y en negativo verde y dorado, con zooms que siguen tu cara.",
+   "preview": "previews/effects/negative-words.mp4",
+   "poster": "previews/posters/effects/negative-words.jpg",
+   "variants": [],
+   "category": "effect"
   }
  ],
  "styles": [

@@ -688,6 +688,29 @@
    "material": "none",
    "notes": "Needs two different shots back to back (a real cut), the speaker in both. Version 1 (Por capas) needs 16 frames before the cut and 8 after, and the cutout; version 2 (Completo) needs 12 each side. White flashes: use it as an accent, not on every cut.",
    "status": "ready"
+  },
+  {
+   "n": 28,
+   "key": "negative-words",
+   "name": "Negativo",
+   "does": "Only the words that matter, huge and in negative (dark bosque over light things, dorado over dark ones), the big word behind the head when it fits, while the camera creeps and snaps on the face. The reel captions hide while it plays.",
+   "say": "put that number in negative behind my head",
+   "shot": [
+    "wide",
+    "medium"
+   ],
+   "camera": [
+    "still",
+    "drifting"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "clean",
+   "tracking": "face (track.py, as Zoom Digital)",
+   "extra": [],
+   "material": "",
+   "notes": "One continuous shot with room above the head. WORDS holds only what carries the line (a number, a name, the payoff), never the whole sentence. Keep zooms gentle (1.1 to 1.3): a tight zoom leaves no room above the head and the cards drop to the chest. Needs the clean cutout.",
+   "status": "ready"
   }
  ]
 }

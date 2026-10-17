@@ -470,6 +470,16 @@
      "poster": "previews/posters/effects/flicker-2.jpg"
     }
    ]
+  },
+  {
+   "n": 28,
+   "key": "negative-words",
+   "name": "Negativo",
+   "job": "Gancho",
+   "line": "Solo las palabras clave, enormes y en negativo verde y dorado, con zooms que siguen tu cara.",
+   "preview": "previews/effects/negative-words.mp4",
+   "poster": "previews/posters/effects/negative-words.jpg",
+   "en": "Negative Words"
   }
  ]
 }
