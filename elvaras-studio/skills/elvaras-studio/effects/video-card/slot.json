@@ -1,0 +1,29 @@
+{
+ "key": "video-card",
+ "pack": "video-card",
+ "imported": "2026-10-17",
+ "cutout": "layer",
+ "hi": "no",
+ "reel_captions": "keep",
+ "captions_note": "above the head the reel's captions stay on; over the chest the card covers their band, so build.py writes work/reel_captions.json and they step aside only while the card is up",
+ "reel_env": [],
+ "in_a_reel": [
+  "the chapter clips are the user's own footage (the raw take, the finished reel, a screen recording): put them in <slot>/card/ (fx_new.py --buyer-files <folder>) or give full paths in CHAPTERS",
+  "CARD_IN 3 or later, the first chapter 8 frames after it, chapters 12 frames or more apart, CARD_OUT at least 15 frames after the last chapter and 10 before the slot ends",
+  "TITLE and chapter names in the user's words; never a number or a claim they did not give"
+ ],
+ "sounds": {},
+ "steps": [
+  "put the user's clips in ./card (or full paths in CHAPTERS), then edit the CLIP block in build.py: TITLE, LABEL, CHAPTERS, CARD_IN, CARD_OUT",
+  "run build.py SAFE=1      # measures where the card fits (above the head or over the chest) and prints it",
+  "hf lint",
+  "hf snapshot --at <the times build.py prints>",
+  "run build.py",
+  "hf render"
+ ],
+ "buyer_folder": {
+  "name": "card",
+  "min": 0,
+  "what": "the clips for the card's chapters: the user's own raw take, finished reel or screen recording (mp4 / mov). Full paths in CHAPTERS work too"
+ }
+}
