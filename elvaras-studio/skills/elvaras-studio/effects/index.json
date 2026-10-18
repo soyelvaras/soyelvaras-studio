@@ -567,7 +567,7 @@
    "n": 25,
    "key": "knockout-tiles",
    "name": "Knockout Tiles",
-   "does": "Name tiles slam onto the wall behind you one per word, each gets struck out and knocked away; receipts can then stack up with a running total (version 4 Íconos: app-icon tiles in one row with the name, never a real logo, one strike through all, a gravity fall and a serif word).",
+   "does": "Name tiles slam onto the wall behind you one per word, each gets struck out and knocked away; receipts can then stack up with a running total (version 4 Íconos: app icons in one row with the name (the real app icon when assets/icons has it), one strike through all, a gravity fall and a serif word).",
    "say": "put these names on the wall behind me and knock each one out as I say it",
    "shot": [
     "wide",
