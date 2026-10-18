@@ -711,30 +711,6 @@
    "material": "",
    "notes": "One continuous shot with room above the head. WORDS holds only what carries the line (a number, a name, the payoff), never the whole sentence. Keep zooms gentle (1.1 to 1.3): a tight zoom leaves no room above the head and the cards drop to the chest. Needs the clean cutout.",
    "status": "ready"
-  },
-  {
-   "n": 29,
-   "key": "video-card",
-   "name": "Tarjeta de Video",
-   "does": "A video card pops in with a title and chapters; its picture plays each chapter's clip (the raw take, then the finished reel) under a segmented progress line, then it leaves.",
-   "say": "show the raw take and then the finished reel in a video card",
-   "shot": [
-    "wide",
-    "medium",
-    "close"
-   ],
-   "camera": [
-    "still",
-    "drifting"
-   ],
-   "wall": "none",
-   "segments": 1,
-   "cutout": "clean",
-   "tracking": "none (head from layout.json or the cutout: above the head when the card fits, else over the chest)",
-   "extra": [],
-   "material": "the user's own clips for the chapters",
-   "notes": "Chapter clips are the user's own footage, in card/ or as full paths. Above the head it sits behind the speaker; over the chest it sits in front and the reel captions step aside while it is up. Never over the face.",
-   "status": "ready"
   }
  ]
 }
