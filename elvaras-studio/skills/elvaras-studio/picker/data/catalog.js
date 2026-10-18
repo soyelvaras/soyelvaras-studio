@@ -660,6 +660,16 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/effects/negative-words.jpg",
    "variants": [],
    "category": "effect"
+  },
+  {
+   "n": 29,
+   "key": "title-card",
+   "name": "Tarjeta de Título",
+   "line": "Corta a una pantalla de capítulo con tu título y vuelves dentro de un teléfono.",
+   "preview": "previews/effects/title-card.mp4",
+   "poster": "previews/posters/effects/title-card.jpg",
+   "variants": [],
+   "category": "effect"
   }
  ],
  "styles": [

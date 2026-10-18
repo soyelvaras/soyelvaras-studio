@@ -711,6 +711,31 @@
    "material": "",
    "notes": "One continuous shot with room above the head. WORDS holds only what carries the line (a number, a name, the payoff), never the whole sentence. Keep zooms gentle (1.1 to 1.3): a tight zoom leaves no room above the head and the cards drop to the chest. Needs the clean cutout.",
    "status": "ready"
+  },
+  {
+   "n": 29,
+   "key": "title-card",
+   "name": "Tarjeta de Título",
+   "does": "A chapter card: the picture cuts to the bosque screen with a running timecode and a big serif title landing word by word, then the speaker comes back inside a phone frame with a play bar and grows back to the full picture.",
+   "say": "put a title card here",
+   "shot": [
+    "wide",
+    "medium",
+    "close"
+   ],
+   "camera": [
+    "still",
+    "drifting",
+    "moving"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "none",
+   "tracking": "none",
+   "extra": [],
+   "material": "",
+   "notes": "The title is words the speaker says; the timecode and the play bar are the reel's own time and length. The reel captions hide while the title screen is up.",
+   "status": "ready"
   }
  ]
 }

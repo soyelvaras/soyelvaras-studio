@@ -1,0 +1,24 @@
+{
+ "key": "title-card",
+ "pack": "title-card",
+ "imported": "2026-10-18",
+ "cutout": "none",
+ "hi": "no",
+ "reel_captions": "keep",
+ "captions_note": "the title screen covers the whole frame, so build.py writes work/reel_captions.json and the reel's captions step aside from the cut until the phone has grown back",
+ "reel_env": [],
+ "in_a_reel": [
+  "TITLE holds words the speaker says, one line per entry, landing on the frame each is said (words.json of the slot)",
+  "T_IN 2 or later; the phone comes back 6 frames or more after the last line and grows back 8 frames or more later; the card is over 2 frames before the slot ends",
+  "the timecode and the play bar show the reel's own time and length: nothing to invent"
+ ],
+ "sounds": {},
+ "steps": [
+  "edit the CLIP block in build.py: T_IN, TITLE (frames from words.json), PHONE_AT / FULL_AT if the defaults fall badly",
+  "run build.py SAFE=1      # prints the frames and the snapshot times",
+  "hf lint",
+  "hf snapshot --at <the times build.py prints>",
+  "run build.py",
+  "hf render"
+ ]
+}
