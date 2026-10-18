@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """storyboard-deck (Mazo de Storyboard): a row of storyboard cards is dealt over the chest one by one, like playing
 cards: first the script card (the line being said), then frames of your own reel, each with its shot number, its time
-and the words said in it. One card lifts to stand out, then the whole row is swept off to the side.
+and the words said in it. One card lifts to stand out, then the whole row leaves to the right. The whole move reads left to right.
 
 Everything on the cards is real: frames taken from your own footage at the times you give, the words said at those
 times (from the clip's words.json, or written by you), the line of the script card. The row sits under the chin, in
@@ -96,9 +96,10 @@ def main():
         sys.exit('FRAMES: 2 to 5 frame cards (the row also holds the script card)')
     n = len(frames) + 1
     land = [F_IN + k * DEAL_EVERY for k in range(n)]
-    if F_IN < DEAL + 2 or f_out - land[-1] < 18 or f_out + LIFT > nfr - 2:
-        sys.exit(f'frames: F_IN {F_IN} (>= {DEAL + 2}), the full row up 18 frames or more before F_OUT ({f_out}; last card lands '
-                 f'f{land[-1]}), and gone 2 frames before the slot ends (F_OUT <= {nfr - 2 - LIFT})')
+    hold = 30 if HIGHLIGHT else 22        # frames the full row needs: the wave along it (and the card that stands out)
+    if F_IN < DEAL + 2 or f_out - land[-1] < hold or f_out + LIFT + n - 1 > nfr - 2:
+        sys.exit(f'frames: F_IN {F_IN} (>= {DEAL + 2}), the full row up {hold} frames or more before F_OUT ({f_out}; last card '
+                 f'lands f{land[-1]}), and gone 2 frames before the slot ends (F_OUT <= {nfr - 2 - LIFT - n + 1})')
     script = SCRIPT or ' '.join(w['text'] for w in slot_words).strip() or '...'
 
     # layout: one row under the chin, as wide as the safe zone allows
@@ -150,20 +151,25 @@ def main():
                      f'<div class="tag"><span>{k + 2:02d}</span><span>{when}</span></div></div>'
                      f'<div class="q" style="font-size:{qfs}px;line-height:{round(qfs * 1.25)}px">{("&ldquo;" + esc(quote) + "&rdquo;") if quote else ""}</div></div>')
     html = []
+    # the whole move reads left to right: the cards come in from the left in order, a wave runs along the row, one card
+    # stands out, and the row leaves to the right (at chest height, never up across the face)
+    t_wave = F(land[-1] + 4)
+    WAVE_STEP = .06
     for k, c in enumerate(cards):
         x = x0 + k * (cw + gap)
         rot = rng.uniform(-3.2, 3.2)
         html.append(f'<div class="slot" style="left:{x:.0f}px;top:{top}px">{c}</div>')
         t0 = F(land[k] - DEAL)
-        sets.append(f"gsap.set('#cd{k}',{{autoAlpha:0,x:{1080 - x + 60:.0f},y:-40,rotation:24}});")
+        sets.append(f"gsap.set('#cd{k}',{{autoAlpha:0,x:{-(x + cw + 120):.0f},y:-30,rotation:-24}});")
         tw += [f"tl.set('#cd{k}',{{autoAlpha:1}},{t0:.3f});",
-               f"tl.to('#cd{k}',{{x:0,y:0,rotation:{rot:.2f},duration:{DEAL / FPS:.3f},ease:'power3.out'}},{t0:.3f});"]
-        # they leave the way a hand sweeps a row off the table: to the left, at chest height, never up across the face
-        tw.append(f"tl.to('#cd{k}',{{x:{-(x + cw + 160):.0f},y:60,rotation:{rot - 14:.1f},autoAlpha:0,duration:{(LIFT - 1) / FPS:.3f},"
-                  f"ease:'power2.in'}},{F(f_out + (n - 1 - k)):.3f});")
+               f"tl.to('#cd{k}',{{x:0,y:0,rotation:{rot:.2f},duration:{DEAL / FPS:.3f},ease:'back.out(1.5)'}},{t0:.3f});",
+               f"tl.to('#cd{k}',{{y:-18,duration:.115,ease:'power2.out'}},{t_wave + k * WAVE_STEP:.3f});",
+               f"tl.to('#cd{k}',{{y:0,duration:.16,ease:'power2.in'}},{t_wave + k * WAVE_STEP + .12:.3f});",
+               f"tl.to('#cd{k}',{{x:{1080 - x + 160:.0f},y:50,rotation:{rot + 14:.1f},autoAlpha:0,duration:{(LIFT - 1) / FPS:.3f},"
+               f"ease:'power2.in'}},{F(f_out + k):.3f});"]
     if HIGHLIGHT and 1 <= HIGHLIGHT <= len(frames):
         hk = HIGHLIGHT
-        t_hi = F(land[-1] + 6)
+        t_hi = max(F(land[-1] + 6), t_wave + (n - 1) * WAVE_STEP + .32)      # after the wave has passed
         t_dn = F(f_out) - .26
         tw += [f"tl.to('#cd{hk}',{{scale:1.14,y:-28,duration:.24,ease:'back.out(2)'}},{t_hi:.3f});",
                f"tl.to('#cd{hk}',{{scale:1,y:0,duration:.2,ease:'power2.inOut'}},{t_dn:.3f});"]

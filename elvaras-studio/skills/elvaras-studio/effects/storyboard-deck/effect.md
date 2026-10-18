@@ -2,7 +2,7 @@
 
 **Qué hace:** una fila de tarjetas de storyboard se reparte sobre el pecho una por una, como naipes: primero la tarjeta
 de guion (la frase que se está diciendo), después cuadros de sus propios reels, cada uno con su número, su tiempo y lo
-que se dice en él. Una tarjeta se levanta para destacar y después toda la fila se va hacia arriba.
+que se dice en él. Todo el movimiento va de izquierda a derecha: entran desde la izquierda, una ola recorre la fila, una tarjeta se levanta para destacar y la fila sale hacia la derecha.
 
 **Función:** explicar / prueba. Mostrar cómo se arma un video, un antes de grabar, "así lo planeé", un resumen de un reel.
 
