@@ -1,0 +1,24 @@
+{
+ "key": "storyboard-deck",
+ "pack": "storyboard-deck",
+ "imported": "2026-10-18",
+ "cutout": "none",
+ "hi": "no",
+ "reel_captions": "keep",
+ "captions_note": "the row sits over the chest band, so build.py writes work/reel_captions.json and the reel's captions step aside only while it is up",
+ "reel_env": [],
+ "in_a_reel": [
+  "FRAMES are stills of the user's own footage: 'aroll' (this slot) or paths to their own reels; quotes come from the matching words.json or are written by hand, never invented",
+  "F_IN 10 or later; the whole row up 18 frames or more before F_OUT; the row gone 2 frames before the slot ends",
+  "SCRIPT None = the words said in the slot"
+ ],
+ "sounds": {},
+ "steps": [
+  "edit the CLIP block in build.py: F_IN, F_OUT, FRAMES (clip, second, quote), SCRIPT, HIGHLIGHT",
+  "run build.py SAFE=1      # prints the row, the frames and the snapshot times",
+  "hf lint",
+  "hf snapshot --at <the times build.py prints>",
+  "run build.py",
+  "hf render"
+ ]
+}

@@ -736,6 +736,30 @@
    "material": "",
    "notes": "The title is words the speaker says; the timecode and the play bar are the reel's own time and length. The reel captions hide while the title screen is up.",
    "status": "ready"
+  },
+  {
+   "n": 30,
+   "key": "storyboard-deck",
+   "name": "Mazo de Storyboard",
+   "does": "A row of storyboard cards is dealt over the chest like playing cards: the script card, then frames of your own reels with their number, time and the words said in them; one lifts to stand out, then the row lifts away.",
+   "say": "deal a storyboard over my chest",
+   "shot": [
+    "wide",
+    "medium"
+   ],
+   "camera": [
+    "still",
+    "drifting",
+    "moving"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "none",
+   "tracking": "none (the chin from layout.json)",
+   "extra": [],
+   "material": "stills of the user's own footage",
+   "notes": "Frames are stills of the user's own footage; quotes come from the matching words.json or are written by hand. Needs room under the chin. The reel captions hide while the row is up.",
+   "status": "ready"
   }
  ]
 }

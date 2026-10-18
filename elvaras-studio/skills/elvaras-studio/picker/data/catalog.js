@@ -670,6 +670,16 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/effects/title-card.jpg",
    "variants": [],
    "category": "effect"
+  },
+  {
+   "n": 30,
+   "key": "storyboard-deck",
+   "name": "Mazo de Storyboard",
+   "line": "Tarjetas de storyboard con cuadros de tus reels se reparten sobre tu pecho como naipes.",
+   "preview": "previews/effects/storyboard-deck.mp4",
+   "poster": "previews/posters/effects/storyboard-deck.jpg",
+   "variants": [],
+   "category": "effect"
   }
  ],
  "styles": [
