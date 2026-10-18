@@ -660,6 +660,16 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/effects/negative-words.jpg",
    "variants": [],
    "category": "effect"
+  },
+  {
+   "n": 29,
+   "key": "video-card",
+   "name": "Tarjeta de Video",
+   "line": "Una tarjeta de video con capítulos: tu toma cruda y después el reel terminado.",
+   "preview": "previews/effects/video-card.mp4",
+   "poster": "previews/posters/effects/video-card.jpg",
+   "variants": [],
+   "category": "effect"
   }
  ],
  "styles": [
