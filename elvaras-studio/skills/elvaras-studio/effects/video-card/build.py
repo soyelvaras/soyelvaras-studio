@@ -12,6 +12,7 @@ Run from the slot folder:
 """
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -22,7 +23,7 @@ LABEL = 'TUTORIAL'            # small dorado label before the chapter count ('' 
 # The chapters, in order: (frame its label shows and its clip starts, 'name', 'clip', seconds into the clip[, crop]). The
 # clip is a path (absolute, or inside the slot) to the user's own footage: the raw take, the finished reel, a screen
 # recording... The first chapter's clip already plays from CARD_IN, under the intro label. The optional fifth value is
-# that clip's own CROP_Y (e.g. .5 for a finished reel, so its captions show in the card).
+# how that clip fills the card: 'fit' or 'crop' (or a number = crop at that CROP_Y).
 CHAPTERS = [
     (30, 'La toma cruda', 'card/raw.mp4', 0.0),
     (60, 'El reel terminado', 'card/final.mp4', 0.0),
@@ -31,7 +32,12 @@ CARD_IN = 8          # frame the card pops in (3 or later)
 CARD_OUT = None      # frame it leaves. None = 12 frames before the slot ends
 PLACE = 'auto'       # 'auto', 'above' (above the head, behind the speaker) or 'below' (over the chest, in front)
 SIZE = 1.0           # card size (1 = up to 900 px wide; it shrinks to fit the room it gets)
-CROP_Y = .30         # vertical clips: which 16:9 band survives (0 = top, .5 = middle). .3 keeps a face that sits high
+FIT = 'fit'          # how a VERTICAL clip fills the 16:9 picture: 'fit' = YouTube style, the whole clip centred over a
+                     # blurred copy of itself; 'crop' = cut to the band with the face (CROP_Y). A horizontal clip (a real
+                     # YouTube video of yours) always fills the picture as it is
+CROP_Y = .30         # 'crop' only: which 16:9 band survives (0 = top, .5 = middle). .3 keeps a face that sits high
+BADGE = 'youtube'    # small app icon in the corner of the picture: 'youtube' or '' (none). File in assets/icons
+ZOOM = 1.06          # the whole frame pushes in toward the card while it is up, and back as it leaves (1 = off)
 SFX_VOL = 1.0        # sound level (0 = silent)
 # ==== END CLIP ====
 
@@ -101,7 +107,11 @@ def chapter_media(ends, cw, mh):
     out = []
     for k, (ch, end) in enumerate(zip(CHAPTERS, ends)):
         fr, name, src, t0 = ch[:4]
-        cy = ch[4] if len(ch) > 4 else CROP_Y
+        mode = ch[4] if len(ch) > 4 else FIT
+        cy = mode if isinstance(mode, (int, float)) else CROP_Y
+        mode = 'crop' if isinstance(mode, (int, float)) else mode
+        if mode not in ('fit', 'crop'):
+            sys.exit(f"chapter {k + 1}: the fifth value is 'fit', 'crop' or a number (got {mode!r})")
         p = src if os.path.isabs(src) else os.path.join(HERE, src)
         if not os.path.exists(p):
             sys.exit(f'chapter {k + 1} "{name}": {src} is not there. Put the user\'s own clip in the slot (card/) or give a full path')
@@ -109,7 +119,10 @@ def chapter_media(ends, cw, mh):
         w, h = int(info['width']), int(info['height'])
         start = (CARD_IN if k == 0 else fr)
         need = (end - start) / FPS + .3
-        if h * 16 > w * 9:                                   # taller than 16:9: keep the face band
+        if h * 16 > w * 9 and mode == 'fit':                 # vertical, YouTube style: whole clip over a blurred copy
+            vf = (f'split[a][b];[a]scale={w2}:{h2}:force_original_aspect_ratio=increase,crop={w2}:{h2},boxblur=22:2,'
+                  f'eq=brightness=-0.10:saturation=0.85[bg];[b]scale=-2:{h2}:flags=lanczos[fg];[bg][fg]overlay=(W-w)/2:0')
+        elif h * 16 > w * 9:                                 # vertical, cropped to the band with the face
             vf = f'crop=iw:trunc(iw*9/16/2)*2:0:(ih-iw*9/16)*{cy:.3f},scale={w2}:{h2}:flags=lanczos'
         else:
             vf = f'scale={w2}:{h2}:force_original_aspect_ratio=increase:flags=lanczos,crop={w2}:{h2}'
@@ -173,11 +186,21 @@ def main():
     subs = [f'<div class="st" id="st0">' + (f'<b>{esc(LABEL)}</b>' if LABEL else '') + f'<span>{count}</span></div>']
     subs += [f'<div class="st" id="st{k + 1}"><b class="nm">{k + 1:02d}</b><span>{esc(c[1])}</span></div>' for k, c in enumerate(CHAPTERS)]
     pb = round(W * .15)
+    badge = ''
+    if BADGE:
+        bp = os.path.join(HERE, 'assets/icons', BADGE + '.svg')
+        if not os.path.exists(bp):
+            sys.exit(f'BADGE = {BADGE!r}: assets/icons/{BADGE}.svg is not there ("" = no badge)')
+        icon = open(bp, encoding='utf-8').read()
+        icon = re.sub(r'<title>.*?</title>', '', icon).replace('<svg', '<svg style="width:100%;height:100%;display:block;fill:#FF0000"', 1)
+        bs = round(W * .085)
+        badge = (f'<div id="badge" style="left:{round(W * .03)}px;top:{round(W * .03)}px;width:{round(bs * 1.32)}px;height:{bs}px">'
+                 f'<div style="position:absolute;inset:{round(bs * .2)}px {round(bs * .22)}px">{icon}</div></div>')
     card = (f'<div id="card" style="left:{x}px;top:{y}px;width:{W}px;height:{H}px">'
             f'<div class="media" style="height:{mh}px">{vids}'
             f'<div id="play" style="width:{pb}px;height:{pb}px;margin:{-pb / 2:.0f}px 0 0 {-pb / 2:.0f}px">'
             f'<svg viewBox="0 0 24 24" width="{round(pb * .42)}" height="{round(pb * .42)}"><path d="M8 5.5v13l10.5-6.5z" fill="{BOSQUE}"/></svg></div>'
-            f'<div class="shade"></div><div id="bar" style="bottom:{round(W * .028)}px">{segs}<div id="knob"></div></div></div>'
+            f'<div class="shade"></div>{badge}<div id="bar" style="bottom:{round(W * .028)}px">{segs}<div id="knob"></div></div></div>'
             f'<div class="panel" style="height:{ph}px;padding:{round(ph * .14)}px {pad}px 0">'
             f'<div class="title" style="font-size:{tfs}px;line-height:{round(tfs * 1.08)}px">{esc(TITLE)}</div>'
             f'<div class="sub" style="font-size:{sfs}px;height:{round(sfs * 1.5)}px;margin-top:{round(ph * .06)}px">{"".join(subs)}</div></div></div>')
@@ -201,6 +224,10 @@ def main():
         if k:
             tw += [f"tl.to('#cv{k}',{{autoAlpha:1,duration:.12,ease:'power1.out'}},{a:.3f});"]
     tw += [f"tl.to('#card',{{autoAlpha:0,y:-30,scale:.97,duration:.26,ease:'power2.in'}},{t_out:.3f});"]
+    if ZOOM > 1.001:              # the whole frame leans in toward the card, slowly, and eases back as it leaves
+        sets.append(f"gsap.set('#stage',{{scale:1,transformOrigin:'{x + W / 2:.0f}px {y + H / 2:.0f}px'}});")
+        tw += [f"tl.to('#stage',{{scale:{ZOOM},duration:{max(.4, t_out - t_in - .1):.3f},ease:'sine.inOut'}},{t_in:.3f});",
+               f"tl.to('#stage',{{scale:1,duration:{min(.45, (nfr - 3) / FPS - t_out - .1):.3f},ease:'power2.inOut'}},{t_out + .05:.3f});"]
 
     snd = [('pop', CARD_IN, .10), ('click-soft', CARD_IN + 6, .12)] + [('click-soft', s, .08) for s in starts[1:]] + \
           [('whoosh-short', c_out, .08)]
@@ -223,6 +250,8 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 .media{{position:relative;overflow:hidden;background:#000}}
 .cv{{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}}
 .shade{{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.45))}}
+#badge{{position:absolute;z-index:3;border-radius:22%;background:#FFFFFF;box-shadow:0 4px 14px rgba(0,0,0,.35)}}
+#stage{{position:absolute;inset:0}}
 #play{{position:absolute;left:50%;top:50%;border-radius:50%;background:{CREMA};display:flex;align-items:center;justify-content:center;
   box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:3;padding-left:.5%}}
 #bar{{position:absolute;left:0;right:0;height:6px;z-index:2}}
@@ -251,10 +280,12 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 <div id="root" data-composition-id="main" data-start="0" data-duration="{dur:.3f}" data-width="1080" data-height="1920">
   <audio id="bga" src="assets/aroll.mp4" data-start="0" data-media-start="0" data-duration="{dur:.3f}" data-track-index="2" data-volume="1"></audio>
 {nl.join(audio)}
+  <div id="stage">
   <video id="bgv" class="full" src="assets/aroll.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{dur:.3f}" data-track-index="0"></video>
   {card if back else ''}
   <video id="fg" class="full" src="assets/subject.webm" muted playsinline data-start="0" data-media-start="0" data-duration="{dur:.3f}" data-track-index="1"></video>
   {'' if back else card}
+  </div>
 {SAFE_GUIDE if os.environ.get('SAFE') == '1' else ''}
 </div>
 <script>
