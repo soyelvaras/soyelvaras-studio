@@ -271,10 +271,23 @@ window.STUDIO_CATALOG = {
    "n": 2,
    "key": "couch-wall",
    "name": "Muro de Portadas",
-   "line": "Las portadas de tus reels forman una grilla en la pared detrás de ti.",
+   "line": "Las portadas de tus reels forman una grilla en la pared detrás de ti. Dos versiones.",
    "preview": "previews/effects/couch-wall.mp4",
    "poster": "previews/posters/effects/couch-wall.jpg",
-   "variants": [],
+   "variants": [
+    {
+     "n": 1,
+     "name": "Feed de portadas",
+     "preview": "previews/effects/couch-wall.mp4",
+     "poster": "previews/posters/effects/couch-wall.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Grilla en movimiento",
+     "preview": "previews/effects/couch-wall-2.mp4",
+     "poster": "previews/posters/effects/couch-wall-2.jpg"
+    }
+   ],
    "category": "effect"
   },
   {

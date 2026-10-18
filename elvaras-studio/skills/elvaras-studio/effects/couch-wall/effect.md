@@ -49,6 +49,26 @@ arriba un conteo.
 **Interruptores:** `SAFE=1` dibuja la guía de zona segura (solo instantáneas). `CAPTIONS=0` saca las palabras de
 subtítulo propias del efecto. `SFX=0` saca sus sonidos.
 
+## Versiones (`VARIANT` en el bloque CLIP)
+
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola (o `--variant 2`).
+
+1. **Feed de portadas:** todo lo de arriba. La pared se vuelve una grilla de portadas que sube y se desliza como un feed.
+2. **Grilla en movimiento:** sus reels caen desde arriba uno por uno, REPRODUCIÉNDOSE, a una grilla detrás de su cabeza
+   (con una leve inclinación y un rebote al llegar), y salen volando hacia arriba en `F_OUT`.
+   - La carpeta `COVERS` puede tener clips de sus propios reels (mp4 / mov: cada tarjeta reproduce un pedazo del medio,
+     cortado y achicado solo en `assets/grid/`) y portadas (quedan quietas). Al menos 2 archivos; con menos que tarjetas
+     se repiten. `fx_new.py --buyer-files <carpeta>` los copia.
+   - Sin máscara de pared y sin `prep.py`: solo el recorte de la persona queda adelante, así que las tarjetas pasan detrás
+     de la cabeza y nunca por la cara. Los muebles no quedan adelante (en esta versión las tarjetas van arriba, sobre la
+     pared).
+   - Campos propios: `GRID` (columnas x filas, 3 x 2), `DROP_EVERY` (cuadros entre una tarjeta y la siguiente),
+     `CARD_SIZE` (1 = 240 px de ancho; se achica sola si la grilla no cabe en la zona segura). `F_IN` = cuando aterriza
+     la primera, `F_OUT` = cuando salen (o `None`: se quedan hasta el final).
+   - Orden: `build.py SAFE=1`, `hf lint`, `hf snapshot --at <los tiempos que imprime>`, `build.py`, `hf render`.
+     `grid.py` arma la página; build.py le pasa el control.
+   - Solo reels del usuario: nunca videos de otra persona.
+
 ## Orden de ejecución (PY y SK como en SKILL.md, <slot> = la carpeta del espacio; sin cd, sin variables de terminal)
 ```
 # primero: pídele al usuario una carpeta con las portadas de sus propios reels (sus portadas guardadas, o exportadas de su perfil) y cópialas a <slot>/covers/ (fx_new.py --buyer-files <carpeta> hace la copia). Sin portadas del usuario = sin Muro de Portadas: déjalo fuera y dilo

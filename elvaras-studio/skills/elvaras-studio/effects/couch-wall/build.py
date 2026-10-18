@@ -62,6 +62,15 @@ REF = None           # reference frame the wall is measured on. None = the middl
 # (sound, frame, base volume). Base volumes are the template's; everything is played at 0.75x.
 SOUNDS = [('whoosh-short', F_IN - 9, .25)] + \
          ([('whoosh-short', F_OUT - 13, .16), ('pop', F_OUT, .18)] if F_OUT is not None else [])
+# Look (picked in the Studio Picker; fx_new.py writes it):
+#   1 Feed de portadas      everything above: the wall becomes a grid of your covers that rises and scrolls like a feed
+#   2 Grilla en movimiento  your reels drop in from the top one by one, PLAYING, into a grid behind your head, and fly
+#                           away on F_OUT. COVERS can hold clips of your own reels (they play) and covers (they stay
+#                           still). No wall matte and no prep.py: only the cutout stays in front. grid.py builds it
+VARIANT = 1
+GRID = (3, 2)        # Grilla: columns x rows (2 to 4 x 1 to 3)
+DROP_EVERY = 4       # Grilla: frames between one card landing and the next (F_IN = when the first one lands)
+CARD_SIZE = 1.0      # Grilla: card size (1 = 240 px wide; it shrinks by itself if the grid does not fit the safe zone)
 # ==== END CLIP ====
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -197,6 +206,10 @@ def captions(cap_y, dur, nfr):
 
 def main():
     os.chdir(HERE)
+    if VARIANT == 2:         # Grilla en movimiento: grid.py builds the page (no prep.py, no wall matte)
+        import grid
+        grid.main(COVERS, F_IN, F_OUT, GRID, DROP_EVERY, CARD_SIZE, voice=VOICE)
+        return
     clip = json.load(open('clip.json'))
     nfr = int(clip['frames'])
     dur = nfr / FPS - .001      # 1 ms short on purpose: the renderer rounds the length UP to whole frames

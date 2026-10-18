@@ -177,7 +177,7 @@
    "n": 2,
    "key": "couch-wall",
    "name": "Couch Wall",
-   "does": "Your reel covers become a grid on the wall behind you.",
+   "does": "Your reel covers become a grid on the wall behind you (version 2 Grilla en movimiento: your reels drop in one by one, playing, into a grid behind your head, then fly away).",
    "say": "put my reels as a grid on the wall behind me",
    "shot": [
     "wide",

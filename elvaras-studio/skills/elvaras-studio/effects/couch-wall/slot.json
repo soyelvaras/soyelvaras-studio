@@ -11,7 +11,8 @@
  ],
  "in_a_reel": [
   "set F_IN to 8 or later and F_OUT at least 45 frames after it and 2 frames before the slot ends, so the slot starts and ends on the plain room",
-  "COUNTS stays {} unless the buyer gives real view counts: never estimate or round up a number"
+  "COUNTS stays {} unless the buyer gives real view counts: never estimate or round up a number",
+  "Grilla en movimiento (VARIANT 2): COVERS may hold clips of the buyer's own reels (they play) and covers (still); no prep.py, no wall matte, only the cutout in front. F_IN = first card lands, F_OUT = they fly away (at least 15 frames after the last lands, and 11 frames before the slot ends)"
  ],
  "sounds": {},
  "steps": [
@@ -28,6 +29,6 @@
  "buyer_folder": {
   "name": "covers",
   "min": 4,
-  "what": "the buyer's own reel cover images (jpg, png or webp; 9 or more looks best)"
+  "what": "the buyer's own reel cover images (jpg, png or webp; 9 or more looks best). Version 2 also takes clips of their own reels (mp4 / mov), which play in the cards"
  }
 }
