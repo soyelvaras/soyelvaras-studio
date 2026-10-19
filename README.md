@@ -1,10 +1,6 @@
 # Soy Elvaras Studio
 
-Edición de reels con la identidad de Soy Elvaras, dentro de Claude. Grabas tus clips, Claude edita el reel.
-
-**Uso personal de Cristobal Varas.** Es una adaptación del kit Claude Creator Studio de Ten Fold Marketing,
-hecha bajo la licencia de comprador (ajustar plantillas y configuración para uso propio). No se comparte, no se
-publica y no se vende. Este repositorio tiene que ser **privado**.
+Edición de reels dentro de Claude. Grabas tus clips, Claude edita el reel.
 
 ## Qué hay aquí
 
