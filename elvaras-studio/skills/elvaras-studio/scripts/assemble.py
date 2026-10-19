@@ -76,7 +76,7 @@ def main():
     subprocess.run([FF, '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', concat,
                     '-vf', 'setpts=N/30/TB', '-r', '30', '-fps_mode', 'cfr', '-af', 'asetpts=PTS-STARTPTS',
                     '-c:v', 'libx264', '-crf', '14', '-preset', 'medium', '-g', '30', '-keyint_min', '30', '-pix_fmt', 'yuv420p',
-                    '-c:a', 'aac', '-b:a', '192k', aroll], check=True)
+                    '-c:a', 'aac', '-b:a', '320k', '-ar', '48000', aroll], check=True)   # the voice keeps its quality (SKILL.md rule 9)
     fr = 0
     for k, m in enumerate(meta):
         n = frames(parts[k])

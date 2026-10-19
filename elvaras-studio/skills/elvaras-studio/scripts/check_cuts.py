@@ -46,9 +46,10 @@ else:
     print('one continuous take: there are no cuts to check')
 if '--phone' in sys.argv:
     out = os.path.splitext(render)[0] + '-phone.mp4'
+    # only the picture gets smaller: the audio is the render's own, copied untouched (SKILL.md rule 9)
     subprocess.run([FF, '-loglevel', 'error', '-y', '-i', render, '-vf', 'scale=720:-2', '-c:v', 'libx264', '-crf', '26', '-preset', 'slow',
-                    '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', out], check=True)
-    print('phone copy', out, f'{os.path.getsize(out) / 1e6:.1f} MB')
+                    '-c:a', 'copy', '-movflags', '+faststart', out], check=True)
+    print('phone copy', out, f'{os.path.getsize(out) / 1e6:.1f} MB (audio copied, not re-encoded)')
 
 # how loud the voice is. The reel keeps the level the clip was recorded at: nothing in the edit raises or lowers it.
 r = subprocess.run([FF, '-hide_banner', '-nostats', '-i', render, '-vn', '-af', 'volumedetect', '-f', 'null', '-'], **skillenv.TEXT)

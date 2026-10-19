@@ -260,6 +260,9 @@ el conjunto de entradas que tiene el motor. Di lo que no se pudo igualar. Nunca 
 7. Nunca borres ni cambies los archivos del usuario. Los originales solo se leen.
 8. Háblale con palabras simples. Nunca le muestres nombres de archivos de esta skill, líneas STATUS ni errores
    técnicos.
+9. La voz nunca pierde calidad. Si un paso solo cambia la imagen (copia para el celular, recorte, escala), el audio
+   se copia tal cual (`-c:a copy`). Si hay que codificarlo, una sola vez y en AAC 320k a 48 kHz, nunca menos. No
+   bajes la tasa de bits ni el muestreo para que un archivo pese menos: comprime la imagen.
 
 ## Flujo de trabajo ("edítalo")
 

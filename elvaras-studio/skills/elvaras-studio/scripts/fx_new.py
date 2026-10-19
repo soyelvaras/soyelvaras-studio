@@ -284,7 +284,7 @@ def main():
     fit = 'scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920,setsar=1'
     enc = ['-frames:v', str(n), '-fps_mode', 'cfr', '-r', '30', '-c:v', 'libx264', '-crf', '14', '-preset', 'medium',
            '-pix_fmt', 'yuv420p']
-    aud = ['-af', f'apad,atrim=0:{dur:.4f}', '-c:a', 'aac', '-ar', '48000', '-ac', '2', '-b:a', '192k']
+    aud = ['-af', f'apad,atrim=0:{dur:.4f}', '-c:a', 'aac', '-ar', '48000', '-ac', '2', '-b:a', '320k']   # the voice keeps its quality (SKILL.md rule 9)
     aroll = os.path.join(slot, 'assets', 'aroll.mp4')
     run([FF, '-v', 'error', '-y', '-ss', f'{seek:.4f}', '-i', src, '-t', f'{dur + 0.2:.4f}', '-vf', f'fps=30,{fit}']
         + enc + aud + [aroll])

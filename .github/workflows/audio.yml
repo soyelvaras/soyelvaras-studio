@@ -1,0 +1,15 @@
+# The voice never loses quality (SKILL.md rule 9): every push checks that no script lowers the audio.
+name: audio
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tests/check_audio.py
