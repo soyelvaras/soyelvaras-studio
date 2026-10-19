@@ -127,8 +127,8 @@ Cómo leer las líneas STATUS:
     que imprime, dile que abra un chat nuevo y detente. Nada más en este chat: el chat nuevo sigue donde quedó, con
     la versión nueva.
   - No: sigue, y no vuelvas a preguntar en este chat.
-  - En Soy Elvaras Studio la fuente de actualizaciones es su propio repositorio privado (`SOURCE` en
-    `scripts/update.py`). Mientras esté vacía, nunca se busca ni se instala nada.
+  - La fuente de actualizaciones es el repositorio público de Soy Elvaras Studio en GitHub (`SOURCE` en
+    `scripts/update.py`): lo que está en su rama main es la versión más nueva.
 - `clean cutout NOT SET UP` está bien para subtítulos solos. Casi todos los efectos lo necesitan, igual que los looks
   que van detrás de la persona (subtítulos Contundente, Muestra y Cuenta). Consíguelo la primera vez que las
   elecciones tengan un efecto o uno de esos looks: `setup.py --matting`, una vez, unos 105 MB.
@@ -260,9 +260,10 @@ el conjunto de entradas que tiene el motor. Di lo que no se pudo igualar. Nunca 
 7. Nunca borres ni cambies los archivos del usuario. Los originales solo se leen.
 8. Háblale con palabras simples. Nunca le muestres nombres de archivos de esta skill, líneas STATUS ni errores
    técnicos.
-9. La voz nunca pierde calidad. Si un paso solo cambia la imagen (copia para el celular, recorte, escala), el audio
+9. La voz y la imagen nunca pierden calidad. Si un paso solo cambia la imagen (copia para el celular, recorte, escala), el audio
    se copia tal cual (`-c:a copy`). Si hay que codificarlo, una sola vez y en AAC 320k a 48 kHz, nunca menos. No
-   bajes la tasa de bits ni el muestreo para que un archivo pese menos: comprime la imagen.
+   bajes la tasa de bits ni el muestreo para que un archivo pese menos. La imagen tampoco se aplasta: el render final
+   sale con CRF 16 y la copia para el celular en 1080p con CRF 20.
 
 ## Flujo de trabajo ("edítalo")
 
@@ -297,7 +298,7 @@ de `clipsDir`.
                                                         unos 20 a 45 s por cada 10 s de reel en Apple Silicon, hasta
                                                         unos 80 s por cada 10 s cuando el reel tiene efectos
    PY "SK/scripts/frames_check.py" "<project>" "renders/<slug>-v1.mp4"     la autorrevisión: MIRA la hoja
-   PY "SK/scripts/check_cuts.py" "<project>" "renders/<slug>-v1.mp4" --phone   tira de cortes + copia 720p para celular
+   PY "SK/scripts/check_cuts.py" "<project>" "renders/<slug>-v1.mp4" --phone   tira de cortes + copia 1080p para celular
                                                         su última línea es el nivel de audio (references/cutting.md)
 10. entrega la copia para celular y el render completo. Di qué se hizo y qué quedó fuera, con palabras simples.
 ```

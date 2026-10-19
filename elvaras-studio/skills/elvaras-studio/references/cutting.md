@@ -55,7 +55,7 @@ Luego marca las palabras: `PY "SK/scripts/marks.py" "<project>"` y la regla de `
 
 ## 5. Revisar los cortes (después del render)
 `PY "SK/scripts/check_cuts.py" "<project>" "renders/<file>.mp4" --phone` escribe `work/cut_check.jpg` (el cuadro antes
-y después de cada corte, lado a lado) y una copia 720p para el celular. Cada cuadro "después" debe mostrar la toma
+y después de cada corte, lado a lado) y una copia 1080p para el celular (audio copiado tal cual). Cada cuadro "después" debe mostrar la toma
 nueva limpia. El render se puede escribir de la forma corta (`renders/<file>.mp4`): los dos scripts de revisión lo
 buscan dentro del proyecto.
 

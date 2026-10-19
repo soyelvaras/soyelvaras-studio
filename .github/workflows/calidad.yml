@@ -1,0 +1,15 @@
+# The voice and the picture never lose quality (SKILL.md rule 9): every push checks that no script lowers them.
+name: calidad
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  calidad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tests/check_quality.py

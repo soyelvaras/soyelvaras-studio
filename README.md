@@ -26,10 +26,6 @@ https://github.com/soyelvaras/soyelvaras-studio
 /elvaras-studio setup
 ```
 
-El repositorio es privado: la app lo descarga con la cuenta de GitHub que ya tengas conectada en ese computador. Si
-dice que no tiene acceso, inicia sesión en GitHub en ese computador (por ejemplo con `gh auth login`) y repite el
-paso 4.
-
 ## Instalar desde el navegador (claude.ai)
 
 Sirve para dejarlo instalado en tu cuenta desde cualquier computador.
@@ -37,12 +33,7 @@ Sirve para dejarlo instalado en tu cuenta desde cualquier computador.
 1. Entra a [claude.ai/customize/plugins](https://claude.ai/customize/plugins) (**Customize > Plugins**).
 2. Haz clic en **Add** y luego **Add marketplace**.
 3. Escribe `soyelvaras/soyelvaras-studio`.
-4. Como el repositorio es privado, el diálogo pide **Connect GitHub** o **Install the Claude GitHub App**. Acepta y
-   dale acceso al repositorio `soyelvaras-studio`.
-5. Instala **Soy Elvaras Studio**.
-
-Sin acceso a GitHub también puedes usar **Add > Upload plugin** y subir un `.zip` de la carpeta `elvaras-studio`
-(la que contiene `.claude-plugin/plugin.json`).
+4. Instala **Soy Elvaras Studio**.
 
 El plugin queda guardado en tu cuenta y aparece solo en la app de escritorio y en Claude Code la próxima vez que abras
 una sesión con esa cuenta. Si no aparece, escribe `/reload-plugins` o abre Claude Code de nuevo.
@@ -88,9 +79,7 @@ claude plugin marketplace add soyelvaras/soyelvaras-studio
 claude plugin install elvaras-studio@soyelvaras-studio
 ```
 
-En Windows necesitas [Git for Windows](https://git-scm.com/downloads) instalado antes. Como el repositorio es privado,
-primero inicia sesión en GitHub en ese computador (`gh auth login`): Claude Code lo clona con tus credenciales y no
-las pide.
+En Windows necesitas [Git for Windows](https://git-scm.com/downloads) instalado antes.
 
 Si el comando `claude` no existe (solo tienes la app de escritorio), usa la instalación de la app.
 
@@ -126,9 +115,8 @@ Cada proyecto queda en `reel-edits/<nombre>/`, con los renders en `renders/`.
 
 Los arreglos y efectos nuevos llegan como actualizaciones del plugin. Tus elecciones y tu estilo se mantienen.
 
-**Desde el chat:** di `actualiza el Studio` y Claude instala la versión nueva; cuando haya una, también te avisa solo.
-Esto funciona cuando `SOURCE` en `elvaras-studio/skills/elvaras-studio/scripts/update.py` apunta a este repositorio.
-Hoy está vacío, así que por ahora usa una de las dos formas de abajo.
+**Desde el chat:** di `actualiza el Studio` y Claude instala la versión nueva; cuando haya una, también te avisa solo
+(una vez al día revisa la versión de la rama `main` de este repositorio).
 
 **Desde el navegador:** en **Customize > Plugins**, abre el marketplace y haz clic en **Check for updates**, o activa
 **Sync automatically**.
@@ -160,8 +148,23 @@ elvaras-studio/                     el plugin
     references/  scripts/
 .claude/launch.json                 abre el selector en el navegador de la app
 dev/                                elecciones de prueba del selector (no se suben)
-guiones/                            guiones, mapa de material y notas de trabajo
+tests/check_quality.py              falla si algún script baja la calidad de la voz o de la imagen (regla 9)
+tests/e2e.py                        el Studio de punta a punta, como lo vive un comprador nuevo
+.github/workflows/                  calidad.yml en cada cambio; e2e.yml en Windows, Mac Intel y Mac Apple Silicon
 ```
+
+Las pruebas, en este computador:
+
+```bash
+python tests/check_quality.py
+```
+
+```bash
+python tests/e2e.py --rapido
+```
+
+En GitHub, `e2e` corre sola cuando cambia la skill, y a mano desde la pestaña **Actions** ("Run workflow"). Los
+resultados (resumen, render, copia para el celular y hojas de revisión) quedan como artefactos de cada corrida.
 
 Instalar la copia de trabajo directo desde esta carpeta:
 

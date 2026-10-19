@@ -558,6 +558,21 @@ def split_project_arg(args):
     return None, args
 
 
+RENDER_CRF = 16   # MP4 renders keep the picture close to lossless (SKILL.md rule 9); a lower number = higher quality
+
+
+def render_quality(args):
+    """`render` to MP4 without its own --crf/--video-bitrate gets RENDER_CRF, so no render leans on the preset's own."""
+    args = list(args)
+    if not args or args[0] != 'render' or any(a in ('--crf', '--video-bitrate') or a.startswith(('--crf=', '--video-bitrate='))
+                                              for a in args):
+        return args
+    fmt = next((a.split('=', 1)[1] for a in args if a.startswith('--format=')), None)
+    if '--format' in args[:-1]:
+        fmt = args[args.index('--format') + 1]
+    return args if fmt not in (None, 'mp4') else args + ['--crf', str(RENDER_CRF)]
+
+
 def run_hyperframes(args, cwd=None):
-    argv, env = hyperframes_command(args)
+    argv, env = hyperframes_command(render_quality(args))
     return subprocess.run(argv, cwd=cwd, env=env).returncode

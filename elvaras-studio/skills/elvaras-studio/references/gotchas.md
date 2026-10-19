@@ -40,8 +40,8 @@
 - La skill escribe solo en su carpeta de estado `ST` y en la carpeta del proyecto. Nunca en `SK`.
 - Un filtro de seguridad de la terminal puede bloquear un comando que ejecuta un programa guardado en una variable, o
   un `python -c` largo en línea: pon esos pasos en un script pequeño en la carpeta `work/` del proyecto y ejecuta ese.
-- Las subidas grandes al chat pueden fallar: entrega la copia 720p para el celular y deja el render completo en el
-  disco.
+- Las subidas grandes al chat pueden fallar: nunca bajes la calidad para que entre. Dile dónde quedó el archivo en
+  su disco (la copia para el celular y el render completo).
 - Los efectos que siguen el cuarto o la cara necesitan paquetes extra (`effects/INDEX.md` los lista por efecto).
   Instálalos en el Python propio de la skill: `PY -m pip install opencv-python-headless`. mediapipe no tiene versión
   para todas las versiones de Python: si no se instala, salta ese efecto y dilo.

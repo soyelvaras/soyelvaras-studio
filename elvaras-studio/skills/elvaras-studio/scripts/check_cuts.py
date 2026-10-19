@@ -5,7 +5,8 @@ Usage:  PY check_cuts.py <project_dir> <render.mp4> [--phone]
 Writes work/cut_check.jpg (pairs left->right: before|after for each cut). LOOK at it: every 'after' frame must show the
 new shot with that section's look and no leftovers (room plates, cutout of the previous shot, stale captions).
 Snapshots from `hyperframes snapshot` seek approximately at cuts; only frames pulled from the final render are proof.
---phone also writes <render>-phone.mp4 (720p, crf 26; SendUserFile uploads over ~5MB often fail, drop to crf 28).
+--phone also writes <render>-phone.mp4 (1080p, crf 20, the render's audio copied). Never lower its quality to make an
+upload fit: if a chat upload fails, give the file's place on disk instead (SKILL.md rule 9).
 <render.mp4> may be written the short way, "renders/<file>.mp4": it is looked up inside the project folder.
 The last line is the audio level of the render (peak and average).
 """
@@ -46,9 +47,10 @@ else:
     print('one continuous take: there are no cuts to check')
 if '--phone' in sys.argv:
     out = os.path.splitext(render)[0] + '-phone.mp4'
-    # only the picture gets smaller: the audio is the render's own, copied untouched (SKILL.md rule 9)
-    subprocess.run([FF, '-loglevel', 'error', '-y', '-i', render, '-vf', 'scale=720:-2', '-c:v', 'libx264', '-crf', '26', '-preset', 'slow',
-                    '-c:a', 'copy', '-movflags', '+faststart', out], check=True)
+    # full 1080p and a light crf: only the file gets lighter, the picture stays sharp; the audio is the render's own,
+    # copied untouched (SKILL.md rule 9)
+    subprocess.run([FF, '-loglevel', 'error', '-y', '-i', render, '-c:v', 'libx264', '-crf', '20', '-preset', 'slow',
+                    '-pix_fmt', 'yuv420p', '-c:a', 'copy', '-movflags', '+faststart', out], check=True)
     print('phone copy', out, f'{os.path.getsize(out) / 1e6:.1f} MB (audio copied, not re-encoded)')
 
 # how loud the voice is. The reel keeps the level the clip was recorded at: nothing in the edit raises or lowers it.

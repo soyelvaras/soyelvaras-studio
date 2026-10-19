@@ -31,9 +31,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import skillenv  # noqa: E402
 
 PLUGIN = 'elvaras-studio'
-# Your own private GitHub repo, e.g. 'https://raw.githubusercontent.com/<you>/soyelvaras-studio/main/'.
-# Empty = no update check (never pulls from Ten Fold).
-SOURCE = ''
+# The public GitHub repo the Studio installs from: its main branch is what buyers update to.
+SOURCE = 'https://raw.githubusercontent.com/soyelvaras/soyelvaras-studio/main/'
 MANIFEST = SOURCE + 'elvaras-studio/.claude-plugin/plugin.json'
 NOTES = SOURCE + 'whats-new.json'
 

@@ -1,0 +1,76 @@
+# Soy Elvaras Studio de punta a punta (tests/e2e.py) en computadores reales y limpios: Windows, Mac Intel y Mac Apple
+# Silicon. Corre cuando cambia la skill o la prueba, y a mano desde la pestaña Actions ("Run workflow").
+name: e2e
+
+on:
+  push:
+    paths: ['elvaras-studio/**', 'tests/**', '.github/workflows/e2e.yml']
+  pull_request:
+    paths: ['elvaras-studio/**', 'tests/**', '.github/workflows/e2e.yml']
+  workflow_dispatch:
+    inputs:
+      rapido:
+        description: 'Solo 3 estilos de subtítulos'
+        type: boolean
+        default: false
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            nombre: windows
+          - os: macos-15-intel
+            nombre: mac-intel
+          - os: macos-latest
+            nombre: mac-apple-silicon
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      # Un comprador no tiene lo que traen las máquinas de GitHub. Se saca Python, Node y ffmpeg del PATH para que el
+      # Studio tenga que encontrar o descargar los suyos, igual que en un computador nuevo.
+      - name: Sacar las herramientas preinstaladas (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $limpio = ($env:PATH -split ';') | Where-Object { $_ -notmatch 'python|Python|hostedtoolcache|nodejs|ffmpeg|Git\\usr\\bin|Strawberry' }
+          "PATH=$($limpio -join ';')" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Sacar las herramientas preinstaladas (Mac)
+        if: runner.os == 'macOS'
+        run: echo "PATH=/usr/bin:/bin:/usr/sbin:/sbin" >> "$GITHUB_ENV"
+
+      # La prueba misma necesita un Python; el Studio no lo ve (no está en su PATH).
+      - name: Prueba de punta a punta (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          E2E_OUT: ${{ github.workspace }}\tests\out
+        run: |
+          $py = Get-ChildItem 'C:\hostedtoolcache\windows\Python\3.12*\x64\python.exe' | Select-Object -First 1
+          $extra = @()
+          if ('${{ inputs.rapido }}' -eq 'true') { $extra = @('--rapido') }
+          & $py.FullName tests/e2e.py @extra
+          exit $LASTEXITCODE
+      - name: Prueba de punta a punta (Mac)
+        if: runner.os == 'macOS'
+        env:
+          E2E_OUT: ${{ github.workspace }}/tests/out
+        run: /usr/bin/python3 tests/e2e.py ${{ inputs.rapido && '--rapido' || '' }}
+
+      - name: Guardar los resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ matrix.nombre }}
+          path: |
+            tests/out/resumen.json
+            tests/out/mirar
+          if-no-files-found: warn
