@@ -180,6 +180,3 @@ python "elvaras-studio/skills/elvaras-studio/picker/serve.py" --keep-alive --por
 ```
 
 Y abre http://127.0.0.1:4790/
-
-Para publicar una versión: sube `version` en `elvaras-studio/.claude-plugin/plugin.json`, haz commit y push, y
-actualiza con los comandos de **Actualizaciones**.
