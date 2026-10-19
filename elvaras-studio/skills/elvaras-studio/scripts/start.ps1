@@ -94,7 +94,11 @@ if (-not $Py) {
         if (Test-Path -LiteralPath $part) { Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue }
         Stop-Missing 'the skill could not get its own copy: no internet'
     }
-    $got = (Get-FileHash -LiteralPath $part -Algorithm SHA256).Hash.ToLower()
+    # SHA-256 straight from .NET: Get-FileHash is missing when Windows PowerShell is started from PowerShell 7 (its
+    # module path points at 7's modules), which is how a Claude running in PowerShell 7 and GitHub's machines start this
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    $fs = [System.IO.File]::OpenRead($part)
+    try { $got = (-join ($sha.ComputeHash($fs) | ForEach-Object { $_.ToString('x2') })) } finally { $fs.Dispose(); $sha.Dispose() }
     if ($got -ne $PySha256) {
         Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue
         Stop-Missing 'the download did not pass its check, so it was not used'
