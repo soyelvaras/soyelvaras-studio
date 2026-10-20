@@ -20,7 +20,7 @@ Lee `references/gifs.md` cuando pida GIFs (puedes buscarlos tú y ponerlos en la
 
 - **Responde siempre en español de Chile**, con palabras simples, aunque el usuario escriba en inglés o las
   instrucciones técnicas de algún archivo estén en inglés.
-- Los efectos y estilos se nombran con su **nombre en español** (Palabra Clave, Zoom Digital, Glam Cam...).
+- Los efectos y estilos se nombran con su **nombre en español** (Palabra Clave, Zoom Digital, Cálido...).
   Cada entrada de los archivos de datos guarda su nombre original en inglés en el campo `en`: úsalo solo para
   cruzarlo con código o notas antiguas. Las claves (`key`) nunca cambiaron.
 - Las frases de "Lo que escucha el usuario" (al final) son las que usas, tal cual o con el mismo tono.
@@ -130,7 +130,7 @@ Cómo leer las líneas STATUS:
   - La fuente de actualizaciones es el repositorio público de Soy Elvaras Studio en GitHub (`SOURCE` en
     `scripts/update.py`): lo que está en su rama main es la versión más nueva.
 - `clean cutout NOT SET UP` está bien para subtítulos solos. Casi todos los efectos lo necesitan, igual que los looks
-  que van detrás de la persona (subtítulos Contundente, Muestra y Cuenta). Consíguelo la primera vez que las
+  que van detrás de la persona (subtítulos Contundente, Tutorial Gráfico). Consíguelo la primera vez que las
   elecciones tengan un efecto o uno de esos looks: `setup.py --matting`, una vez, unos 105 MB.
 - El otro extra opcional, solo cuando un script lo pide: `setup.py --fx <effect key>` (paquetes de Python extra para
   ese efecto, en el Python propio de la skill).
@@ -247,7 +247,7 @@ el conjunto de entradas que tiene el motor. Di lo que no se pudo igualar. Nunca 
 ## Reglas fijas
 
 1. Zona segura de Reels (1080x1920): arriba 220, abajo 450 (nada bajo y 1470), lados 35, derecha 100 desde y 1155
-   hacia abajo. Una excepción: la tarjeta de la persona en Muestra y Cuenta va pegada al borde inferior a propósito.
+   hacia abajo. Una excepción: la tarjeta de la persona en Tutorial Gráfico va pegada al borde inferior a propósito.
    O si el usuario pide ignorar la zona segura.
 2. Subtítulos y efectos nunca tapan la cara (de los ojos a la barbilla).
 3. Los subtítulos dicen lo que realmente se dijo. Corrige lo que Whisper escucha mal ("Claude" sale como "cloud").
@@ -307,7 +307,7 @@ de `clipsDir`.
 un look que necesita recorte, un cambio de subtítulos que no calza con un estilo): transmite cada una al usuario con
 palabras simples, y arregla lo que se pueda.
 
-Un look que va detrás de la persona o la saca del cuarto (subtítulos Contundente, Muestra y Cuenta) necesita
+Un look que va detrás de la persona o la saca del cuarto (subtítulos Contundente, Tutorial Gráfico) necesita
 primero un recorte de la persona en todo el reel. Usa el limpio, `rvm_cut.py`, y dile cuánto tarda antes de empezar
 (`references/checks.md`). Casi todos los efectos necesitan también el recorte limpio (`effects/INDEX.md` dice cuáles
 no), pero solo de sus propios cuadros: `fx_new.py` lo hace (unos 1,2 a 1,8 segundos por cuadro en un Mac con Apple
@@ -337,4 +337,4 @@ Ronda de notas: cambia `edl.json` / `words.json` / `plan.json`, vuelve a armar d
 - Después de replicarlo: "Esto es lo que logré igualar y lo que no. Desde ahora todos tus reels usan este estilo."
 - Una grabación baja: "Tu voz quedó grabada un poco baja en este clip. ¿Quieres una copia más fuerte?"
 
-Glam Cam y Tímido de Cámara funcionan con o sin cara. Dilo así. Los estilos no son "para él" ni "para ella".
+Cálido y Tímido funcionan con o sin cara. Dilo así. Los estilos no son "para él" ni "para ella".

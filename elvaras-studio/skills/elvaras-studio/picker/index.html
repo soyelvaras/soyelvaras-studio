@@ -131,20 +131,27 @@ main { padding-bottom: 40px; }
 .sec { padding-top: 24px; scroll-margin-top: 8px; }
 .sec:focus { outline: none; }
 #sec-styles { padding-top: 36px; }
-.slate { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 14px; }
-.clap { position: relative; width: 58px; height: 26px; flex: none; }
-.clap i, .clap::after { content: ''; position: absolute; left: 0; width: 58px; height: 9px; border-radius: 1.5px;
-  background: repeating-linear-gradient(-58deg, var(--cream) 0 7px, var(--black) 7px 14px); }
-.clap::after { bottom: 0; background: repeating-linear-gradient(58deg, var(--cream) 0 7px, var(--black) 7px 14px); }
-.clap i { bottom: 10px; transform-origin: 3px 100%; transition: transform .13s cubic-bezier(.6, 0, 1, .7); }
-.slate.armed .clap i { transform: rotate(-24deg); transition: none; }
-.slate-f { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; padding-bottom: 1px; color: var(--taupe); border-bottom: 1px solid var(--line); height: 26px; white-space: nowrap; }
+/* Each scene opens on a stretch of edit timeline. The gold playhead scrubs with the page scroll. */
+.slate { margin-bottom: 14px; }
+.slate-f { display: flex; align-items: center; gap: 10px; min-width: 0; margin-bottom: 7px; color: var(--taupe); white-space: nowrap; }
 .slate-f b { font-weight: 600; color: var(--cream); }
 .slate-f span + span::before { content: ''; display: inline-block; width: 1px; height: 9px; background: var(--line-2); margin-right: 10px; vertical-align: -1px; }
 .slate-f .r { margin-left: auto; color: var(--orange); font-weight: 600; }
 .slate-f .r::before { display: none !important; }
-@keyframes clapline { 0% { border-bottom-color: var(--orange); } 100% { border-bottom-color: var(--line); } }
-.slate.clapped .slate-f { animation: clapline .9s ease-out both; }
+.ruler { position: relative; height: 20px; overflow: hidden; border-bottom: 1px solid var(--line-2); view-timeline: --slate; view-timeline-inset: auto;
+  background: repeating-linear-gradient(90deg, rgba(242, 236, 223, .5) 0 1px, transparent 1px 40px) 0 100% / 100% 11px no-repeat,
+    repeating-linear-gradient(90deg, rgba(242, 236, 223, .22) 0 1px, transparent 1px 8px) 0 100% / 100% 5px no-repeat; }
+.ruler i { position: absolute; left: 0; bottom: 0; width: 100%; will-change: transform; }
+.ruler .trail { left: 6px; width: calc(100% - 12px); height: 2px; background: var(--orange); transform-origin: 0 50%; transform: scaleX(.5); }
+.ruler .head { top: 0; transform: translateX(calc(50% - 6px)); }
+.ruler .head::before { content: ''; position: absolute; left: 5px; top: 2px; bottom: 0; width: 2px; background: var(--orange); }
+.ruler .head::after { content: ''; position: absolute; left: 0; top: 0; width: 12px; height: 9px; background: var(--orange); clip-path: polygon(0 0, 100% 0, 100% 55%, 50% 100%, 0 55%); }
+@keyframes scrub { from { transform: translateX(0); } to { transform: translateX(calc(100% - 12px)); } }
+@keyframes trail { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@supports (animation-timeline: view()) {
+  .anim .ruler .head { animation: scrub linear both; animation-timeline: --slate; }
+  .anim .ruler .trail { animation: trail linear both; animation-timeline: --slate; }
+}
 .h2 { font-size: clamp(40px, 9vw, 64px); }
 #own .h2 { font-size: clamp(34px, 7vw, 50px); }
 .note { margin-top: 8px; color: var(--cream-2); font-size: 16px; max-width: 38em; text-wrap: pretty; }
@@ -428,7 +435,7 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
   </section>
 
   <section class="sec wrap" id="sec-styles" tabindex="-1" aria-labelledby="h-styles" hidden>
-    <div class="slate"><span class="clap" aria-hidden="true"><i></i></span><div class="slate-f mono"><span>Escena <b>01</b></span><span>Estilo completo</span><span class="r">Elige uno</span></div></div>
+    <div class="slate"><div class="slate-f mono"><span>Escena <b>01</b></span><span>Estilo completo</span><span class="r">Elige uno</span></div><div class="ruler" aria-hidden="true"><i class="trail"></i><i class="head"></i></div></div>
     <div class="sec-hd">
       <h2 class="t h2" id="h-styles">Elige un <span class="remate">estilo.</span></h2>
       <p class="note">Una elección define tus subtítulos, tus efectos y tu ritmo.</p>
@@ -456,13 +463,13 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
     </div>
 
     <section class="sec wrap" id="sec-captions" role="tabpanel" tabindex="-1" aria-labelledby="h-captions">
-      <div class="slate"><span class="clap" aria-hidden="true"><i></i></span><div class="slate-f mono"><span>Escena <b id="n-captions">01</b></span><span>Subtítulos</span><span class="r">Elige uno</span></div></div>
+      <div class="slate"><div class="slate-f mono"><span>Escena <b id="n-captions">01</b></span><span>Subtítulos</span><span class="r">Elige uno</span></div><div class="ruler" aria-hidden="true"><i class="trail"></i><i class="head"></i></div></div>
       <div class="sec-hd"><h2 class="t h2" id="h-captions">Tus <span class="remate">subtítulos.</span></h2></div>
       <div class="grid" id="captions" role="radiogroup" aria-labelledby="h-captions"></div>
     </section>
 
     <section class="sec wrap" id="sec-effects" role="tabpanel" tabindex="-1" aria-labelledby="h-effects" hidden>
-      <div class="slate"><span class="clap" aria-hidden="true"><i></i></span><div class="slate-f mono"><span>Escena <b id="n-effects">02</b></span><span>Efectos</span><span class="r">Elige varios</span></div></div>
+      <div class="slate"><div class="slate-f mono"><span>Escena <b id="n-effects">02</b></span><span>Efectos</span><span class="r">Elige varios</span></div><div class="ruler" aria-hidden="true"><i class="trail"></i><i class="head"></i></div></div>
       <div class="sec-hd">
         <h2 class="t h2" id="h-effects">Tus <span class="remate">efectos.</span></h2>
         <p class="note">Elige todos los que quieras. Claude usa cada uno solo donde calza con lo que estás diciendo. Si quieres uno en una parte del video, usa Gancho, Medio o Final sobre el clip.</p>
@@ -471,7 +478,7 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
     </section>
 
     <section class="sec wrap" id="sec-transitions" role="tabpanel" tabindex="-1" aria-labelledby="h-transitions" hidden>
-      <div class="slate"><span class="clap" aria-hidden="true"><i></i></span><div class="slate-f mono"><span>Escena <b id="n-transitions">03</b></span><span>Transiciones</span><span class="r">Elige varias</span></div></div>
+      <div class="slate"><div class="slate-f mono"><span>Escena <b id="n-transitions">03</b></span><span>Transiciones</span><span class="r">Elige varias</span></div><div class="ruler" aria-hidden="true"><i class="trail"></i><i class="head"></i></div></div>
       <div class="sec-hd">
         <h2 class="t h2" id="h-transitions">Tus <span class="remate">transiciones.</span></h2>
         <p class="note">El paso de una toma a la siguiente. Claude las usa en los cortes donde calzan.</p>
@@ -1420,20 +1427,6 @@ dialog::backdrop { background: rgba(11, 23, 18, .84); -webkit-backdrop-filter: b
     }
     if ('ResizeObserver' in window) new ResizeObserver(measure).observe($('dock'));
     else window.addEventListener('resize', measure);
-    armSlates();
-  }
-
-  function armSlates() {
-    if (!R.classList.contains('anim') || !('IntersectionObserver' in window)) return;
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        io.unobserve(e.target);
-        setTimeout(function () { e.target.classList.remove('armed'); e.target.classList.add('clapped'); }, 220);
-      });
-    }, { threshold: 1 });
-    var slates = D.querySelectorAll('.slate');
-    for (var i = 0; i < slates.length; i++) { slates[i].classList.add('armed'); io.observe(slates[i]); }
   }
 
   /* ---------------------------------------------------------------- save */

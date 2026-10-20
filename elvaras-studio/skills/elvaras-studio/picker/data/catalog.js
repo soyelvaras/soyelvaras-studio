@@ -686,7 +686,7 @@ window.STUDIO_CATALOG = {
   {
    "n": 1,
    "key": "glam-cam",
-   "name": "Glam Cam",
+   "name": "Cálido",
    "group": "",
    "label": "",
    "line": "Primer plano de belleza en estudio. Un zoom en cada idea nueva, una palabra serif a la vez.",
@@ -703,7 +703,7 @@ window.STUDIO_CATALOG = {
   {
    "n": 2,
    "key": "camera-shy",
-   "name": "Tímido de Cámara",
+   "name": "Tímido",
    "group": "",
    "label": "",
    "line": "Una lista de tips. Cortes rápidos, un título fijo y tus puntos escritos en el cuadro. Con o sin cara.",
@@ -720,7 +720,7 @@ window.STUDIO_CATALOG = {
   {
    "n": 3,
    "key": "show-and-tell",
-   "name": "Muestra y Cuenta",
+   "name": "Tutorial Gráfico",
    "group": "",
    "label": "",
    "line": "Tú en una ventana abajo y un lienzo claro arriba para etiquetas, tarjetas y el llamado a la acción.",

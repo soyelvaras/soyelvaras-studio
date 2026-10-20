@@ -4,7 +4,7 @@
   {
    "n": 1,
    "key": "glam-cam",
-   "name": "Glam Cam",
+   "name": "Cálido",
    "line": "Primer plano de belleza en estudio. Un zoom en cada idea nueva, una palabra serif a la vez.",
    "captionStyle": "vanity",
    "effects": [
@@ -19,7 +19,7 @@
   {
    "n": 2,
    "key": "camera-shy",
-   "name": "Tímido de Cámara",
+   "name": "Tímido",
    "line": "Una lista de tips. Cortes rápidos, un título fijo y tus puntos escritos en el cuadro. Con o sin cara.",
    "captionStyle": "moodboard",
    "effects": [
@@ -34,7 +34,7 @@
   {
    "n": 3,
    "key": "show-and-tell",
-   "name": "Muestra y Cuenta",
+   "name": "Tutorial Gráfico",
    "line": "Tú en una ventana abajo y un lienzo claro arriba para etiquetas, tarjetas y el llamado a la acción.",
    "captionStyle": "none",
    "effects": [
