@@ -1,4 +1,5 @@
 {
+ "0.4.0": "Movimiento nuevo: la cámara nunca queda quieta, los gráficos entran con rebote y siguen respirando, y 4 efectos encima de tu imagen (Caja de Prompt, Cifra Grande, Fila de Cápsulas y Puntos) con logos reales de 46 apps.",
  "0.3.3": "Arreglo para Windows: la instalación ya no se detiene al revisar el Python que descarga.",
  "0.3.2": "La voz y la imagen ya no pierden calidad: el audio se copia tal cual y la copia para el celular sale en 1080p.",
  "0.3.1": "La copia para el celular ya no recomprime la voz."
