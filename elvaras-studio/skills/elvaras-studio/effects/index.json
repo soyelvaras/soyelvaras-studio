@@ -760,6 +760,110 @@
    "material": "stills of the user's own footage",
    "notes": "Frames are stills of the user's own footage; quotes come from the matching words.json or are written by hand. Needs room under the chin. The reel captions hide while the row is up.",
    "status": "ready"
+  },
+  {
+   "n": 31,
+   "key": "prompt-box",
+   "name": "Prompt Box",
+   "does": "An input box rises over your chest with the app's real logo, what you say you type into it types itself in, and a cursor arcs in and clicks send.",
+   "say": "type my prompt on screen",
+   "shot": [
+    "wide",
+    "medium",
+    "close"
+   ],
+   "camera": [
+    "still",
+    "drifting",
+    "moving"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "none",
+   "tracking": "none (screen-fixed, placed from layout.json)",
+   "extra": [],
+   "material": "none (a spoken instruction of up to about 60 characters; the app's name for its logo)",
+   "notes": "Any framing, any cut: an overlay over the reel's own footage. Its own box with the app's real logo in the label, never a copy of a real app's screen.",
+   "status": "ready",
+   "layer": "overlay"
+  },
+  {
+   "n": 32,
+   "key": "stat-stack",
+   "name": "Stat Stack",
+   "does": "The number you say lands huge over your chest and counts up to its value, and a small caps line under it swaps on the words that follow.",
+   "say": "make the number huge",
+   "shot": [
+    "wide",
+    "medium",
+    "close"
+   ],
+   "camera": [
+    "still",
+    "drifting",
+    "moving"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "none",
+   "tracking": "none (screen-fixed, placed from layout.json)",
+   "extra": [],
+   "material": "none (a number the speaker really says)",
+   "notes": "Any framing, any cut: an overlay. Chest band under the chin, above the head on a tight selfie, declines when there is room for neither.",
+   "status": "ready",
+   "layer": "overlay"
+  },
+  {
+   "n": 33,
+   "key": "chip-row",
+   "name": "Chip Row",
+   "does": "As you list things, an outlined pill pops in for each one in a row under your captions, with the app's real logo when it is an app.",
+   "say": "put the things I list in pills",
+   "shot": [
+    "wide",
+    "medium",
+    "close"
+   ],
+   "camera": [
+    "still",
+    "drifting",
+    "moving"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "none",
+   "tracking": "none (screen-fixed, placed from layout.json)",
+   "extra": [],
+   "material": "none (the things the speaker lists; app names for their logos)",
+   "notes": "Any framing, any cut: an overlay under the reel's caption line, which keeps running.",
+   "status": "ready",
+   "layer": "overlay"
+  },
+  {
+   "n": 34,
+   "key": "dot-counter",
+   "name": "Dot Counter",
+   "does": "A row of dots pops in when you say how many things are coming; each dot fills as you name its step.",
+   "say": "show how many steps with dots",
+   "shot": [
+    "wide",
+    "medium",
+    "close"
+   ],
+   "camera": [
+    "still",
+    "drifting",
+    "moving"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "none",
+   "tracking": "none (screen-fixed, placed from layout.json)",
+   "extra": [],
+   "material": "none (a count the speaker says, 2 to 8)",
+   "notes": "Any framing, any cut: an overlay. Best on a list reel: the dots fill on each step.",
+   "status": "ready",
+   "layer": "overlay"
   }
  ]
 }

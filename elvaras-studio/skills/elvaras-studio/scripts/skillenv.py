@@ -237,6 +237,11 @@ def my_fonts_dir(state=None):
     return os.path.join(state or state_dir(), 'fonts')
 
 
+def icons_dir(state=None):
+    """App logos fetched with get_icon.py beyond the starter set in engine/icons. fx_new.py copies both into a slot."""
+    return os.path.join(state or state_dir(), 'icons')
+
+
 def examples_dir(state=None):
     """Where study.py keeps what it pulled out of an example the buyer showed (frames, cut times, levels)."""
     return os.path.join(state or state_dir(), 'examples')

@@ -155,6 +155,8 @@ def main():
             print(f'version {a.variant or _pv.get(key)} of {entry["name"]} is its own video, not a slot in the reel: any span works, '
                   'cuts included, and the parts of the reel do not apply')
             cut_frames, two_shot = [], False
+        if meta.get('layer') == 'overlay':
+            cut_frames = []          # graphics over the reel's own footage: the cuts under them do not matter
         if cut_frames and not two_shot:
             sys.exit(f'{entry["name"]} needs one continuous shot and this span crosses a cut at reel frame '
                      f'{cut_frames[0] + frame0} ({(cut_frames[0] + frame0) / 30:.2f}s). Move --from / --to to one side of it.')
@@ -197,6 +199,15 @@ def main():
     # ---------------------------------------------------------------- 1 + 2: effect files, fonts, sounds, template
     copy_tree(src_dir, slot, a.force, skip=('example', 'slot.json'))
     shutil.copyfile(os.path.join(src_dir, 'slot.json'), os.path.join(slot, 'slot.json'))
+    for lib in meta.get('libs') or []:      # shared engine code an effect builds on (vgfx.py for the overlay graphics)
+        dp = os.path.join(slot, lib)
+        if a.force or not os.path.exists(dp):
+            shutil.copyfile(os.path.join(ENGINE, lib), dp)
+    if meta.get('icons'):                   # app logos (engine/icons, scripts/get_icon.py): the slot gets its own copy
+        os.makedirs(os.path.join(slot, 'assets', 'icons'), exist_ok=True)
+        for d in (os.path.join(ENGINE, 'icons'), skillenv.icons_dir()):
+            if os.path.isdir(d):
+                copy_tree(d, os.path.join(slot, 'assets', 'icons'), force=False)
     # an effect that comes in versions (Comentario): the version picked in the Studio Picker goes on the VARIANT line
     pick_v = (fxlib.read(skillenv.path_arg(a.picks) if a.picks else skillenv.picks_file(), {}) or {}).get('effectVariants') or {}
     bpy = os.path.join(slot, 'build.py')

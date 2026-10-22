@@ -680,6 +680,46 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/effects/storyboard-deck.jpg",
    "variants": [],
    "category": "effect"
+  },
+  {
+   "n": 31,
+   "key": "prompt-box",
+   "name": "Caja de Prompt",
+   "line": "Lo que le pides a la IA se escribe solo y un cursor aprieta enviar.",
+   "preview": "previews/effects/prompt-box.mp4",
+   "poster": "previews/posters/effects/prompt-box.jpg",
+   "variants": [],
+   "category": "effect"
+  },
+  {
+   "n": 32,
+   "key": "stat-stack",
+   "name": "Cifra Grande",
+   "line": "El número que dices cae enorme y sube hasta su valor.",
+   "preview": "previews/effects/stat-stack.mp4",
+   "poster": "previews/posters/effects/stat-stack.jpg",
+   "variants": [],
+   "category": "effect"
+  },
+  {
+   "n": 33,
+   "key": "chip-row",
+   "name": "Fila de Cápsulas",
+   "line": "Una cápsula por cada cosa que nombras, con el logo si es una app.",
+   "preview": "previews/effects/chip-row.mp4",
+   "poster": "previews/posters/effects/chip-row.jpg",
+   "variants": [],
+   "category": "effect"
+  },
+  {
+   "n": 34,
+   "key": "dot-counter",
+   "name": "Puntos",
+   "line": "Una fila de puntos que se llena con cada paso que nombras.",
+   "preview": "previews/effects/dot-counter.mp4",
+   "poster": "previews/posters/effects/dot-counter.jpg",
+   "variants": [],
+   "category": "effect"
   }
  ],
  "styles": [

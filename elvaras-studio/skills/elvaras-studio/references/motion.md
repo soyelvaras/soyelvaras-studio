@@ -152,6 +152,11 @@ con curvas distintas, así que el camino se curva; llega con un pequeño exceso 
 Para que el cursor dude entre dos lugares (una persona que se pierde), deja 0,4 a 1 s quieto con una deriva de 3 a 6
 px antes del siguiente viaje.
 
+En los efectos superpuestos (y en cualquier efecto nuevo que se arme sobre `engine/vgfx.py`) no hace falta escribir
+esto a mano: `Page.cursor([(x, y, seg, clic), ...])` hace el arco, la llegada, la deriva y el clic, y `Page.icon("<app>")`
+pone el logo real de una app (`engine/icons`, `get_icon.py`). `Page.enter`, `leave`, `drift` y `press` siguen las
+reglas de la sección 1.
+
 ## 5. Leer el movimiento de un ejemplo
 
 En las hojas de `study.py`, mira los cuadros alrededor de cada momento en que algo aparece o se mueve, y anota: qué se

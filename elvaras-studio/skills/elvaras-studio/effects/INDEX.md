@@ -19,9 +19,16 @@ del usuario. Las únicas imágenes de demo de la skill son los clips cortos de m
 elegirlo. Nunca se usan en un reel. Un `example/clip.md` en la carpeta de un efecto es un ejemplo trabajado en
 palabras: los ajustes que usó un clip de demo, sin imágenes.
 
-Casi todos los efectos necesitan el recorte limpio (`setup.py --matting`, una vez, unos 105 MB). Revelado no
-necesita ninguno, y Comentario puede correr sin él (`fx_new.py --no-cutout` y `CHIN_Y` escrito a mano). La columna
-Recorte de abajo dice qué necesita cada uno.
+Casi todos los efectos necesitan el recorte limpio (`setup.py --matting`, una vez, unos 105 MB). Revelado y los cuatro
+superpuestos no necesitan ninguno, y Comentario puede correr sin él (`fx_new.py --no-cutout` y `CHIN_Y` escrito a
+mano). La columna Recorte de abajo dice qué necesita cada uno.
+
+**Los superpuestos** (Caja de Prompt, Cifra Grande, Fila de Cápsulas, Puntos; `"layer": "overlay"` en su `slot.json`)
+son solo gráficos transparentes: su render es un `.webm` que el reel pone ENCIMA de su propia imagen, así que la
+imagen conserva su color, sus cortes y la cámara viva, el espacio puede cruzar cortes, y `frames_check.py` sigue
+midiendo esos cuadros. Son rápidos (sin recorte) y funcionan en cualquier encuadre. Dos de ellos muestran logos reales
+de apps (`engine/icons`, 46 apps; `get_icon.py "<app>"` baja otra con licencia libre): solo cuando la persona nombra
+esa app.
 
 Todos los efectos usan por defecto los colores de Soy Elvaras (dorado #C9A15B como acento, crema #F2ECDF como texto
 claro, tinta #141615 y bosque #13281F como oscuros) y sus textos en pantalla por defecto están en español.
@@ -172,6 +179,7 @@ decide de cuál de los dos tipos son sus palabras, y agrega lo que encuentres al
 | Zoom Digital, versión 2 (Medio rostro) | el efecto (la pila de palabras del lado vacío). Los subtítulos del reel se ocultan solo mientras dura `HALF` | ninguno: `CAPTIONS=0` no las apaga (solo apaga `CAPS`) | `HALF_WORDS` (escribe el texto en las mayúsculas o minúsculas del estilo; `'lg'` es Bebas Neue, solo mayúsculas), `LINE`, `HALF_TOP`, y las reglas css `.hl.sm`, `.hl.lg`, `.hl.it` (tipografía, grosor) que build.py agrega a `CSS` cuando `VARIANT == 2`. Color de la palabra clave: `YEL` |
 | Negativo | el efecto (solo las palabras que importan, en negativo). Los subtítulos del reel se ocultan mientras dura | ninguno | `WORDS` (escribe el texto en las mayúsculas o minúsculas del estilo), `COLORS` (los dos colores del negativo), y las reglas css `.ng` (tipografía `'Work Sans'` 900; otra tipografía necesita su archivo en `NG_FONT` para medir) |
 | Muro de Palabras | el efecto (el muro de palabras) | ninguno | `PHRASES`, `FS`, `INK`, `ACCENT`, `GROUND`, `ACCENT_Y`. Tipografía: su propio `@font-face` (`'Inter Tight Wall'`) y la regla `.wd`. El muro se dibuja en mayúsculas |
+| Caja de Prompt, Cifra Grande, Fila de Cápsulas, Puntos | el efecto (lo que se escribe, el número y su línea, las cápsulas). Caja de Prompt, Cifra Grande y Puntos ocultan los subtítulos del reel solo mientras están arriba; Fila de Cápsulas los deja correr | ninguno (`CAPTIONS=0` se acepta y no cambia nada) | el bloque `STYLE` al inicio de `build.py`, igual en los cuatro: `font`, `weight`, `tracking`, `big_font`, `big_weight`, `big_tracking`, `case`, `small_font`, `small_weight`, `serif_font`, `ink`, `accent`, `card`, `shadow` |
 
 Comentario es el que tiene un bloque de estilo listo. En los otros efectos hechos de palabras la tipografía está en
 reglas css dentro de `build.py`: cambia la familia y el grosor ahí, mantén las variables de tamaño, y mira la
@@ -213,7 +221,7 @@ uno de estos: reestiliza las palabras de un efecto a los valores de esa especifi
 ## La lista
 
 <!-- LIST:START (generated from index.json, do not edit by hand; traducida a mano en Soy Elvaras Studio) -->
-30 listos, 0 recetas.
+34 listos, 0 recetas.
 
 | # | Efecto | Clave | Tipo | Qué hace | El usuario dice | Encuadre | Cámara | Pared | Recorte | Seguimiento | Paquetes extra |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -244,6 +252,10 @@ uno de estos: reestiliza las palabras de un efecto a los valores de esa especifi
 | 22 | Apagón | `blackout` | listo | El cuarto se atenúa en tu frase mientras tú quedas iluminado, la palabra de golpe cae detrás de tu cabeza y las luces vuelven en la frase siguiente. | "baja las luces cuando digo X y súbelas en la frase siguiente" | cualquiera | cualquiera | no hace falta | limpio | ninguno (prep.py mide la cabeza mientras el cuarto está oscuro; la palabra queda fija en pantalla) | scipy |
 | 24 | Revelado | `pull-back-reveal` | listo | El video en vivo se achica a una tarjeta dentro de una ventana de app: se marca un checklist con la edición real, corre la línea de tomas y un contador sube al número que dices. | "aléjate y muestra este video editándose" | cualquiera | cualquiera | no hace falta | ninguno | ninguno (toda la imagen entra en la tarjeta; no se mide nada) | ninguno |
 | 30 | Mazo de Storyboard | `storyboard-deck` | listo | Una fila de tarjetas de storyboard se reparte sobre el pecho como naipes: la tarjeta de guion y cuadros de tus reels con su número, su tiempo y lo que se dice; una ola la recorre de izquierda a derecha, una se levanta y la fila sale hacia la derecha. | "reparte un storyboard sobre mi pecho" | abierto o medio | cualquiera | no hace falta | ninguno | ninguno (la barbilla sale de layout.json) | fotos de tu propio material |
+| 31 | Caja de Prompt | `prompt-box` | listo | Una caja de texto sube sobre el pecho con el logo real de la app que nombras, lo que le pides a la IA se escribe solo y un cursor llega en arco y aprieta enviar. Superpuesto. | "pon mi prompt en pantalla" | cualquiera | cualquiera | no hace falta | ninguno | ninguno (fija en pantalla, ubicada desde layout.json) | ninguno |
+| 32 | Cifra Grande | `stat-stack` | listo | El número que dices cae enorme en dorado y sube hasta su valor, con una línea chica debajo que cambia con lo que sigue. Superpuesto. | "pon el número gigante" | cualquiera | cualquiera | no hace falta | ninguno | ninguno (fija en pantalla, ubicada desde layout.json) | ninguno |
+| 33 | Fila de Cápsulas | `chip-row` | listo | Una cápsula por cada cosa que nombras, en fila bajo los subtítulos, con el logo real cuando es una app. Superpuesto. | "pon lo que nombro en cápsulas" | cualquiera | cualquiera | no hace falta | ninguno | ninguno (fija en pantalla, bajo la línea de subtítulos) | ninguno |
+| 34 | Puntos | `dot-counter` | listo | Una fila de puntos cae cuando dices cuántas cosas vienen, y cada punto se llena al nombrar su paso. Superpuesto. | "muestra con puntos cuántos pasos son" | cualquiera | cualquiera | no hace falta | ninguno | ninguno (fija en pantalla, ubicada desde layout.json) | ninguno |
 | 29 | Tarjeta de Título | `title-card` | listo | Una tarjeta de capítulo: la imagen corta a la pantalla bosque con un código de tiempo que corre y un título grande en serif que aterriza palabra por palabra; la persona vuelve en un marco de teléfono con barra de reproducción y crece hasta la imagen completa. | "pon una tarjeta de título en esta parte" | cualquiera | cualquiera | no hace falta | ninguno | ninguno | ninguno |
 | 28 | Negativo | `negative-words` | listo | Solo las palabras que importan, enormes y en negativo (verde bosque sobre lo claro, dorado sobre lo oscuro), la grande detrás de la cabeza cuando cabe, con zooms que siguen la cara. Los subtítulos del reel se ocultan mientras dura. | "pon esa cifra en negativo detrás de mi cabeza" | abierto o medio, con espacio sobre la cabeza | quieta o con deriva | no hace falta | limpio | cara (track.py, como Zoom Digital) | ninguno |
 | 27 | Flicker | `flicker` | listo | El corte entre dos tomas se vuelve una ráfaga de destellos que aterriza en la toma siguiente (versión 1, la principal: primero parpadea la persona de la toma siguiente, después el fondo; versión 2: parpadea todo el cuadro). | "haz un flicker en ese corte" | cualquiera, dos tomas seguidas | cualquiera | no hace falta | limpio (solo la versión 1) | ninguno (no se mide nada: capas que aparecen y desaparecen por cuadro) | ninguno |
@@ -280,4 +292,8 @@ uno de estos: reestiliza las palabras de un efecto a los valores de esa especifi
 - **Negativo** (LISTO, `effects/negative-words/`: bake.py, build.py, clipblock.py, effect.md, onsets.py, post.py, slot.json, track.py). No necesita nada del usuario. Una toma continua con espacio sobre la cabeza. `WORDS` lleva solo lo que carga la frase (una cifra, un nombre, el remate), nunca la frase entera: "tenemos un 15% de margen en todas nuestras ventas" queda `15%` + `margen`. Zooms suaves (1,1 a 1,3): uno fuerte sube la cabeza y las tarjetas bajan al pecho; en un plano cercano baja `EYE` (y más alto) para dejar aire sobre el pelo. Cada tarjeta puede ir detrás o adelante (tercer valor); mezclar las dos se lee mejor. Los subtítulos del reel se ocultan todo el espacio (slot.json).
 - **Tarjeta de Título** (LISTO, `effects/title-card/`: build.py, effect.md, slot.json). No necesita nada del usuario ni recorte. El título son palabras que la persona dice (`TITLE`, una línea por entrada con su cuadro); el código de tiempo y la barra del teléfono son el tiempo y el largo reales del reel. Los subtítulos del reel se ocultan mientras dura la pantalla del título.
 - **Mazo de Storyboard** (LISTO, `effects/storyboard-deck/`: build.py, effect.md, slot.json). Los cuadros son fotos de su propio material (`'aroll'` o la ruta de un reel suyo) y las citas salen del `words.json` de ese clip o se escriben a mano. Necesita espacio bajo la barbilla; va adelante sobre el cuerpo, nunca sobre la cara, y sale hacia un lado. Los subtítulos del reel se ocultan mientras está arriba.
+- **Caja de Prompt** (LISTO, superpuesto, `effects/prompt-box/`: build.py, check.py, effect.md, slot.json; `vgfx.py` lo copia fx_new.py). Necesita del usuario: nada; `TEXT` son palabras que dice, `APP` solo si nombra la app (logo real). Cualquier encuadre y corte. Deja unos 0,5 s después de la última palabra para que el cursor alcance a enviar. Sin espacio bajo la barbilla ni sobre la cabeza se detiene con DECLINED.
+- **Cifra Grande** (LISTO, superpuesto, `effects/stat-stack/`). Necesita del usuario: nada; solo un número que dice de verdad. Sube como contador cuando vale 10 o más (respeta separadores y %). Whisper puede partir "3.000": escribe `NUMBER` a mano.
+- **Fila de Cápsulas** (LISTO, superpuesto, `effects/chip-row/`). Necesita del usuario: nada; las cápsulas son lo que enumera (2 a 4, de 1 a 3 palabras), con logo solo para una app que nombra. Los subtítulos del reel siguen arriba: revisa que no se toquen.
+- **Puntos** (LISTO, superpuesto, `effects/dot-counter/`). Necesita del usuario: nada; un número dicho de 2 a 8. Con `FILL_AT` el espacio cubre la lista entera (puede cruzar cortes) y cada punto se llena en su paso.
 <!-- LIST:END -->

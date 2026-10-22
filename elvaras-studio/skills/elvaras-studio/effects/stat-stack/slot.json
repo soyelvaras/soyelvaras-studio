@@ -1,0 +1,28 @@
+{
+ "key": "stat-stack",
+ "pack": "stat-stack",
+ "imported": "2026-10-22",
+ "cutout": "none",
+ "layer": "overlay",
+ "libs": [
+  "vgfx.py"
+ ],
+ "hi": "no",
+ "reel_captions": "hide",
+ "captions_note": "the number carries those words: fx_add.py hides the reel's captions only while it is up (work/reel_captions.json)",
+ "reel_env": [],
+ "in_a_reel": [
+  "NUMBER is a number the speaker really says, as said; never a made-up result",
+  "the user's style wins: set the STYLE block at the top of build.py to the reel's caption style (font, weight, tracking, case, ink, accent) before the first build (effects/INDEX.md, Reestilizar las palabras de un efecto)"
+ ],
+ "sounds": {},
+ "steps": [
+  "check NUMBER and SUBS in the CLIP block against words.json (None picks the first spoken number)",
+  "run build.py SAFE=1      # prints the timings, the place, the snapshot times and the caption window",
+  "hf lint",
+  "hf snapshot --at <times build.py printed>      # LOOK: mid-entrance too",
+  "run build.py      # guide off",
+  "hf render",
+  "run check.py      # frame count, work/check/sheet.jpg, phone copy"
+ ]
+}

@@ -1,0 +1,29 @@
+{
+ "key": "chip-row",
+ "pack": "chip-row",
+ "imported": "2026-10-22",
+ "cutout": "none",
+ "layer": "overlay",
+ "libs": [
+  "vgfx.py"
+ ],
+ "icons": true,
+ "hi": "no",
+ "reel_captions": "keep",
+ "captions_note": "the chips sit under the reel's caption line, which keeps running",
+ "reel_env": [],
+ "in_a_reel": [
+  "CHIPS are the things the speaker lists, in their words, each on the second it is said; an app gets its real logo",
+  "the user's style wins: set the STYLE block at the top of build.py to the reel's caption style (font, weight, tracking, case, ink, accent) before the first build (effects/INDEX.md, Reestilizar las palabras de un efecto)"
+ ],
+ "sounds": {},
+ "steps": [
+  "write CHIPS in the CLIP block (get_icon.py \"<app>\" first for an app whose logo is missing)",
+  "run build.py SAFE=1      # prints the timings, the place, the snapshot times and the caption window",
+  "hf lint",
+  "hf snapshot --at <times build.py printed>      # LOOK: mid-entrance too",
+  "run build.py      # guide off",
+  "hf render",
+  "run check.py      # frame count, work/check/sheet.jpg, phone copy"
+ ]
+}

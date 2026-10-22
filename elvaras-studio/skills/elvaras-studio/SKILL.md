@@ -16,6 +16,8 @@ que dibujas: la regla de oro, entradas, salidas, cámara viva, entradas de movim
 elecciones tengan un estilo completo, `effects/INDEX.md` cuando tengan efectos y `references/gotchas.md` cuando un
 armado o render falle. Lee `references/replicate.md` apenas el usuario muestre un ejemplo o describa un look propio.
 Lee `references/gifs.md` cuando pida GIFs (puedes buscarlos tú y ponerlos en las frases correctas).
+Cuando nombra una app y un gráfico la muestra, usa su logo real: `engine/icons` trae 46, y
+`PY "SK/scripts/get_icon.py" "<app>"` baja otra con licencia libre (si no hay, va su inicial y lo dices).
 
 ## Idioma: siempre en español
 
@@ -43,7 +45,7 @@ se comparte, publica ni entrega a otra persona, y su repositorio de GitHub es pr
 - Formatos: el render principal es 9:16 para Instagram. Cuando pida la versión web, renderiza también en 16:9.
 - Los 19 clips de `captions/previews` (y sus fotos en `picker/previews/posters/captions`) ya son de él: una sola
   escena de 1016(3), todo el texto abajo, armada en `~/reel-edits/subtitulos-base`. Los de `picker/previews/effects`
-  (los 26) y `picker/previews/styles` (los 3) también son suyos. Los de `effects/*/example` siguen siendo de relleno
+  (los 34) y `picker/previews/styles` (los 3) también son suyos. Los de `effects/*/example` siguen siendo de relleno
   hasta que él grabe los suyos: nunca los presentes como trabajo suyo.
 - Lo que ya se aprendió con sus tomas (detalle en la memoria del proyecto): usa lentes, y la medición de la cabeza
   se corta en la nariz (la barbilla real queda unos 150 px más abajo); su silla oscura se mezcla con su polerón en

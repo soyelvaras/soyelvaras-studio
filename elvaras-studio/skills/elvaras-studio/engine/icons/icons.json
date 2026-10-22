@@ -1,0 +1,310 @@
+{
+ "adobephotoshop": {
+  "title": "Photoshop",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify logos:adobe-photoshop (api.iconify.design)",
+  "license": "CC0 1.0"
+ },
+ "adobepremierepro": {
+  "title": "Premiere",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify logos:adobe-premiere (api.iconify.design)",
+  "license": "CC0 1.0"
+ },
+ "airtable": {
+  "title": "Airtable",
+  "hex": "#18BFFF",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "anthropic": {
+  "title": "Anthropic",
+  "hex": "#191919",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "apple": {
+  "title": "Apple",
+  "hex": "#000000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "canva": {
+  "title": "Canva",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify devicon:canva (api.iconify.design)",
+  "license": "MIT"
+ },
+ "capcut": {
+  "title": "CapCut",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify thesvg-color:capcut (api.iconify.design)",
+  "license": "MIT"
+ },
+ "claude": {
+  "title": "Claude",
+  "hex": "#D97757",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "cursor": {
+  "title": "Cursor",
+  "hex": "#000000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "davinciresolve": {
+  "title": "DaVinci Resolve",
+  "hex": "#233A51",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "discord": {
+  "title": "Discord",
+  "hex": "#5865F2",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "elevenlabs": {
+  "title": "ElevenLabs",
+  "hex": "#000000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "excel": {
+  "title": "Excel",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify thesvg-color:microsoft-excel (api.iconify.design)",
+  "license": "MIT"
+ },
+ "facebook": {
+  "title": "Facebook",
+  "hex": "#0866FF",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "figma": {
+  "title": "Figma",
+  "hex": "#F24E1E",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "github": {
+  "title": "GitHub",
+  "hex": "#181717",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "gmail": {
+  "title": "Gmail",
+  "hex": "#EA4335",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "googlecalendar": {
+  "title": "Google Calendar",
+  "hex": "#4285F4",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "googledrive": {
+  "title": "Google Drive",
+  "hex": "#4285F4",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "googlegemini": {
+  "title": "Google Gemini",
+  "hex": "#8E75B2",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "googlesheets": {
+  "title": "Google Sheets",
+  "hex": "#34A853",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "instagram": {
+  "title": "Instagram",
+  "hex": "#FF0069",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "linkedin": {
+  "title": "LinkedIn",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify logos:linkedin-icon (api.iconify.design)",
+  "license": "CC0 1.0"
+ },
+ "lovable": {
+  "title": "Lovable",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify logos:lovable-icon (api.iconify.design)",
+  "license": "CC0 1.0"
+ },
+ "make": {
+  "title": "Make",
+  "hex": "#6D00CC",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "midjourney": {
+  "title": "Midjourney",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify logos:midjourney (api.iconify.design)",
+  "license": "CC0 1.0"
+ },
+ "n8n": {
+  "title": "n8n",
+  "hex": "#EA4B71",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "notion": {
+  "title": "Notion",
+  "hex": "#000000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "obsidian": {
+  "title": "Obsidian",
+  "hex": "#7C3AED",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "openai": {
+  "title": "ChatGPT",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify logos:openai-icon (api.iconify.design)",
+  "license": "CC0 1.0"
+ },
+ "perplexity": {
+  "title": "Perplexity",
+  "hex": "#1FB8CD",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "shopify": {
+  "title": "Shopify",
+  "hex": "#7AB55C",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "slack": {
+  "title": "Slack",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify logos:slack-icon (api.iconify.design)",
+  "license": "CC0 1.0"
+ },
+ "spotify": {
+  "title": "Spotify",
+  "hex": "#1ED760",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "telegram": {
+  "title": "Telegram",
+  "hex": "#26A5E4",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "threads": {
+  "title": "Threads",
+  "hex": "#000000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "tiktok": {
+  "title": "TikTok",
+  "hex": "#000000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "trello": {
+  "title": "Trello",
+  "hex": "#0052CC",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "visualstudiocode": {
+  "title": "VS Code",
+  "hex": null,
+  "mono": false,
+  "source": "Iconify devicon:vscode (api.iconify.design)",
+  "license": "MIT"
+ },
+ "whatsapp": {
+  "title": "WhatsApp",
+  "hex": "#25D366",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "x": {
+  "title": "X",
+  "hex": "#000000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "youtube": {
+  "title": "YouTube",
+  "hex": "#FF0000",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "zapier": {
+  "title": "Zapier",
+  "hex": "#FF4F00",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ },
+ "zoom": {
+  "title": "Zoom",
+  "hex": "#0B5CFF",
+  "mono": true,
+  "source": "Simple Icons 16.35.0 (cdn.jsdelivr.net/npm/simple-icons)",
+  "license": "CC0 1.0"
+ }
+}

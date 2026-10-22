@@ -977,7 +977,8 @@ def css_motion_note(css, where):
 # The drift is the one movement that is linear on purpose: it has to keep going, never settle.
 # Effect slots sit OUTSIDE the camera (their pixels, safe zone and face checks stay exactly as built, and most of them
 # move their own picture): the drift lands back on 1 the moment a slot starts and starts from 1 when it ends, so
-# there is never a jump at a slot's edge. plan.json / my-style.json "camera": {"rate": 0.015, "max": 0.045,
+# there is never a jump at a slot's edge. An overlay slot (transparent graphics) is the exception: the footage keeps
+# drifting under it. plan.json / my-style.json "camera": {"rate": 0.015, "max": 0.045,
 # "alternate": true} or false (a still picture). Overall styles skip it: their shots already push in on their own.
 # ----------------------------------------------------------------------------------------------------------------------
 CAM_RATE, CAM_MAX = .015, .045    # scale gained per second of shot, and the most one shot may gain
@@ -987,7 +988,8 @@ LAST_CAM = None                   # what the last page() did with the camera (bu
 def _camera_pieces():
     """The stretches of the cut the camera drifts over: every shot, minus the effect slots. Each one is
     (t0, t1, starts on a cut, ends on a cut); an edge that is not a cut touches a slot."""
-    spans = [(float(s['from']), min(float(s['to']), DUR)) for s in PLAN.get('slots') or [] if not s.get('off')]
+    spans = [(float(s['from']), min(float(s['to']), DUR)) for s in PLAN.get('slots') or []
+             if not s.get('off') and not s.get('overlay')]      # an overlay leaves the footage, and the camera, under it
     out = []
     for t0, t1 in SEGS:
         parts = [(t0, t1)]
@@ -1311,6 +1313,8 @@ def slots(b):
                  every caption style). fx_add.py --caption-y writes it
       gain       brightness lift for the slot picture (a slot render passes through the renderer twice and comes
                  back a touch darker than the footage around it)
+      overlay    true = the render is transparent graphics (.webm) laid over the reel's own footage, which keeps
+                 its grade, cuts and live camera underneath (the overlay effects: slot.json "layer": "overlay")
       sfx        [{"src", "at", "media", "dur", "vol"}] the effect's own sounds, replayed over the reel's voice track
       off        true = leave this slot out of the build
     Returns (picture layers, audio elements). The voice always comes from the reel's own a-roll, so there is no
@@ -1325,9 +1329,11 @@ def slots(b):
         if t1 - t0 < .03:
             continue
         g = float(s.get('gain') or 1)
-        lift = f' style="filter:brightness({g:.4f})"' if abs(g - 1) > .003 else ''
-        # class gr: an overall style grades its footage with .gr, so the slot gets the same grade as its neighbours
-        out.append(f'<div id="fx{n}w"{lift}><video id="fx{n}" class="full gr" src="{s["src"]}" muted playsinline '
+        lift = f' style="filter:brightness({g:.4f})"' if abs(g - 1) > .003 and not s.get('overlay') else ''
+        # class gr: an overall style grades its footage with .gr, so the slot gets the same grade as its neighbours.
+        # An overlay slot (transparent graphics over the reel's own footage) is not footage: no grade, no lift
+        grade = '' if s.get('overlay') else ' gr'
+        out.append(f'<div id="fx{n}w"{lift}><video id="fx{n}" class="full{grade}" src="{s["src"]}" muted playsinline '
                    f'data-start="{T(t0):.3f}" data-media-start="{float(s.get("media", 0)):.3f}" '
                    f'data-duration="{t1 - T(t0):.3f}" data-track-index="{5 + n % 2}"></video></div>')
         b.cut(f'#fx{n}w', t0, t1)

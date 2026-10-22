@@ -120,7 +120,9 @@ def main():
             dx = (seg['cx'] - head['cx']) if seg and seg.get('cx') is not None else 0
             face = (head['left'] + dx, top + .22 * (chin - top), head['right'] + dx, chin)     # brow to chin: hair and caps may be overlapped
         line = f'{t:6.2f}s'
-        in_slot = next((s for s in fx_slots if float(s['from']) - .001 <= t < float(s['to'])), None)
+        # an overlay slot leaves the footage as it is and only draws over it: its frames keep the two numbers, which
+        # then flag the graphic itself when it touches the face or the red area
+        in_slot = next((s for s in fx_slots if float(s['from']) - .001 <= t < float(s['to']) and not s.get('overlay')), None)
         if in_slot:
             # an effect moves, regrades or covers the picture on purpose: the two numbers would always fire
             line += f"   inside the {in_slot.get('key') or in_slot.get('slot')} effect: no automatic numbers, judge this frame by eye"
