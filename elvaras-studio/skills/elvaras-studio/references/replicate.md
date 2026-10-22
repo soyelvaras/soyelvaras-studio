@@ -96,6 +96,7 @@ campo es opcional.
 | `align`, `margin` | `center`, `left`, `right`; margen lateral en px | center, 70 |
 | `entrance`, `exit` | `none`, `pop`, `fade`, `slide-up`, `type-on`, `word-by-word`; `none` o `fade` | none |
 | `css` | css extra para este estilo. Clases: `.cu` el bloque, `.cu .ln` una línea, `.cu .pl` la placa, `.cu .w` una palabra, `.cu .w.m` una palabra marcada | |
+| `motion`, `word_motion`, `mark_motion` | tu propia animación para cada línea, para cada palabra al decirse y para cada palabra marcada al decirse (`references/motion.md`) | ninguna |
 
 El motor mantiene el bloque dentro de la zona segura, corta las líneas donde se acaba el ancho y mueve un bloque que
 quedaría sobre la cara (imprime una `NOTE` cuando lo hace). `"caption": "karaoke"` (una clave en vez de una
@@ -118,9 +119,11 @@ simples que escribes tú, con un rango de tiempo y un ancla.
   necesita un recorte de la persona (`rvm_cut.py`).
 - `from` / `to` en segundos del reel. Déjalos fuera para una capa que dura todo el reel. En `my-style.json` solo se
   usan esas capas fijas; las capas con tiempo van en el `plan.json` de un reel, escritas a partir de sus palabras.
-- `in` / `out`: `none`, `fade`, `pop`, `slide-up`. Ese es todo el movimiento que tiene una capa: los `@keyframes` de
-  css en una capa NO se reproducen en el motor de render. Cuando el ejemplo mueve un gráfico de otra forma, usa la
-  más parecida de esas cuatro y dilo.
+- `in` / `out`: `none`, `fade`, `pop`, `slide-up`, los atajos. Cualquier otro movimiento va en `"motion"` (entradas
+  de GSAP, `references/motion.md`): letras de a una, desenfoque, rebote, clic, cursor en arco. Los `@keyframes` de css
+  NO se reproducen en el motor de render.
+- `drift`: cuánto crece la capa mientras se queda (por defecto 0,02 en las franjas, 0 en `full` y `behind`), para que
+  nada quede congelado.
 - Un GIF o un clip corto como capa: `gif_add.py` lo hace y escribe la capa por ti (`references/gifs.md`).
 - El texto de una capa son palabras propias del usuario o un relleno genérico. Nunca un logo, un usuario ni una
   afirmación.
@@ -138,13 +141,14 @@ simples que escribes tú, con un rango de tiempo y un ancla.
 | Ritmo de acercamientos | `edl.json`: parte una toma en tramos y alterna `zoom` (1.0, 1.25, 1.0 ...) con `cx` / `cy` en la cara, tan seguido como lo hace el ejemplo | cortes secos entre niveles de zoom; un zoom suave es el efecto Zoom Digital; blando sobre 1,4 en una fuente 1080 |
 | Ritmo de cortes | `edl.json`: salidas más justas o más holgadas, pausas que se dejan o se cortan, según la duración típica de toma del ejemplo | las tomas del usuario deciden qué se puede cortar |
 | Sonido | `"sounds": [{"src": "assets/sfx/pop.mp3", "at": 1.2, "vol": 0.2}]` en `plan.json` (los nombres disponibles están en `<project>/assets/sfx`); ninguno para un ejemplo tranquilo. Efectos: `SFX=0`, `--no-sfx`, `SFX_GAIN` | solo el set de sonidos incluido; no se agrega música |
-| Cualquier otra cosa | `"css": "..."` css simple que va al final, en `plan.json` o `my-style.json` | puede reestilizar lo que hay en la página; no puede agregar movimiento |
+| Movimiento de todo el reel | `"motion": [...]` en `plan.json`, o con `"on": "marks" / "cuts" / "words"` en `my-style.json` para todos los reels: un golpe de zoom en cada palabra clave, un destello en cada corte (`references/motion.md`) | un efecto tapa la imagen mientras dura su espacio |
+| Cámara | la cámara viva va sola: `"camera": {"rate": 0.015, "max": 0.045}` la ajusta, `false` la apaga (`references/motion.md`) | los estilos completos usan su propio acercamiento |
+| Cualquier otra cosa | `"css": "..."` css simple que va al final, en `plan.json` o `my-style.json` | puede reestilizar lo que hay en la página; el movimiento va en `"motion"` |
 
 Lo que hoy no se puede igualar, así que dilo directo cuando el ejemplo lo tenga: música, una composición que mueve a la
 persona a un panel o a una página (usa el estilo completo Tutorial Gráfico cuando ese es el look, o
 Pantalla Verde para un fondo), cambios de velocidad, transiciones entre tomas que no sean un corte o el efecto Corte en
-Zoom, gráficos animados más allá de las cuatro entradas, movimiento de subtítulos más allá de las seis entradas, 3D, y
-b-roll que el usuario no entregó.
+Zoom, 3D, y b-roll que el usuario no entregó.
 
 ## 4. Compararlo lado a lado
 

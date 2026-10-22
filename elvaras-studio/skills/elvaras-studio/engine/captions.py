@@ -222,6 +222,7 @@ BASE_CSS = '''
 html,body{width:1080px;height:1920px;background:#000;overflow:hidden}
 #root{position:relative;width:1080px;height:1920px;overflow:hidden}
 .full{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover}
+#cam,#punch{position:absolute;left:0;top:0;width:1080px;height:1920px}
 .cap{position:absolute;left:0;width:1080px;text-align:center;white-space:nowrap}
 '''
 
@@ -842,6 +843,203 @@ def _num(v, default):
         return float(default)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# MOTION: animation the editing Claude writes itself, as GSAP tweens on the reel's one timeline (references/motion.md).
+# The renderer seeks that timeline frame by frame, so a tween here always renders exactly; css @keyframes and
+# transitions never do. Each entry is plain JSON:
+#   {"target": ".w", "tween": "from" | "to" | "fromTo" | "set", "vars": {...gsap vars...}, "from": {...},  (fromTo only)
+#    "at": 0.0  (seconds after the element comes in) | "at_end": 0.3  (seconds before it goes),
+#    "on": "marks" | "words" | "cuts" | "start", "kinds": ["key", "num"], "every": 1, "offset": 0.0}  (reel motion only)
+# ----------------------------------------------------------------------------------------------------------------------
+TWEENS = ('from', 'to', 'fromTo', 'set')
+# "footage" is #punch: the picture, the cutout and the words behind the head, inside the live camera (#cam), so a
+# punch-in rides on top of the camera's own drift instead of fighting it. Effect slots sit over it, unmoved
+TARGETS = {'self': '', 'footage': '#punch', 'speaker': '#cutw', 'captions': '#caps', 'layers': '#layers'}
+MOTION_MAX = 400          # tweens from one "on" entry: more than this is a mistake (a word tween on every word of a long reel is fine)
+
+
+def _unsafe(v):
+    """Anything that would make two renders of the same frame differ (random values: the renderer may load the page
+    more than once), or that is not plain data."""
+    s = json.dumps(v)
+    return any(x in s for x in ('random(', '"random"', '=>', 'function', 'Math.', '<script'))
+
+
+def _jsjson(v):
+    return json.dumps(v).replace('</', '<\\/')
+
+
+def motion(entries, scope='', base=0.0, end=None, where='Motion', hides=True):
+    """GSAP lines for a list of motion entries. scope = the element they belong to (a layer, a caption line, a word):
+    "target" is a selector INSIDE it, "self" (or nothing) is the element itself. Without a scope "target" is a
+    selector on the page, or one of TARGETS ("footage" moves the picture and the cutout together). hides = the
+    engine keeps the scope element hidden until its moment (a caption line, a layer; not a word inside a line)."""
+    if isinstance(entries, dict):
+        entries = [entries]
+    out = []
+    for k, m in enumerate(entries if isinstance(entries, list) else []):
+        if not isinstance(m, dict):
+            continue
+        tw = m.get('tween', 'from')
+        name = f'{where} {m.get("id", k + 1)}'
+        if tw not in TWEENS:
+            NOTES.append(f'{name}: tween "{tw}" is not one of {", ".join(TWEENS)}; left out.')
+            continue
+        vars_ = m.get('vars') if isinstance(m.get('vars'), dict) else {}
+        if _unsafe(m):
+            NOTES.append(f'{name}: random values or code are not allowed (two renders of one frame must match); left out. '
+                         'Write the numbers out.')
+            continue
+        tgt = str(m.get('target', 'self') or 'self').strip()
+        tgt = TARGETS.get(tgt, tgt)
+        if scope:
+            sel = scope if not tgt else ','.join(f'{scope} {t.strip()}' for t in tgt.split(',') if t.strip())
+        elif tgt:
+            sel = tgt
+        else:
+            NOTES.append(f'{name}: no target; left out.')
+            continue
+        t = (end - _num(m.get('at_end'), 0)) if m.get('at_end') is not None and end is not None else base + _num(m.get('at'), 0)
+        t = T(max(0.0, min(t, DUR)))
+        v = dict(vars_)
+        if tw == 'set':
+            v.pop('duration', None)
+            args = _jsjson(v)
+        elif tw == 'fromTo':
+            v.setdefault('immediateRender', False)
+            args = _jsjson(m.get('from') if isinstance(m.get('from'), dict) else {}) + ',' + _jsjson(v)
+        else:
+            v.setdefault('duration', .3)
+            if tw == 'from' and any(k in v for k in ('opacity', 'autoAlpha')):
+                # The engine hides an element until its moment (autoAlpha 0), so a from() would animate opacity from
+                # 0 to that hidden 0 and the element would never show. Opacity goes as its own fromTo, ending at 1.
+                # Only a caption line or a layer itself is hidden by the engine: anything inside it (rows, words,
+                # letters) has to start invisible right away (immediateRender), or it shows before its entrance and
+                # then blinks out.
+                timing = {k: v[k] for k in ('duration', 'ease', 'stagger', 'delay', 'repeat', 'yoyo', 'repeatDelay') if k in v}
+                fade = {k: v.pop(k) for k in ('opacity', 'autoAlpha') if k in v}
+                hidden = hides and bool(scope) and not tgt     # "self" of a caption line or a layer
+                out.append(f'tl.fromTo({_jsjson(sel)},{_jsjson(fade)},'
+                           f'{_jsjson({**{k: 1 for k in fade}, **timing, "immediateRender": not hidden})},{t:.3f});')
+                if not set(v) - set(timing):
+                    continue
+            args = _jsjson(v)
+        out.append(f'tl.{tw}({_jsjson(sel)},{args},{t:.3f});')
+    return out
+
+
+def reel_motion(entries):
+    """Reel-wide motion (plan.json / my-style.json "motion"): at fixed reel seconds ("at"), or on a pattern ("on"):
+    every marked word ("marks", optionally only some "kinds"), every word, every cut, or the start. my-style.json
+    only keeps the "on" kind: its times come from each new reel's own words."""
+    if isinstance(entries, dict):
+        entries = [entries]
+    out = []
+    for k, m in enumerate(entries if isinstance(entries, list) else []):
+        if not isinstance(m, dict):
+            continue
+        on = m.get('on')
+        if not on:
+            out += motion([m], '', 0.0, None, 'Reel motion')
+            continue
+        if on == 'marks':
+            kinds = m.get('kinds')
+            times = [w['start'] for w in W if w.get('e') and (not kinds or w.get('e') in kinds)]
+        elif on == 'words':
+            times = [w['start'] for w in W]
+        elif on == 'cuts':
+            times = [s0 for s0, _ in SEGS[1:]]
+        elif on == 'start':
+            times = [0.0]
+        else:
+            NOTES.append(f'Reel motion {m.get("id", k + 1)}: "on": "{on}" is not marks, words, cuts or start; left out.')
+            continue
+        every = max(1, int(_num(m.get('every'), 1)))
+        times = [t + _num(m.get('offset'), 0) for t in times[::every]][:MOTION_MAX]
+        one = {x: y for x, y in m.items() if x not in ('on', 'every', 'offset', 'kinds')}
+        for t in times:
+            out += motion([{**one, 'at': t}], '', 0.0, None, 'Reel motion')
+    return out
+
+
+def css_motion_note(css, where):
+    """css animation never plays in the renderer: say so once, so the look is rebuilt with motion entries"""
+    if css and ('@keyframes' in str(css) or 'animation:' in str(css) or 'transition:' in str(css)):
+        note = (f'{where}: css @keyframes / animation / transition do not play in the renderer (it seeks frame by frame). '
+                'Rewrite that movement as "motion" entries (references/motion.md).')
+        if note not in NOTES:
+            NOTES.append(note)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# LIVE CAMERA: the picture never stands still (references/motion.md, "the golden rule"). Every shot of the cut drifts
+# slowly around the face, pushing in on one shot and easing back out on the next; the cut itself hides the reset.
+# The drift is the one movement that is linear on purpose: it has to keep going, never settle.
+# Effect slots sit OUTSIDE the camera (their pixels, safe zone and face checks stay exactly as built, and most of them
+# move their own picture): the drift lands back on 1 the moment a slot starts and starts from 1 when it ends, so
+# there is never a jump at a slot's edge. plan.json / my-style.json "camera": {"rate": 0.015, "max": 0.045,
+# "alternate": true} or false (a still picture). Overall styles skip it: their shots already push in on their own.
+# ----------------------------------------------------------------------------------------------------------------------
+CAM_RATE, CAM_MAX = .015, .045    # scale gained per second of shot, and the most one shot may gain
+LAST_CAM = None                   # what the last page() did with the camera (build_reel.py writes it to work/build.json)
+
+
+def _camera_pieces():
+    """The stretches of the cut the camera drifts over: every shot, minus the effect slots. Each one is
+    (t0, t1, starts on a cut, ends on a cut); an edge that is not a cut touches a slot."""
+    spans = [(float(s['from']), min(float(s['to']), DUR)) for s in PLAN.get('slots') or [] if not s.get('off')]
+    out = []
+    for t0, t1 in SEGS:
+        parts = [(t0, t1)]
+        for a, z in spans:
+            parts = [q for p0, p1 in parts for q in ((p0, min(p1, a)), (max(p0, z), p1)) if q[1] - q[0] > .001]
+        out += [(p0, p1, abs(p0 - t0) < .02, abs(p1 - t1) < .02) for p0, p1 in parts]
+    return out
+
+
+def camera(b):
+    """GSAP lines for the live camera (#cam) over the whole cut. Returns what frames_check.py needs to follow it
+    (the origin in frame px and every move as [t0, t1, scale from, scale to, ease]), or None when it is off."""
+    c = EXTRA.get('camera')
+    if c is False or (isinstance(c, dict) and c.get('off')):
+        return None
+    c = c if isinstance(c, dict) else {}
+    rate, top = max(0.0, _num(c.get('rate'), CAM_RATE)), max(0.0, _num(c.get('max'), CAM_MAX))
+    if not rate or not top:
+        return None
+    alternate = c.get('alternate', True) is not False
+    if FACELESS:
+        ox, oy = 540.0, 864.0
+    else:                             # the face holds still while the room drifts around it (same point as styles.py)
+        ox, oy = float(HEAD['cx']), float(HEAD['top']) + .75 * float(HEAD['width']) - LIFT
+    b.css.append(f"\n#cam{{transform-origin:{ox:.1f}px {oy:.1f}px}}")
+    moves, k = [], 0
+
+    def move(t0, t1, s0, s1, ease):
+        if t1 - t0 < .05 or abs(s1 - s0) < 1e-4:
+            return
+        b.js.append(f"tl.fromTo('#cam',{{scale:{s0:.4f}}},{{scale:{s1:.4f},duration:{t1 - t0:.3f},ease:'{ease}',"
+                    f"immediateRender:false}},{t0:.3f});")
+        moves.append([round(t0, 3), round(t1, 3), round(s0, 4), round(s1, 4), ease])
+
+    for t0, t1, cut0, cut1 in _camera_pieces():
+        t0, t1 = T(t0), (T(t1) if t1 < DUR - .02 else DUR)
+        p = min(top, rate * (t1 - t0))
+        if cut0 and cut1:             # a whole shot: push in, then ease out on the next one
+            k += 1
+            pull = alternate and k % 2 == 0
+            move(t0, t1, 1 + p if pull else 1.0, 1.0 if pull else 1 + p, 'none')
+        elif cut0:                    # a slot comes next: arrive back on 1 right as it starts
+            move(t0, t1, 1 + p, 1.0, 'none')
+        elif cut1:                    # out of a slot: start from 1, where the slot left the picture
+            move(t0, t1, 1.0, 1 + p, 'none')
+        else:                         # between two slots in one shot: breathe in and back out
+            mid = T((t0 + t1) / 2)
+            move(t0, mid, 1.0, 1 + p / 2, 'sine.inOut')
+            move(mid, t1, 1 + p / 2, 1.0, 'sine.inOut')
+    return {'ox': round(ox, 1), 'oy': round(oy, 1), 'moves': moves} if moves else None
+
+
 def custom_top(s=None):
     """screen y of the top of the custom caption block, from its "position" (a band name or a y), kept inside the
     safe zone and off the face"""
@@ -898,8 +1096,11 @@ def custom(b):
                                       'left' | 'right'; side margin px
       entrance, exit                  'none' | 'pop' | 'fade' | 'slide-up' | 'type-on' | 'word-by-word'; 'none' | 'fade'
       css                             extra css for this style (classes: .cu block, .cu .ln line, .cu .w word, .cu .w.m
-                                      marked word, .cu .pl plate)"""
+                                      marked word, .cu .pl plate)
+      motion, word_motion, mark_motion   your own animation (see MOTION above): for each line, for each word as it is
+                                      said, for each marked word as it is said (references/motion.md)"""
     s = CUSTOM
+    css_motion_note(s.get('css'), 'Custom captions')
     fam, weight = str(s.get('font') or 'Inter Tight'), int(_num(s.get('weight'), 800))
     size, lh = _num(s.get('size'), 64), _num(s.get('line_height'), 1.12)
     case = s.get('case', 'as-typed')
@@ -984,6 +1185,11 @@ def custom(b):
                     inner = esc(txt)
                 ws.append(f'<span id="{wid}" class="{cls}">{inner}</span>')
                 ts = T(w['start'])
+                # your own motion for each word as it is said, and for each marked word (references/motion.md)
+                if s.get('word_motion'):
+                    b.js += motion(s['word_motion'], f'#{wid}', w['start'], None, 'Caption word motion', hides=False)
+                if w.get('e') and s.get('mark_motion'):
+                    b.js += motion(s['mark_motion'], f'#{wid}', w['start'], None, 'Caption mark motion', hides=False)
                 if entrance == 'word-by-word' and w is not g[0]:
                     b.js.append(f"gsap.set('#{wid}',{{opacity:0}});")
                     b.js.append(f"tl.fromTo('#{wid}',{{opacity:0,scale:1.18}},{{opacity:1,scale:1,duration:.16,ease:'back.out(2)',immediateRender:false}},{ts:.3f});")
@@ -1014,6 +1220,8 @@ def custom(b):
         else:
             b.cut(sel, t0)
         b.out(sel, t1, fade=.12 if s.get('exit') == 'fade' else 0)
+        if s.get('motion'):              # your own motion for each caption line: "at" after it comes in, "at_end" before it goes
+            b.js += motion(s['motion'], sel, t0, t1 if t1 < DUR - .02 else None, 'Caption motion')
 
 
 STYLES = {
@@ -1182,6 +1390,10 @@ def layers(b, behind=False):
                'chest', 'lower-third'. A band layer is a 1080 px wide centred box whose top sits on the band.
       from/to  reel seconds. Leave both out for a layer that stays the whole reel (a border, a corner tag).
       in/out   'none' | 'fade' | 'pop' | 'slide-up'
+      motion   your own animation for the layer (references/motion.md): "at" after it comes in, "at_end" before it goes
+      drift    how much a band layer grows while it holds (0.02 = 2%), so it never stands still. Default 0.02 on the
+               band anchors, 0 on 'full' and 'behind' (a border or a backdrop would slide off its edges), and 0 when
+               the layer's own motion already moves it ("self")
     Returns the html of the layers of one kind (behind the speaker, or in front). Layers never count as caption
     changes and never move with a slot's caption_y."""
     out = []
@@ -1228,12 +1440,22 @@ def layers(b, behind=False):
                      f'height:auto;border-radius:{_num(m.get("radius"), 0):.0f}px"></video>')
         out.append(f'<div id="{lid}" class="layer" data-name="{esc(str(l.get("id", n)))}" style="position:absolute;{box}">{media}{l.get("html", "")}</div>')
         sel, how_in, how_out = f'#{lid}', l.get('in', 'none'), l.get('out', 'none')
+        dur = 0 if how_in == 'none' else .22
         if t0 > .02 or how_in != 'none':
             b.js.append(f"gsap.set('{sel}',{{autoAlpha:0}});")
             frm = {'pop': "scale:.85,", 'slide-up': "y:40,"}.get(how_in, '')
             to = {'pop': "scale:1,ease:'back.out(2)',", 'slide-up': "y:0,ease:'power3.out',"}.get(how_in, '')
-            dur = 0 if how_in == 'none' else .22
             b.js.append(f"tl.fromTo('{sel}',{{{frm}autoAlpha:0}},{{{to}autoAlpha:1,duration:{dur},immediateRender:false}},{T(t0):.3f});")
+        css_motion_note(l.get('css'), f'Layer {l.get("id", n)}')
+        own = l.get('motion') if isinstance(l.get('motion'), list) else [l.get('motion')] if isinstance(l.get('motion'), dict) else []
+        moves_self = any(isinstance(m, dict) and str(m.get('target', 'self') or 'self') == 'self' for m in own)
+        drift = _num(l.get('drift'), 0 if y is None or moves_self else .02)
+        hold0, hold1 = T(t0) + dur, (T(t1) if t1 < DUR - .02 else DUR) - (.18 if how_out == 'fade' else 0)
+        if drift and hold1 - hold0 > .3:  # the golden rule: a layer that holds keeps growing a touch until it goes
+            b.js.append(f"tl.fromTo('{sel}',{{scale:1}},{{scale:{1 + drift:.4f},duration:{hold1 - hold0:.3f},"
+                        f"ease:'sine.inOut',immediateRender:false}},{hold0:.3f});")
+        if own:                          # the layer's own animation: "at" after it comes in, "at_end" before it goes
+            b.js += motion(own, sel, t0, t1 if t1 < DUR - .02 else None, f'Layer {l.get("id", n)} motion')
         if t1 < DUR - .02:
             if how_out == 'fade':
                 b.js.append(f"tl.to('{sel}',{{autoAlpha:0,duration:.18}},{max(0, T(t1) - .18):.3f});")
@@ -1279,6 +1501,8 @@ def page(key, safe=False):
     if b.cutout:
         footage.append(f'<div id="cutw"{up}><video id="cut" class="full" src="{CUTOUT}" muted playsinline data-start="0" '
                        f'data-media-start="0" data-duration="{DUR:.3f}" data-track-index="1"></video></div>')
+    global LAST_CAM
+    LAST_CAM = camera(b)                  # the picture never stands still (overall styles push their own shots)
     return document(b, footage, safe=safe, audio_track=2)
 
 
@@ -1290,6 +1514,8 @@ def document(b, footage, safe=False, audio_track=9):
     fx_audio = fx_audio + sounds()
     if EXTRA.get('css'):                  # the escape hatch: plain css from plan.json / my-style.json, last so it wins
         b.css.append('\n' + str(EXTRA['css']))
+        css_motion_note(EXTRA['css'], 'The style css')
+    b.js += reel_motion(EXTRA.get('motion'))   # reel-wide motion: punch-ins on key words, a flash on every cut, ...
     return f'''<!doctype html>
 <html lang="en" data-resolution="portrait">
 <head>
@@ -1304,9 +1530,11 @@ def document(b, footage, safe=False, audio_track=9):
 <div id="root" data-composition-id="main" data-start="0" data-duration="{DUR:.3f}" data-width="1080" data-height="1920">
   <audio id="bga" src="{VIDEO}" data-start="0" data-media-start="0" data-duration="{DUR:.3f}" data-track-index="{audio_track}" data-volume="1"></audio>
 {nl.join('  ' + h for h in fx_audio)}
+  <div id="cam"><div id="punch">
   <div id="footage">
 {nl.join('    ' + h for h in footage)}
   </div>
+  </div></div>
   <div id="slots">
 {nl.join('    ' + h for h in fx)}
   </div>

@@ -66,9 +66,29 @@ el reel; cuando dice NOT matched, mira dos veces. Si se nota un borde, saca el e
 dilo.
 
 Para un estilo de subtítulos sin estilo completo, el script también imprime cuánto del área no segura y de la caja de
-la cara cambió respecto del corte crudo. Sobre un 1,5% significa que hay algo dibujado ahí. Se salta esos números
-cuando el look cambia el color o mueve la imagen, y en cada cuadro dentro de un espacio de efecto (el efecto cambia la
-imagen a propósito): ahí la imagen es la única prueba.
+la cara cambió respecto del corte crudo. Sobre un 1,5% significa que hay algo dibujado ahí. La cámara viva no lo
+confunde: el script mueve el cuadro crudo igual que ella antes de comparar. Se salta esos números cuando el look cambia
+el color o mueve la imagen con entradas de movimiento, y en cada cuadro dentro de un espacio de efecto (el efecto
+cambia la imagen a propósito): ahí la imagen es la única prueba.
+
+## 4. Revisión del movimiento (antes del render y en el render final)
+
+Las reglas están en `references/motion.md`. Antes de renderizar, toma instantáneas también en la MITAD de cada
+entrada y de cada movimiento, no solo cuando todo se asentó. Confirma:
+
+| Revisión | Falla cuando | Arreglo |
+|---|---|---|
+| Nada se detiene | un gráfico, tarjeta o título se queda congelado más de 1 s; un reel sin estilo completo armado con `"camera": false` sin que él lo pidiera | deja la deriva de la capa (`drift`), agrega un `to` lento de escala 1,02, vuelve a encender la cámara |
+| Nada lineal | una entrada, salida, paneo o zoom con `ease: 'none'` | `back.out` en entradas, `power2.in` en salidas, `power2.inOut` en la cámara |
+| Escalonado | filas, tarjetas, íconos o checks que aparecen todos en el mismo cuadro | `stagger` de 0,04 a 0,07 s |
+| Contadores | un número que salta al valor final en un cuadro | que suba en cerca de 1 s, `power2.out` |
+| Legible | un titular o número que se va antes de 1 s (salvo un corte justo) | que entre antes o dure hasta el corte |
+| Ningún texto encima de otro | dos textos que se tapan en algún cuadro, sobre todo en los bordes de cada espacio y capa | mira los cuadros de cada borde y corrige tiempos o lugar |
+| Movimiento dentro de lo seguro | algo que en la mitad de su movimiento cruza la cara o sale de la zona segura | menos recorrido, otro origen, o que entre desde otro lado |
+| Nada sale del cuadro sin querer | un elemento que queda cortado por el borde y no está saliendo a propósito | muévelo hacia adentro o achícalo |
+| Cámara | la línea `camera=` de `build_reel.py` dice `still` en un reel sin estilo completo | quita `"camera": false` del plan o del estilo |
+
+## 5. Cortes y entrega
 
 `check_cuts.py` cubre los cortes (cuadro antes / después de cada corte) y escribe la copia para el celular.
 

@@ -11,7 +11,8 @@ copia para el celular y da notas. Puede cambiar su estilo de edición cuando qui
 
 Lee antes de la primera edición: `references/cutting.md` (tomas, silencios, corregir la transcripción),
 `references/captions.md` (los 19 estilos de subtítulos, cómo marcar palabras, dónde van los subtítulos),
-`references/checks.md` (chequeo de toma, autorrevisión, zona segura). Lee `references/styles.md` cuando las
+`references/checks.md` (chequeo de toma, autorrevisión, zona segura), `references/motion.md` (cómo se mueve todo lo
+que dibujas: la regla de oro, entradas, salidas, cámara viva, entradas de movimiento). Lee `references/styles.md` cuando las
 elecciones tengan un estilo completo, `effects/INDEX.md` cuando tengan efectos y `references/gotchas.md` cuando un
 armado o render falle. Lee `references/replicate.md` apenas el usuario muestre un ejemplo o describa un look propio.
 Lee `references/gifs.md` cuando pida GIFs (puedes buscarlos tú y ponerlos en las frases correctas).
@@ -264,6 +265,9 @@ el conjunto de entradas que tiene el motor. Di lo que no se pudo igualar. Nunca 
    se copia tal cual (`-c:a copy`). Si hay que codificarlo, una sola vez y en AAC 320k a 48 kHz, nunca menos. No
    bajes la tasa de bits ni el muestreo para que un archivo pese menos. La imagen tampoco se aplasta: el render final
    sale con CRF 16 y la copia para el celular en 1080p con CRF 20.
+10. Nada se detiene nunca. La imagen tiene la cámara viva (sale sola en todo reel sin estilo completo; no la apagues
+   salvo que él lo pida), cada gráfico que se queda sigue derivando, nada entra lineal ni todo en el mismo cuadro.
+   Las reglas y cómo escribir cualquier movimiento: `references/motion.md`.
 
 ## Flujo de trabajo ("edítalo")
 
@@ -290,9 +294,11 @@ de `clipsDir`.
                           PY "SK/scripts/fx_add.py" "<project>" "<slot>"      (escribe el espacio en plan.json)
        paso a paso: effects/INDEX.md
 8. PY "SK/scripts/build_reel.py" "<project>" --safe     lee las elecciones -> index.html, zona no segura en rojo
+                                                        (su línea "camera=" debe decir live salvo en un estilo completo)
    PY "SK/scripts/hf.py" "<project>" lint               0 errores
    PY "SK/scripts/hf.py" "<project>" snapshot --at <5 a 10 momentos> --no-end --describe false
-                                                        lee <project>/snapshots/contact-sheet.jpg, corrige
+                                                        lee <project>/snapshots/contact-sheet.jpg, corrige. Incluye
+                                                        momentos en la MITAD de cada entrada (references/checks.md, 4)
 9. PY "SK/scripts/build_reel.py" "<project>"            el mismo armado SIN la guía roja
    PY "SK/scripts/hf.py" "<project>" render -o renders/<slug>-v1.mp4 --quality high
                                                         unos 20 a 45 s por cada 10 s de reel en Apple Silicon, hasta

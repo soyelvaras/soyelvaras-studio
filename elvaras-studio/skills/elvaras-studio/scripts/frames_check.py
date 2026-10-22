@@ -21,6 +21,7 @@ contrast, so anything above about 1.5% means something is drawn there: look at t
 slot get no numbers (the effect moves or regrades the picture on purpose): those are judged by eye.
 """
 import json
+import math
 import os
 import subprocess
 import sys
@@ -57,6 +58,24 @@ def changed(a, b, box):
     d = ImageChops.difference(a.convert('L').crop((x0, y0, x1, y1)), b.convert('L').crop((x0, y0, x1, y1)))
     hist = d.histogram()
     return sum(hist[60:]) / max(1, sum(hist))
+
+
+def follow_camera(raw, cam, t):
+    """the raw frame moved the way the live camera moved the reel at t (work/build.json "camera"), so the two numbers
+    compare like with like"""
+    m = next((m for m in (cam or {}).get('moves') or [] if m[0] - .001 <= t < m[1]), None)
+    if not m:
+        return raw
+    u = min(max((t - m[0]) / max(m[1] - m[0], 1e-6), 0.0), 1.0)
+    if len(m) > 4 and m[4] == 'sine.inOut':
+        u = (1 - math.cos(math.pi * u)) / 2
+    s = m[2] + (m[3] - m[2]) * u
+    if abs(s - 1) < 1e-4:
+        return raw
+    ox, oy = cam['ox'] / S, cam['oy'] / S
+    big = raw.resize((round(FW * s), round(FH * s)), Image.BICUBIC)
+    x0, y0 = round(ox * (s - 1)), round(oy * (s - 1))
+    return big.crop((x0, y0, x0 + FW, y0 + FH))
 
 
 def main():
@@ -106,7 +125,7 @@ def main():
             # an effect moves, regrades or covers the picture on purpose: the two numbers would always fire
             line += f"   inside the {in_slot.get('key') or in_slot.get('slot')} effect: no automatic numbers, judge this frame by eye"
         elif raw_ok and os.path.isfile(aroll):
-            raw = grab(aroll, t, os.path.join(out_dir, f'a_{col}.png'))
+            raw = follow_camera(grab(aroll, t, os.path.join(out_dir, f'a_{col}.png')), built.get('camera'), t)
             u = max(changed(im, raw, box) for box in unsafe)
             line += f'   unsafe area changed {u * 100:4.1f}%'
             f = changed(im, raw, face) if face else 0.0

@@ -57,6 +57,13 @@ def read(path, fallback=None):
         return fallback
 
 
+def motion_entries(mine, plan):
+    """Reel-wide motion: my-style.json's patterns ("on": marks / words / cuts), then this reel's own entries. An entry
+    at fixed seconds in my-style.json belonged to the reel it was built on, so it is left out."""
+    return [m for m in (mine.get('motion') or []) if isinstance(m, dict) and m.get('on')] + \
+           [m for m in (plan.get('motion') or []) if isinstance(m, dict)]
+
+
 def main():
     skillenv.utf8_stdio()
     if len(sys.argv) < 2 or sys.argv[1].startswith('--'):
@@ -93,7 +100,10 @@ def main():
     cap.EXTRA = {'layers': always + [l for l in (plan.get('layers') or []) if isinstance(l, dict)],
                  'grade': plan.get('grade', mine.get('grade')),
                  'css': '\n'.join(str(c) for c in (mine.get('css'), plan.get('css')) if c),
-                 'sounds': plan.get('sounds') or []}
+                 'sounds': plan.get('sounds') or [],
+                 # reel-wide motion (references/motion.md) and the live camera ("camera": false = a still picture)
+                 'motion': motion_entries(mine, plan),
+                 'camera': plan.get('camera', mine.get('camera'))}
     fonts_src = skillenv.my_fonts_dir()
     if os.path.isdir(fonts_src):                 # fonts fetched for the buyer's style (get_font.py) go with every reel
         os.makedirs(os.path.join(proj, 'assets', 'fonts'), exist_ok=True)
@@ -165,20 +175,32 @@ def main():
         what = f'style=none captions={caption}'
     notes += cap.NOTES
     n_layers = len(cap.EXTRA.get('layers') or [])
-    if own_look or n_layers or cap.EXTRA.get('grade') or cap.EXTRA.get('css') or cap.EXTRA.get('sounds'):
+    if own_look or n_layers or cap.EXTRA.get('grade') or cap.EXTRA.get('css') or cap.EXTRA.get('sounds') or cap.EXTRA.get('motion'):
         what += ('  [the buyer\'s own style: ' + ', '.join(x for x in (
             own_look if caption == 'custom' or own_look and not opt('--caption') else None,
             f'{n_layers} layer(s)' if n_layers else None, 'grade' if cap.EXTRA.get('grade') and not style else None,
             'css' if cap.EXTRA.get('css') else None,
-            f"{len(cap.EXTRA['sounds'])} sound cue(s)" if cap.EXTRA.get('sounds') else None) if x) + ']')
+            f"{len(cap.EXTRA['sounds'])} sound cue(s)" if cap.EXTRA.get('sounds') else None,
+            f"{len(cap.EXTRA['motion'])} motion entr(ies)" if cap.EXTRA.get('motion') else None) if x) + ']')
+    cam = None if style else getattr(cap, 'LAST_CAM', None)
+    what += ('  camera=live (' + ', '.join(f'{(max(m[2], m[3]) - 1) * 100:.1f}%' for m in cam['moves'][:6])
+             + (' ...' if len(cam['moves']) > 6 else '') + ')') if cam else ('  camera=' + ('style' if style else 'still'))
+    # reel motion that moves or filters the picture itself (a punch-in on key words, a flash on cuts) means the
+    # automatic self-check cannot compare the render with the footage any more
+    moves_picture = any(str(m.get('target', '')).strip() in ('footage', 'speaker', '#root', '#cam', '#punch', '#plate', '#cutw')
+                        for m in (cap.EXTRA.get('motion') or []) if isinstance(m, dict))
+    if moves_picture:
+        notes.append('Reel motion moves the picture (footage, speaker or #root), so the self-check cannot compare '
+                     'the render with the footage: look at the frames_check sheet yourself, mid-move too.')
     with open(os.path.join(proj, 'index.html'), 'w', encoding='utf-8', newline='\n') as fh:
         fh.write(html)
     # what was built, for frames_check.py: the automatic checks only make sense when the picture was not regraded or moved
     os.makedirs(os.path.join(proj, 'work'), exist_ok=True)
     with open(os.path.join(proj, 'work', 'build.json'), 'w', encoding='utf-8') as fh:
+        # the live camera is followed by frames_check.py (it moves the raw frame the same way before comparing)
         json.dump({'style': style, 'caption': caption, 'safe': safe,
-                   'untouched_footage': not style and not cap.LIFT and not cap.EXTRA.get('grade'),
-                   'face_in_place': not style}, fh, indent=1)
+                   'untouched_footage': not style and not cap.LIFT and not cap.EXTRA.get('grade') and not moves_picture,
+                   'face_in_place': not style, 'camera': cam}, fh, indent=1)
     marks = sum(1 for w in cap.W if w.get('e'))
     print(f'built index.html  {what}  words={len(cap.W)} marked={marks}  dur={cap.DUR:.3f}s  '
           f'slots={len(live)}  safe guide={"ON (snapshots only)" if safe else "off"}')

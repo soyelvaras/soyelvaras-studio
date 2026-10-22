@@ -149,6 +149,10 @@ decide de cuál de los dos tipos son sus palabras, y agrega lo que encuentres al
 - Todo lo demás en un efecto también se puede cambiar: volumen del sonido (`SFX_GAIN`, `SOUNDS`, `SFX=0`), fuerza del
   movimiento (`PUSH`, las escalas en `ZOOMS`), tiempos (los valores de cuadro y segundo del bloque CLIP), colores
   (`ACCENT`, `GRADE`).
+- Al adaptar el movimiento de un efecto en la copia de su espacio, sigue `references/motion.md`: entradas con un
+  pequeño exceso, salidas más rápidas, nada lineal, nada que entre todo en el mismo cuadro, y lo que se queda sigue
+  derivando. Los espacios quedan fuera de la cámara viva del reel (ella vuelve a 1 en sus bordes), así que un efecto
+  que deja la imagen quieta más de 1 s necesita su propio empuje lento.
 
 | Efecto | Sus palabras | Interruptor que las apaga | Dónde se define el look en el `build.py` del espacio |
 |---|---|---|---|
