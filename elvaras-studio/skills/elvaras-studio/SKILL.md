@@ -349,16 +349,16 @@ PY "SK/scripts/render_window.py" "<project>/fx/<slot>" <desde> <hasta> --webm -o
 
 ### Trial reels: "haz 5 trial reels"
 
-Con el reel aprobado, el usuario puede pedir versiones de prueba para Instagram. Cada versión cambia una sola cosa (el
-gancho, los subtítulos, los colores o los efectos) y además lleva un pase propio de velocidad, encuadre y color, así
-que ninguna es copia de otra. Lee `references/trials.md` antes de empezar. En corto:
+Con el reel aprobado, el usuario puede pedir versiones de prueba para Instagram. Cada versión es claramente distinta:
+su propio gancho (un titular distinto o la apertura en Pantalla LED), su velocidad, su ritmo de zoom sobre los cortes,
+su color y, si el reel lo permite, otros subtítulos. Lee `references/trials.md` antes de empezar. En corto:
 ```
-PY "SK/scripts/trials.py" plan "<project>" --base renders/<slug>-vN.mp4 --count 5     propone la mezcla; pregúntale
+PY "SK/scripts/trials.py" plan "<project>" --base renders/<slug>-vN.mp4 --count 5     propone las versiones; escribe los titulares y pregúntale
 PY "SK/scripts/trials.py" make "<project>"                                            arma cada versión
 PY "SK/scripts/trials.py" render "<project>"                                          en segundo plano, una por una
 ```
-El gancho se renderiza solo en su tramo y se pega sobre el render aprobado (~1 min). Subtítulos, colores y efectos
-necesitan un render completo cada uno.
+El gancho se renderiza solo en su tramo y se pega sobre el render aprobado (~1 min); velocidad, zoom y color son un
+pase de ffmpeg. Solo otros subtítulos piden un render completo, y un reel de Página y Tarjeta los conserva.
 
 ## Lo que escucha el usuario
 
