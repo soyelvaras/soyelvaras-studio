@@ -354,7 +354,7 @@ window.STUDIO_CATALOG = {
    "n": 15,
    "key": "checklist",
    "name": "Checklist",
-   "line": "Cada paso se marca a medida que lo dices. Tres versiones.",
+   "line": "Cada paso se marca a medida que lo dices. Cuatro versiones.",
    "preview": "previews/effects/checklist-1.mp4",
    "poster": "previews/posters/effects/checklist-1.jpg",
    "variants": [
@@ -366,15 +366,21 @@ window.STUDIO_CATALOG = {
     },
     {
      "n": 2,
-     "name": "Libreta a mano",
+     "name": "Vidrio",
      "preview": "previews/effects/checklist-2.mp4",
      "poster": "previews/posters/effects/checklist-2.jpg"
     },
     {
      "n": 3,
-     "name": "Notificaciones",
+     "name": "Libreta a mano",
      "preview": "previews/effects/checklist-3.mp4",
      "poster": "previews/posters/effects/checklist-3.jpg"
+    },
+    {
+     "n": 4,
+     "name": "Notificaciones",
+     "preview": "previews/effects/checklist-4.mp4",
+     "poster": "previews/posters/effects/checklist-4.jpg"
     }
    ],
    "category": "effect"
@@ -383,7 +389,7 @@ window.STUDIO_CATALOG = {
    "n": 21,
    "key": "pointer-callout",
    "name": "Llamadas",
-   "line": "Tarjetas unidas a ti con líneas que te siguen. Tres versiones.",
+   "line": "Tarjetas unidas a ti con líneas que te siguen. Cuatro versiones.",
    "preview": "previews/effects/pointer-callout-1.mp4",
    "poster": "previews/posters/effects/pointer-callout-1.jpg",
    "variants": [
@@ -395,15 +401,21 @@ window.STUDIO_CATALOG = {
     },
     {
      "n": 2,
-     "name": "Etiquetas de museo",
+     "name": "Vidrio",
      "preview": "previews/effects/pointer-callout-2.mp4",
      "poster": "previews/posters/effects/pointer-callout-2.jpg"
     },
     {
      "n": 3,
-     "name": "Notas a mano",
+     "name": "Etiquetas de museo",
      "preview": "previews/effects/pointer-callout-3.mp4",
      "poster": "previews/posters/effects/pointer-callout-3.jpg"
+    },
+    {
+     "n": 4,
+     "name": "Notas a mano",
+     "preview": "previews/effects/pointer-callout-4.mp4",
+     "poster": "previews/posters/effects/pointer-callout-4.jpg"
     }
    ],
    "category": "effect"
@@ -685,10 +697,23 @@ window.STUDIO_CATALOG = {
    "n": 31,
    "key": "prompt-box",
    "name": "Caja de Prompt",
-   "line": "Lo que le pides a la IA se escribe solo y un cursor aprieta enviar.",
+   "line": "Lo que le pides a la IA se escribe solo y un cursor aprieta enviar. Dos versiones.",
    "preview": "previews/effects/prompt-box.mp4",
    "poster": "previews/posters/effects/prompt-box.jpg",
-   "variants": [],
+   "variants": [
+    {
+     "n": 1,
+     "name": "Caja",
+     "preview": "previews/effects/prompt-box.mp4",
+     "poster": "previews/posters/effects/prompt-box.jpg"
+    },
+    {
+     "n": 2,
+     "name": "Vidrio",
+     "preview": "previews/effects/prompt-box-2.mp4",
+     "poster": "previews/posters/effects/prompt-box-2.jpg"
+    }
+   ],
    "category": "effect"
   },
   {

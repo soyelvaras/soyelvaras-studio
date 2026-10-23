@@ -50,11 +50,20 @@ SIZE = 'auto'     # 'auto' = as large as the measured open space allows, or a nu
 FLOOR = 0.82      # smallest size that still reads on a phone (36 px text). Under it the build stops instead of shrinking
 ACCENT, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'   # line / dots / icon tile, card text, card. Brand colours, never orange
 GRADE = 'none'    # CSS filter on the picture. Leave 'none': the reel grades, and anything else also changes frame 0
-VARIANT = 1       # look: 1 = Tarjetas (dark cards with an icon), 2 = Etiquetas de museo (numbered cream labels, serif), 3 = Notas a mano (handwriting and drawn arrows)
-ACCENT_WORD = 'Claude'   # versions 2 and 3: this word of a card is drawn in the accent colour. '' = none
-GLASS = None      # Vidrio Líquido (engine/glass.py): the tint alpha behind the cream text, .42 over a dark room, .6 or
-                  # more over a bright wall. None = the solid card
+VARIANT = 1       # look: 1 = Tarjetas (dark cards with an icon), 2 = Vidrio (the Tarjetas in live glass), 3 = Etiquetas de
+                  # museo (numbered cream labels, serif), 4 = Notas a mano (handwriting and drawn arrows)
+ACCENT_WORD = 'Claude'   # versions 3 and 4: this word of a card is drawn in the accent colour. '' = none
+GLASS = None      # Vidrio (version 2): the tint alpha behind the cream text. None = .62 (reads over a bright wall too);
+                  # .42 over a dark room
 # ==== END CLIP ====
+
+# the versions as the picker numbers them (version 2 is always Vidrio). Inside, Vidrio is the Tarjetas in live glass,
+# so the look code below keeps its own three: 1 Tarjetas, 2 Etiquetas de museo, 3 Notas a mano
+if VARIANT == 2:
+    GLASS = .62 if GLASS is None else GLASS
+else:
+    GLASS = None
+VARIANT = {1: 1, 2: 1, 3: 2, 4: 3}.get(VARIANT, 1)
 
 FP = shutil.which('ffprobe') or 'ffprobe'
 SL, ST, SR, SB, SY2, SR2 = 35, 220, 1045, 1470, 1155, 980       # safe zone; the right side tightens to 980 from y 1155

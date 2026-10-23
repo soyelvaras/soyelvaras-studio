@@ -49,13 +49,20 @@ GRADE = ''          # CSS filter on the footage. '' = leave it (the main reel gr
 VIGNETTE = 0        # 0 to .4 edge darkening. 0 inside a reel that has its own vignette. Standalone clip: .30
 PUSH = 1.0          # slow push-in across the slot (1.0 = none). Only above 1.0 (demo: 1.03) on a locked-off shot that does not cut back to plain a-roll.
 KEEP_OUT = []       # [(x0, y0, x1, y1), ...] px rects the main reel uses (its label pill, its caption band): the card never enters them.
-VARIANT = 1         # look: 1 = Tarjeta (dark glass card), 2 = Libreta a mano (lined paper, handwriting, drawn ticks), 3 = Notificaciones (each step a phone notification)
+VARIANT = 1         # look: 1 = Tarjeta (dark card), 2 = Vidrio (the Tarjeta in live glass), 3 = Libreta a mano (lined paper,
+                    # handwriting, drawn ticks), 4 = Notificaciones (each step a phone notification)
 PAPER = '#F6F0E2'   # Libreta: paper colour
 MARGIN = '#C9A15B'  # Libreta: margin line and ticks
 HAND_INK = '#141615'  # Libreta: handwriting colour
 TITLE_INK = '#5B3F2C'  # Libreta: title colour
 APP_NAME = 'Claude'   # Notificaciones: the app name on every notification
 # ==== END CLIP ====
+
+# the versions as the picker numbers them (version 2 is always Vidrio). Inside, Vidrio is the Tarjeta in live glass, so
+# the look code below keeps its own three: 1 Tarjeta, 2 Libreta a mano, 3 Notificaciones
+if VARIANT == 2:
+    GLASS = 'liquid'
+VARIANT = {1: 1, 2: 1, 3: 2, 4: 3}.get(VARIANT, 1)
 
 FF = shutil.which('ffmpeg') or 'ffmpeg'
 FP = shutil.which('ffprobe') or 'ffprobe'

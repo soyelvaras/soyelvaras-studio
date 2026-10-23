@@ -50,6 +50,12 @@ gráfico si toca la cara o el área roja. Con `SAFE=1` la toma va debajo para ju
 El movimiento sigue `references/motion.md` (base común en `vgfx.py`): entrada con un pequeño exceso, salida más rápida,
 piezas escalonadas, y mientras se queda sigue creciendo un poco.
 
+## Versiones (`VARIANT` en el bloque CLIP)
+1. **Caja**: la caja bosque (el original), superpuesta.
+2. **Vidrio**: la caja en Vidrio Líquido (`engine/glass.py`): lo de atrás se ve desenfocado y en movimiento. Necesita
+   la imagen debajo, así que el render es un `.mp4` normal (`slot.json` "layer" pasa a "glass" solo) y la cámara
+   viva del reel se queda quieta mientras dura el espacio.
+
 ## El estilo del usuario manda
 El bloque STYLE al inicio de `build.py` trae Soy Elvaras (Work Sans, Bebas Neue, Instrument Serif itálica, crema,
 dorado, bosque). Antes del primer armado, ajústalo al estilo de subtítulos del reel (`effects/INDEX.md`, "Reestilizar

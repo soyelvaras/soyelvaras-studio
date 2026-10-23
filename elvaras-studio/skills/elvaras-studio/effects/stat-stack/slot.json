@@ -5,8 +5,7 @@
  "cutout": "none",
  "layer": "overlay",
  "libs": [
-  "vgfx.py",
-  "glass.py"
+  "vgfx.py"
  ],
  "hi": "no",
  "reel_captions": "hide",

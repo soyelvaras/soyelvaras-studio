@@ -38,7 +38,7 @@ cosas en una tarjeta".
 | `CARD_BOX` | `'auto'` o `(x, y, w, h)` donde debe caber la tarjeta | auto lee work/prep.json; cámbialo después de mirar las instantáneas |
 | `LAYER` | `'behind'` / `'front'` / `'auto'` | detrás siempre que haya espacio; adelante solo sobre el pecho o las piernas, nunca la cara |
 | `OVERLAP` | px que la tarjeta se mete detrás de lo alto de la cabeza | 40; 0 para dejarla libre |
-| `GLASS` | `'auto'` / `'glass'` / `'opaque'` | deja auto |
+| `GLASS` | `'auto'` / `'glass'` / `'opaque'` / `'liquid'` | deja auto (la versión 2 lo pone en `'liquid'`) |
 | `ACCENT` | color de la marca | dorado `#C9A15B` |
 | `GRADE`, `VIGNETTE`, `PUSH` | look de la imagen en el espacio | `''`, `0`, `1.0` cuando el espacio va en un reel que tiene su propio color; valores de demo para un clip suelto |
 | `KEEP_OUT` | rectángulos que usa el reel (cápsula de título, franja de subtítulos) | del plan del reel; la ubicación automática se mantiene fuera, una caja puesta a mano recibe un aviso |
@@ -101,11 +101,14 @@ cuadro).
 
 ## Versiones (`VARIANT` en el bloque CLIP)
 
-El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Las tres usan
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Las cuatro usan
 los mismos tiempos (`ROWS`, `F_DONE`) y el mismo lugar.
 
 1. **Tarjeta**: la tarjeta de vidrio oscura con contador (el original).
-2. **Libreta a mano**: hoja de libreta (`PAPER`) con margen dorado (`MARGIN`), título en Bebas (`TITLE_INK`), letra a
+2. **Vidrio**: la misma tarjeta en Vidrio Líquido (`engine/glass.py`): el cuarto y las manos se ven moviéndose
+   detrás, desenfocados, y el borde dobla la imagen. Funciona también con la cámara en mano. La versión 2 de los efectos
+   con tarjeta es siempre Vidrio.
+3. **Libreta a mano**: hoja de libreta (`PAPER`) con margen dorado (`MARGIN`), título en Bebas (`TITLE_INK`), letra a
    mano Caveat (`HAND_INK`), casillas cuadradas con un ticket dibujado y cinta arriba.
-3. **Notificaciones**: cada paso es una notificación de vidrio que entra cuando se dice, con el nombre de la app
+4. **Notificaciones**: cada paso es una notificación de vidrio que entra cuando se dice, con el nombre de la app
    (`APP_NAME`) arriba; la última se vuelve crema cuando la lista termina.

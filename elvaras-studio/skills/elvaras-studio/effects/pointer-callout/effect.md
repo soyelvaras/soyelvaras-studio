@@ -100,13 +100,15 @@ Un espacio de 5 s toma unos 4 minutos de punta a punta una vez que existe el rec
 
 ## Versiones (`VARIANT` en el bloque CLIP)
 
-El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Las tres usan
+El usuario la elige en el selector (puntitos bajo la tarjeta); `fx_new.py` la escribe sola en el espacio. Las cuatro usan
 el mismo seguimiento, las mismas líneas y el mismo reparto del espacio.
 
 1. **Tarjetas**: tarjetas oscuras con ícono y líneas doradas (el original).
-2. **Etiquetas de museo**: rótulos crema numerados (01, 02...), texto en Instrument Serif cursiva, línea crema fina y
+2. **Vidrio**: las mismas tarjetas en Vidrio Líquido (`engine/glass.py`): lo de atrás se ve desenfocado y en
+   movimiento. `GLASS` es el tinte detrás del texto crema: `None` = .62, que se lee también sobre una pared clara.
+3. **Etiquetas de museo**: rótulos crema numerados (01, 02...), texto en Instrument Serif cursiva, línea crema fina y
    punto dorado. Sin ícono ni detalle (`icon` y `sub` se ignoran).
-3. **Notas a mano**: sin tarjeta, palabras en Caveat crema con un subrayado dorado y una flecha dibujada que apunta al
+4. **Notas a mano**: sin tarjeta, palabras en Caveat crema con un subrayado dorado y una flecha dibujada que apunta al
    cuerpo.
 
-En 2 y 3, `ACCENT_WORD` (por defecto 'Claude') va en el color de acento.
+En 3 y 4, `ACCENT_WORD` (por defecto 'Claude') va en el color de acento.

@@ -116,11 +116,12 @@ function mask(k){
   mc.fillStyle = '#fff'; mc.textAlign = 'center'; mc.textBaseline = 'middle';
   let fs = 40; mc.font = `800 ${fs}px "Inter Tight"`;
   const tw = mc.measureText(w.text).width || 1;
-  fs = Math.min(40 * cols * 0.80 / zk / tw, rows * 0.17 / zk);
+  fs = Math.min(40 * cols * 0.84 / zk / tw, rows * 0.18 / zk);
   mc.font = `800 ${fs}px "Inter Tight"`;
   mc.fillText(w.text, cols / 2, rows * 0.46);
   const d = mc.getImageData(0, 0, cols, rows).data, a = new Float32Array(cols * rows);
-  for (let i = 0; i < a.length; i++) a[i] = d[i * 4] / 255;
+  // crisp letters: the antialiased edge is pulled to on or off, so a word reads as letters and not as a smudge
+  for (let i = 0; i < a.length; i++) { const x = Math.min(1, Math.max(0, (d[i * 4] / 255 - 0.28) / 0.4)); a[i] = x * x * (3 - 2 * x); }
   if (document.fonts && document.fonts.check(`800 20px "Inter Tight"`)) masks[k] = a;   // cache only once the font is in
   return a;
 }
@@ -141,7 +142,7 @@ function draw(t){
   const cell = C.pitch * z, cx = W / 2, cy = H * 0.46;
   const c0 = Math.max(0, Math.floor(cols / 2 - (W / 2) / cell) - 1), c1 = Math.min(cols, Math.ceil(cols / 2 + (W / 2) / cell) + 1);
   const r0 = Math.max(0, Math.floor(rows * 0.46 - cy / cell) - 1), r1 = Math.min(rows, Math.ceil(rows * 0.46 + (H - cy) / cell) + 1);
-  const sw = cell / 3 * 0.74, sh = cell * 0.82, gap = cell / 3;
+  const sw = cell / 3 * 0.84, sh = cell * 0.86, gap = cell / 3;
   const R = [255, 60, 52], G = [64, 255, 96], B = [72, 112, 255];
   for (let r = r0; r < r1; r++) {
     const y = cy + (r - rows * 0.46) * cell + cell * 0.09;
@@ -149,8 +150,9 @@ function draw(t){
       const x = cx + (c - cols / 2) * cell;
       const v = a[r * cols + c] * flick * on;
       const n = 0.94 + 0.12 * hash(c + f * 7, r);
-      const base = 0.075 * on;
-      const lr = (base + (col[0] / 255) * v) * n, lg = (base + (col[1] / 255) * v) * n, lb = (base + (col[2] / 255) * v) * n;
+      const base = 0.045 * on;
+      const lit = Math.min(1, v * 1.2);
+      const lr = (base + (col[0] / 255) * lit) * n, lg = (base + (col[1] / 255) * lit) * n, lb = (base + (col[2] / 255) * lit) * n;
       ctx.fillStyle = `rgb(${R[0] * lr | 0},${R[1] * lr | 0},${R[2] * lr | 0})`; ctx.fillRect(x + gap * 0.13, y, sw, sh);
       ctx.fillStyle = `rgb(${G[0] * lg | 0},${G[1] * lg | 0},${G[2] * lg | 0})`; ctx.fillRect(x + gap * 1.13, y, sw, sh);
       ctx.fillStyle = `rgb(${B[0] * lb | 0},${B[1] * lb | 0},${B[2] * lb | 0})`; ctx.fillRect(x + gap * 2.13, y, sw, sh);
@@ -158,8 +160,8 @@ function draw(t){
   }
   // bloom: the lit dots bleed a soft glow, stronger as the camera gets close
   gx.clearRect(0, 0, glow.width, glow.height);
-  gx.filter = `blur(${4 + 6 * p}px)`; gx.drawImage(cv, 0, 0, glow.width, glow.height); gx.filter = 'none';
-  ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.55 + 0.25 * p;
+  gx.filter = `blur(${3 + 4 * p}px)`; gx.drawImage(cv, 0, 0, glow.width, glow.height); gx.filter = 'none';
+  ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.32 + 0.18 * p;
   ctx.drawImage(glow, 0, 0, W, H);
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
 }

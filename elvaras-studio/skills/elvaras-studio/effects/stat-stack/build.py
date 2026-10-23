@@ -28,7 +28,6 @@ STYLE = dict(
     accent='#C9A15B',              # dorado: the number. None = same as ink
     card='#13281F',
     shadow=True,
-    glass=False,                   # Vidrio Líquido (engine/glass.py): True = the number sits in a live glass card
 )
 # ==== END STYLE ====
 
@@ -44,9 +43,6 @@ SUBS = None         # the small caps lines under it: [(text, seconds), ...], eac
 T_OUT = None        # when it leaves (slot seconds). None = the end of the slot
 Y = None            # centre of the number, screen px. None = the chest band from layout.json, clear of the chin
 SIZE = 230          # px of the number; long numbers shrink to fit the width by themselves
-LABEL = ''          # glass card only: a small caps word in its top corner, said by the speaker ('EDICIÓN'). '' = none
-CHART = True        # glass card only: a line draws along the card while the number counts. A shape, never a claim:
-                    # no axis, no values (effects/chart-grow/effect.md, "El gráfico es una afirmación")
 # ==== END CLIP ====
 
 WEAK = {'el', 'la', 'los', 'las', 'un', 'una', 'de', 'del', 'y', 'o', 'que', 'en', 'a', 'al', 'con', 'por', 'para', 'es',
@@ -94,13 +90,8 @@ def main():
             if took:
                 subs.append((' '.join(V.bare(w['text']) for w in took).upper(), took[0]['start']))
     t_out = T_OUT if T_OUT is not None else s.dur
-    glassy = bool(STYLE.get('glass'))
     size = int(min(SIZE, 900 / max(len(number) * .42, 1)))
-    if glassy:
-        size = int(size * .8)
-        gw = int(min(900, max(560, len(number) * size * .5 + 200)))
-        gh = int(size * .86 + (58 if subs else 0) + (130 if CHART else 0) + 96)
-    y = s.band((gh if glassy else size + 70), Y)
+    y = s.band(size + 70, Y)
     if y is None:
         V.die('there is no room under or above the face on this clip for the number')
     p = V.Page(s)
@@ -115,36 +106,13 @@ def main():
     parts = count_parts(shown) if COUNT > 0 else None
     counting = bool(parts) and parts[1] >= 10 and t_out - t_in > COUNT + .3
     start = f'{parts[0]}0{parts[3]}' if counting else shown
-    inner = (f'<div id="{i}n" class="vg-big" style="font-size:{size}px">{V.esc(start)}</div>'
-             f'<div style="position:relative;height:48px;margin-top:10px">{sub_html}</div>')
-    if glassy:
-        # the glass card: label top left, the number and its line, and (CHART) a line that draws while it counts
-        pts = [(0, .08), (.18, .14), (.36, .22), (.55, .34), (.74, .58), (1, .92)]
-        cw, chh = gw - 96, 110
-        path = 'M' + ' L'.join(f'{x * cw:.0f},{chh - yy * chh:.0f}' for x, yy in pts)
-        ex, ey = cw, chh - pts[-1][1] * chh
-        chart = (f'<svg class="stc" width="{cw}" height="{chh + 12}" viewBox="0 -6 {cw} {chh + 12}" style="overflow:visible">'
-                 f'<path id="{i}ln" d="{path}" fill="none" stroke="{STYLE["accent"]}" stroke-width="6" stroke-linecap="round" '
-                 f'stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>'
-                 f'<circle id="{i}dt" cx="{ex:.0f}" cy="{ey:.0f}" r="10" fill="{STYLE["accent"]}" stroke="{STYLE["ink"]}" stroke-width="3"/>'
-                 '</svg>') if CHART else ''
-        lab = f'<div class="stl vg-small">{V.esc(LABEL.upper())}</div>' if LABEL else ''
-        inner = (f'{lab}<div id="{i}n" class="vg-big" style="font-size:{size}px">{V.esc(start)}</div>'
-                 f'<div style="position:relative;height:{48 if subs else 0}px;margin-top:{10 if subs else 0}px">{sub_html}</div>{chart}')
-        p.css.append(f'''
-.st.g{{position:relative;width:{gw}px;height:{gh}px;margin:0 auto;border-radius:44px;padding:40px 48px 0;{p.glass_css('st', gw, gh, 44)}}}
-.st.g .stl{{position:absolute;left:48px;top:30px;font-size:24px;letter-spacing:.18em;opacity:.72}}
-.st.g .stc{{position:absolute;left:48px;bottom:36px}}''')
-    p.html.append(f'<div class="stw" style="top:{y}px"><div id="{i}" class="st{" g" if glassy else ""}">{inner}</div></div>')
+    p.html.append(f'<div class="stw" style="top:{y}px"><div id="{i}" class="st"><div id="{i}n" class="vg-big" '
+                  f'style="font-size:{size}px">{V.esc(start)}</div><div style="position:relative;height:48px;margin-top:10px">'
+                  f'{sub_html}</div></div></div>')
     p.enter(f'#{i}', t_in, {'scale': 1.25, 'y': 10}, {'scale': 1, 'y': 0}, .3, 'back.out(2)')
     p.drift(f'#{i}', t_in + .3, t_out - V.LEAVE)
     p.leave(f'#{i}', t_out)
     p.sound('pop', t_in, .2)
-    if glassy and CHART:
-        draw = max(COUNT, .5) + .25
-        p.js.append(f"tl.to('#{i}ln',{{strokeDashoffset:0,duration:{draw:.3f},ease:'power2.inOut'}},{V.T(t_in + .08):.3f});")
-        p.enter(f'#{i}dt', t_in + .08 + draw - .05, {'scale': 0}, {'scale': 1}, .2, 'back.out(3)')
-        p.js.append(f"gsap.set('#{i}dt',{{transformOrigin:'50% 50%',transformBox:'fill-box'}});")
     if counting:
         pre, value, sep, post = parts
         fmt = (f"(Math.round(o.v)+'').replace(/\\B(?=(\\d{{3}})+(?!\\d))/g,{json.dumps(sep)})" if sep else 'Math.round(o.v)')
