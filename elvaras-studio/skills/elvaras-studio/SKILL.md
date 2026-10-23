@@ -328,6 +328,23 @@ palabra dicha sin subtítulo salvo que las palabras del propio efecto la lleven.
 Ronda de notas: cambia `edl.json` / `words.json` / `plan.json`, vuelve a armar desde el paso que cambió y renderiza
 `-v2`. Guarda cada versión en `renders/`.
 
+### Correcciones puntuales: render por tramos (siempre que se pueda)
+
+Cuando el reel ya está validado y la nota toca solo unos segundos, NO lo renderices entero. Arregla la fuente, vuelve a
+armar (build y los scripts del proyecto que tocan `index.html`) y renderiza solo esa ventana. El script la pega en el
+render aprobado, en los cuadros exactos, y copia el audio tal cual:
+```
+PY "SK/scripts/render_window.py" "<project>" <desde> <hasta> "renders/<slug>-vN.mp4" -o "renders/<slug>-vN+1.mp4"
+PY "SK/scripts/render_window.py" "<project>/fx/<slot>" <desde> <hasta> --webm -o "renders/<nombre>.webm"
+```
+- La segunda forma es para un efecto o una pasada de gráficos: renderiza solo la ventana y apunta el espacio del efecto
+  a ese archivo (`media` = inicio del espacio − `<desde>`). Después arregla la ventana del reel con la primera.
+- Deja unos cuadros de margen antes y después del cambio. Revisa que el total de cuadros sea el mismo que el de la base
+  (lo imprime) y mira cuadros a ambos lados de las dos uniones.
+- Un tramo de 2 s toma menos de un minuto, en vez de 6 a 10 minutos del reel completo, y muchos menos tokens.
+- Renderiza todo de nuevo solo si el cambio atraviesa el reel: el corte, los tiempos, el estilo de subtítulos, un
+  efecto que se repite en todo el video.
+
 ## Lo que escucha el usuario
 
 - Al empezar una edición: "Voy. Estoy eligiendo tus mejores tomas y cortando los silencios."

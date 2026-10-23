@@ -26,7 +26,15 @@
   Haz que la primera termine antes del set.
 - Lint rechaza animar letterSpacing: simula el espaciado con scaleX.
 - Los ids de elementos no pueden tener apóstrofos.
-- Las máscaras CSS no sobreviven al motor de render. Hornea el canal alfa en un webm VP9.
+- Las máscaras CSS sobre video no sobreviven al motor de render. Hornea el canal alfa en un webm VP9. Una
+  `mask-image` con PNG sobre HTML sí funciona (el editor que se quema, 22-10), pero el PNG tiene que traer canal
+  ALFA: uno en escala de grises no recorta nada.
+- Un `filter` (aunque sea `blur(0px)`) sobre un elemento `preserve-3d` lo aplana: la z de sus hijos se pierde y la
+  cámara termina encima de todo. Desenfoca el contenedor con la perspectiva y deja `filter:'none'` al terminar.
+- Nunca un `filter` sobre la placa del video del reel (`#plate`): el a-roll deja de pintarse más adelante en el render.
+- La cámara viva del motor (`#cam` / `#punch`) envuelve la toma, no `#layers`. Algo que debe calzar con la toma (un
+  recorte de la persona encima, la cabeza fuera de la tarjeta) necesita la cámara en reposo (`scale:1`) mientras se
+  ve, o aparece un doble borde. Y nunca uses el id `cam` en un script de proyecto: ya es del motor.
 - Leer un webm con alfa con ffmpeg: `-c:v libvpx-vp9` ANTES de `-i`, y `alphaextract` antes de `scale`.
 - Mucho backdrop-filter o desenfoque en muchos elementos puede dejar las capturas en negro. Limítalo a unos pocos.
 - HyperFrames corre levemente los colores del video respecto de imágenes fijas y colores CSS: un cuadro congelado al
