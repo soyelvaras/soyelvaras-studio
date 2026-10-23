@@ -30,6 +30,8 @@ midiendo esos cuadros. Son rápidos (sin recorte) y funcionan en cualquier encua
 de apps (`engine/icons`, 46 apps; `get_icon.py "<app>"` baja otra con licencia libre): solo cuando la persona nombra
 esa app.
 
+**Vidrio Líquido** no es un efecto: es un look para las tarjetas. La tarjeta desenfoca EN VIVO lo que tiene detrás (las manos y el cuarto se siguen moviendo) y su borde dobla la imagen como el canto de un vidrio grueso (`engine/glass.py`). Hoy lo tienen Caja de Prompt, Cifra Grande (con una línea que se dibuja mientras cuenta) y Fila de Cápsulas (`glass=True` en su bloque STYLE), y está probado en Checklist y Llamadas. Un superpuesto en vidrio necesita su propia imagen debajo: su render pasa a ser un .mp4 normal (`slot.json` "layer": "glass", lo pone `vgfx.py` solo), así que la cámara viva se detiene en 1 mientras dura. Sobre una pared clara, el texto crema necesita más tinte (`dark=.6`).
+
 Todos los efectos usan por defecto los colores de Soy Elvaras (dorado #C9A15B como acento, crema #F2ECDF como texto
 claro, tinta #141615 y bosque #13281F como oscuros) y sus textos en pantalla por defecto están en español.
 
@@ -180,6 +182,7 @@ decide de cuál de los dos tipos son sus palabras, y agrega lo que encuentres al
 | Negativo | el efecto (solo las palabras que importan, en negativo). Los subtítulos del reel se ocultan mientras dura | ninguno | `WORDS` (escribe el texto en las mayúsculas o minúsculas del estilo), `COLORS` (los dos colores del negativo), y las reglas css `.ng` (tipografía `'Work Sans'` 900; otra tipografía necesita su archivo en `NG_FONT` para medir) |
 | Muro de Palabras | el efecto (el muro de palabras) | ninguno | `PHRASES`, `FS`, `INK`, `ACCENT`, `GROUND`, `ACCENT_Y`. Tipografía: su propio `@font-face` (`'Inter Tight Wall'`) y la regla `.wd`. El muro se dibuja en mayúsculas |
 | Caja de Prompt, Cifra Grande, Fila de Cápsulas, Puntos | el efecto (lo que se escribe, el número y su línea, las cápsulas). Caja de Prompt, Cifra Grande y Puntos ocultan los subtítulos del reel solo mientras están arriba; Fila de Cápsulas los deja correr | ninguno (`CAPTIONS=0` se acepta y no cambia nada) | el bloque `STYLE` al inicio de `build.py`, igual en los cuatro: `font`, `weight`, `tracking`, `big_font`, `big_weight`, `big_tracking`, `case`, `small_font`, `small_weight`, `serif_font`, `ink`, `accent`, `card`, `shadow` |
+| Pantalla LED | el efecto (las palabras dichas, una por una en la pantalla). Los subtítulos del reel se ocultan mientras dura | ninguno | `CASE`, `ACCENT` (palabras en dorado) en el bloque CLIP; los colores `LIGHT` / `DORADO` bajo él; la tipografía es `800 "Inter Tight"` en el canvas (`mask()` en el js de `build.py`) |
 
 Comentario es el que tiene un bloque de estilo listo. En los otros efectos hechos de palabras la tipografía está en
 reglas css dentro de `build.py`: cambia la familia y el grosor ahí, mantén las variables de tamaño, y mira la
@@ -259,6 +262,7 @@ uno de estos: reestiliza las palabras de un efecto a los valores de esa especifi
 | 29 | Tarjeta de Título | `title-card` | listo | Una tarjeta de capítulo: la imagen corta a la pantalla bosque con un código de tiempo que corre y un título grande en serif que aterriza palabra por palabra; la persona vuelve en un marco de teléfono con barra de reproducción y crece hasta la imagen completa. | "pon una tarjeta de título en esta parte" | cualquiera | cualquiera | no hace falta | ninguno | ninguno | ninguno |
 | 28 | Negativo | `negative-words` | listo | Solo las palabras que importan, enormes y en negativo (verde bosque sobre lo claro, dorado sobre lo oscuro), la grande detrás de la cabeza cuando cabe, con zooms que siguen la cara. Los subtítulos del reel se ocultan mientras dura. | "pon esa cifra en negativo detrás de mi cabeza" | abierto o medio, con espacio sobre la cabeza | quieta o con deriva | no hace falta | limpio | cara (track.py, como Zoom Digital) | ninguno |
 | 27 | Flicker | `flicker` | listo | El corte entre dos tomas se vuelve una ráfaga de destellos que aterriza en la toma siguiente (versión 1, la principal: primero parpadea la persona de la toma siguiente, después el fondo; versión 2: parpadea todo el cuadro). | "haz un flicker en ese corte" | cualquiera, dos tomas seguidas | cualquiera | no hace falta | limpio (solo la versión 1) | ninguno (no se mide nada: capas que aparecen y desaparecen por cuadro) | ninguno |
+| 35 | Pantalla LED | `led-screen` | listo | La imagen corta a una pantalla LED oscura: tus palabras se encienden una por una en sus puntos rojos, verdes y azules, la cámara avanza y en la última palabra entra hasta ver los subpíxeles, y vuelve a ti desde un encuadre más cerrado. | "pon mis palabras en una pantalla LED" | cualquiera | cualquiera | no hace falta | ninguno | ninguno | ninguno |
 
 ## Por efecto: qué tiene que entregar el usuario, y qué vigilar
 
@@ -296,4 +300,5 @@ uno de estos: reestiliza las palabras de un efecto a los valores de esa especifi
 - **Cifra Grande** (LISTO, superpuesto, `effects/stat-stack/`). Necesita del usuario: nada; solo un número que dice de verdad. Sube como contador cuando vale 10 o más (respeta separadores y %). Whisper puede partir "3.000": escribe `NUMBER` a mano.
 - **Fila de Cápsulas** (LISTO, superpuesto, `effects/chip-row/`). Necesita del usuario: nada; las cápsulas son lo que enumera (2 a 4, de 1 a 3 palabras), con logo solo para una app que nombra. Los subtítulos del reel siguen arriba: revisa que no se toquen.
 - **Puntos** (LISTO, superpuesto, `effects/dot-counter/`). Necesita del usuario: nada; un número dicho de 2 a 8. Con `FILL_AT` el espacio cubre la lista entera (puede cruzar cortes) y cada punto se llena en su paso.
+- **Pantalla LED** (LISTO, `effects/led-screen/`: build.py, effect.md, slot.json). No necesita nada del usuario ni recorte. Las palabras son las que dice, cada una en su cuadro (`WORDS = None` las lee de `words.json`). Mejor con una frase corta y una última palabra corta: ahí entra el empujón fuerte. Los subtítulos del reel se ocultan mientras dura la pantalla.
 <!-- LIST:END -->

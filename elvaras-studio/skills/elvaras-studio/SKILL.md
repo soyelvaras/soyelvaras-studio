@@ -1,6 +1,6 @@
 ---
 name: elvaras-studio
-description: "Soy Elvaras Studio. Convierte clips verticales 9:16 de alguien hablando a cámara en un reel de Instagram terminado, con el look guardado en el selector de estilo: uno de 19 estilos de subtítulos o uno de 3 estilos completos, más los efectos y transiciones elegidos. Elige la toma más limpia de cada frase, corta los silencios, transcribe con tiempo por palabra, ubica los subtítulos según dónde está la persona en el cuadro y revisa todo dentro de la zona segura de Reels. Responde siempre en español. Úsala cuando el usuario diga 'edítalo', 'edita estos clips', 'dejé clips en descargas', 'arma un reel con esto', 'cambia mis subtítulos', 'cambia mis efectos', 'cambia mi estilo', 'abre el selector', 'actualiza el Studio', o sus versiones en inglés ('edit it', 'open the picker'), o cuando ejecute /elvaras-studio."
+description: "Soy Elvaras Studio. Convierte clips verticales 9:16 de alguien hablando a cámara en un reel de Instagram terminado, con el look guardado en el selector de estilo: uno de 19 estilos de subtítulos o uno de 3 estilos completos, más los efectos y transiciones elegidos. Elige la toma más limpia de cada frase, corta los silencios, transcribe con tiempo por palabra, ubica los subtítulos según dónde está la persona en el cuadro y revisa todo dentro de la zona segura de Reels. Responde siempre en español. Úsala cuando el usuario diga 'edítalo', 'edita estos clips', 'dejé clips en descargas', 'arma un reel con esto', 'cambia mis subtítulos', 'cambia mis efectos', 'cambia mi estilo', 'abre el selector', 'actualiza el Studio', 'haz 5 trial reels', 'hazme versiones de prueba', o sus versiones en inglés ('edit it', 'open the picker', 'make trial reels'), o cuando ejecute /elvaras-studio."
 ---
 
 # Soy Elvaras Studio (elvaras-studio)
@@ -346,6 +346,19 @@ PY "SK/scripts/render_window.py" "<project>/fx/<slot>" <desde> <hasta> --webm -o
 - Un tramo de 2 s toma menos de un minuto, en vez de 6 a 10 minutos del reel completo, y muchos menos tokens.
 - Renderiza todo de nuevo solo si el cambio atraviesa el reel: el corte, los tiempos, el estilo de subtítulos, un
   efecto que se repite en todo el video.
+
+### Trial reels: "haz 5 trial reels"
+
+Con el reel aprobado, el usuario puede pedir versiones de prueba para Instagram. Cada versión cambia una sola cosa (el
+gancho, los subtítulos, los colores o los efectos) y además lleva un pase propio de velocidad, encuadre y color, así
+que ninguna es copia de otra. Lee `references/trials.md` antes de empezar. En corto:
+```
+PY "SK/scripts/trials.py" plan "<project>" --base renders/<slug>-vN.mp4 --count 5     propone la mezcla; pregúntale
+PY "SK/scripts/trials.py" make "<project>"                                            arma cada versión
+PY "SK/scripts/trials.py" render "<project>"                                          en segundo plano, una por una
+```
+El gancho se renderiza solo en su tramo y se pega sobre el render aprobado (~1 min). Subtítulos, colores y efectos
+necesitan un render completo cada uno.
 
 ## Lo que escucha el usuario
 

@@ -28,6 +28,7 @@ STYLE = dict(
     accent='#C9A15B',              # dorado: the send button, the huge words
     card='#13281F',                # bosque: the box fill
     shadow=True,                   # soft shadow under words that sit on footage
+    glass=False,                   # Vidrio Líquido (engine/glass.py): True = the card turns to live glass over the footage
 )
 # ==== END STYLE ====
 
@@ -83,7 +84,7 @@ def main():
 .pbw{{position:absolute;left:{left}px;width:{width}px;transform:translateY(-50%)}}
 .pb{{position:relative;border:2px solid {ink}A6;
   border-top-color:{'transparent' if notch else ink + 'A6'};border-radius:28px;background:{card}C7;
-  box-shadow:0 18px 50px rgba(0,0,0,.32);padding:34px {40 + (88 if SEND else 0)}px 30px 40px}}
+  box-shadow:0 18px 50px rgba(0,0,0,.32);{p.glass_css('pb', width, height, 28, edge=False) if STYLE.get('glass') else ''}padding:34px {40 + (88 if SEND else 0)}px 30px 40px}}
 .pb .top{{position:absolute;left:26px;right:26px;top:-21px;height:40px;display:flex;align-items:center;gap:14px}}
 .pb .top i{{flex:1;height:2px;background:{ink}A6}}
 .pb .top .lb{{display:flex;align-items:center;gap:10px;font-size:28px}}

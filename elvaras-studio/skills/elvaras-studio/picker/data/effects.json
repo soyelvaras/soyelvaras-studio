@@ -561,6 +561,16 @@
    "preview": "previews/effects/dot-counter.mp4",
    "poster": "previews/posters/effects/dot-counter.jpg",
    "en": "Dot Counter"
+  },
+  {
+   "n": 35,
+   "key": "led-screen",
+   "name": "Pantalla LED",
+   "job": "Gancho",
+   "line": "Tus palabras se encienden una por una en una pantalla de puntos y la cámara entra hasta ver los subpíxeles.",
+   "preview": "previews/effects/led-screen.mp4",
+   "poster": "previews/posters/effects/led-screen.jpg",
+   "en": "LED Screen"
   }
  ]
 }

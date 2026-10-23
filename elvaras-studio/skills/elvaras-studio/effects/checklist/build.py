@@ -42,7 +42,8 @@ F_OUT = None        # frame the card leaves (whips off in ~7 frames), or None = 
 CARD_BOX = 'auto'   # 'auto' = largest room the speaker leaves free while the card is up (work/prep.json), or (x, y, w, h) px the card must fit inside.
 LAYER = 'auto'      # 'behind' = between the room and the speaker's cutout (the speaker overlaps it), 'front' = over the speaker, 'auto' = behind unless front is clearly larger.
 OVERLAP = 40        # px the card may tuck behind the top of the speaker's head when it sits above the speaker ('behind' only). 0 = keep clear.
-GLASS = 'auto'      # 'auto' = glass when prep.py says the camera is steady, else opaque. Or force 'glass' / 'opaque'.
+GLASS = 'auto'      # 'auto' = glass when prep.py says the camera is steady, else opaque. Or force 'glass' / 'opaque', or
+                    # 'liquid' = Vidrio Líquido (engine/glass.py): the room and the hands move live behind the card
 ACCENT = '#C9A15B'  # tick, bar and accent-word colour (the house butter yellow). Never orange.
 GRADE = ''          # CSS filter on the footage. '' = leave it (the main reel grades the slot). Standalone clip: 'contrast(1.05) saturate(.95) brightness(.99)'
 VIGNETTE = 0        # 0 to .4 edge darkening. 0 inside a reel that has its own vignette. Standalone clip: .30
@@ -386,7 +387,15 @@ else:
     GLASS_MODE = GLASS
     if GLASS == 'glass' and PREP and not PREP['camera']['still']:
         warn(f'GLASS forced on a moving camera (drift {PREP["camera"]["drift_px"]} px): the room behind the glass will not move with the shot')
-if GLASS_MODE == 'glass':
+LG_CSS = LG_DEFS = ''
+if GLASS_MODE == 'liquid':
+    import glass as _glass
+    LG = _glass.Glass()
+    LG_CSS = LG.card('chk', WN, H0, RAD, dark=True)
+    LG_DEFS = LG.defs()
+    CARD_BG = 'transparent'
+    TINT = 'linear-gradient(158deg,rgba(20,22,21,.10) 0%,rgba(20,22,21,.26) 100%)'
+elif GLASS_MODE == 'glass':
     gf = PREP['camera']['glass_frame'] if PREP else N // 2
     # the room seen through the glass: one blurred still of the plate, cropped to the card rect, contrast flattened
     subprocess.run([FF, '-v', 'error', '-y', '-i', 'assets/aroll.mp4', '-vf',
@@ -478,7 +487,7 @@ def checklist():
 #cl3{{transform-origin:50% 62%}}
 #cls{{position:absolute;left:0;top:0;width:{WN:.1f}px;height:{H0}px;transform:scale({K:.4f});transform-origin:0 0}}
 #clsh{{position:absolute;left:40px;right:40px;top:70px;bottom:-26px;border-radius:{RAD}px;background:rgba(24,16,8,.55);filter:blur(46px)}}
-.card{{position:absolute;inset:0;border-radius:{RAD}px;overflow:hidden;background:{CARD_BG};box-shadow:0 10px 26px rgba(16,10,6,.30)}}
+.card{{position:absolute;inset:0;border-radius:{RAD}px;overflow:hidden;background:{CARD_BG};box-shadow:0 10px 26px rgba(16,10,6,.30);{LG_CSS}}}
 .tint{{position:absolute;inset:0;background:{TINT}}}
 .edge{{position:absolute;inset:0;border-radius:{RAD}px;border:1.5px solid rgba(255,248,239,.15);
   box-shadow:inset 0 1.5px 0 rgba(255,255,255,.20),inset 0 -1px 0 rgba(0,0,0,.35)}}
@@ -717,6 +726,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:#000}}
 <style>{css}</style>
 </head>
 <body>
+{LG_DEFS}
 <div id="root" data-composition-id="main" data-start="0" data-duration="{DUR:.4f}" data-width="1080" data-height="1920">
   <audio id="bga" src="assets/aroll.mp4" data-start="0" data-media-start="0" data-duration="{DUR:.4f}" data-track-index="2" data-volume="1"></audio>
 {nl.join(audio())}

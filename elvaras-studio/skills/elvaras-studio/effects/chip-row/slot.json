@@ -5,7 +5,8 @@
  "cutout": "none",
  "layer": "overlay",
  "libs": [
-  "vgfx.py"
+  "vgfx.py",
+  "glass.py"
  ],
  "icons": true,
  "hi": "no",

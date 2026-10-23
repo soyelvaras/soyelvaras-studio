@@ -9,6 +9,8 @@ Usage (run with PY):
   PY render_window.py "<project>/fx/<slot>" <from> <to> --webm -o "renders/<name>.webm"
         a sub-composition (an fx slot, a graphics pass): renders only the window as a transparent WebM. Point the
         slot at it (src = that file, media = slot start - <from>) and then fix the reel window as above.
+  -c <file.html>  read the window from this composition in <project> instead of index.html (a trial reel's own
+        build, scripts/trials.py). Same frame grid, same length.
 
 Rules (the standard way to apply notes since 2026-10-22):
   - A note about some seconds of an approved render -> this script. A full render only when the change runs across
@@ -35,8 +37,8 @@ FF, FP = skillenv.tool('ffmpeg'), skillenv.tool('ffprobe')
 OPEN = re.compile(r'<(?:video|audio)\b[^>]*>')
 
 
-def window_html(comp, t0, t1):
-    s = open(os.path.join(comp, 'index.html'), encoding='utf-8').read()
+def window_html(comp, t0, t1, src='index.html'):
+    s = open(os.path.join(comp, src), encoding='utf-8').read()
     dur = t1 - t0
 
     def media(m):
@@ -84,7 +86,11 @@ def main():
     args = sys.argv[1:]
     webm = '--webm' in args
     args = [a for a in args if a != '--webm']
-    out = None
+    out, src = None, 'index.html'
+    if '-c' in args:
+        i = args.index('-c')
+        src = args[i + 1]
+        del args[i:i + 2]
     if '-o' in args:
         i = args.index('-o')
         out = args[i + 1]
@@ -99,7 +105,7 @@ def main():
         fps, base_frames, has_audio = probe(base)
     f0, f1 = round(float(args[1]) * fps), round(float(args[2]) * fps)
     t0, t1 = f0 / fps, f1 / fps
-    kept = window_html(comp, t0, t1)
+    kept = window_html(comp, t0, t1, src)
     print(f'STATUS window {t0:.3f}-{t1:.3f} frames {f0}-{f1} ({f1 - f0} frames), {kept} media kept')
     hf = [sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hf.py'), comp, 'render', '-c', 'window.html']
     part = out if webm else os.path.join('renders', '_window.mp4')

@@ -1,0 +1,24 @@
+{
+ "key": "led-screen",
+ "pack": "led-screen",
+ "imported": "2026-10-23",
+ "cutout": "none",
+ "hi": "no",
+ "reel_captions": "keep",
+ "captions_note": "the LED screen covers the whole frame and carries the words, so build.py writes work/reel_captions.json and the reel's captions step aside from the cut until the speaker has settled back",
+ "reel_env": [],
+ "in_a_reel": [
+  "the words are the speaker's own, each on the frame it is said (WORDS = None takes them from the slot's words.json)",
+  "T_IN 2 or later and T_OUT 2 frames or more before the slot ends: the slot starts and ends on the plain picture",
+  "best on a short punchy line of 3 to 6 words; a long sentence turns into a slideshow"
+ ],
+ "sounds": {},
+ "steps": [
+  "edit the CLIP block in build.py: T_IN, T_OUT, ACCENT (WORDS = None reads them from words.json)",
+  "run build.py SAFE=1      # prints the words with their frames and the snapshot times",
+  "hf lint",
+  "hf snapshot --at <the times build.py prints>",
+  "run build.py",
+  "hf render"
+ ]
+}

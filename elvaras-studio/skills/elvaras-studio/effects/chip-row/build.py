@@ -25,6 +25,7 @@ STYLE = dict(
     accent='#C9A15B',              # dorado: the last chip's outline (the one the list lands on)
     card='#13281F',                # bosque: the chip fill
     shadow=True,
+    glass=False,                   # Vidrio Líquido (engine/glass.py): True = the card turns to live glass over the footage
 )
 # ==== END STYLE ====
 
@@ -72,7 +73,10 @@ def main():
     for k, (text, _, app) in enumerate(chips):
         logo = p.icon(app, int(size * 1.15)) if app else ''
         last = ' last' if LAST_ACCENT and k == len(chips) - 1 and len(chips) > 1 else ''
-        pills += f'<span id="{i}c{k}" class="chip vg-small{last}">{logo}{V.esc(V.cased(text, STYLE["case"]))}</span>'
+        cw = len(text) * size * .56 + 2 * size * .87 + (size * 1.55 if app else 0)
+        ch = size * 1.08 + 2 * int(size * .42) + 4
+        gl = (f' style="width:{cw:.0f}px;justify-content:center;' + p.glass_css(f'c{k}', cw, ch, ch / 2) + '"') if STYLE.get('glass') else ''
+        pills += f'<span id="{i}c{k}" class="chip vg-small{last}"{gl}>{logo}{V.esc(V.cased(text, STYLE["case"]))}</span>'
     p.html.append(f'<div class="crw" style="top:{y}px"><div id="{i}" class="cr">{pills}</div></div>')
     for k, (text, at, app) in enumerate(chips):
         p.enter(f'#{i}c{k}', at, {'y': 16, 'scale': .86}, {'y': 0, 'scale': 1}, .24, 'back.out(2.2)', t_out=t_out)

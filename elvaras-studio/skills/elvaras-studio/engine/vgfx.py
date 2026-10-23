@@ -9,6 +9,8 @@ What it gives a build.py:
   Page          collects html / css / timeline lines / sounds and writes index.html (the slot's own footage under it
                 only in SAFE=1 / PREVIEW=1 builds). Motion helpers: enter, leave, drift, press, cursor. Logos: icon
   style_css()   the STYLE block as css rules (.vg-word, .vg-big, .vg-small, .vg-serif)
+  Page.glass_css  Vidrio Líquido (engine/glass.py) for a card, when STYLE has glass on: the slot's own footage then goes
+                under the graphics and the render is a normal opaque slot (slot.json "layer" becomes "glass")
   T(sec)        a time snapped onto the 30 fps frame grid, 2 ms early so a hard set lands ON that frame
 
 No cutout, no extra Python packages. Placement comes from the reel's layout.json (scripts/layout.py) when the slot
@@ -162,6 +164,17 @@ def _json(path, fallback):
         return fallback
 
 
+def _set_layer(layer):
+    """slot.json in the slot folder says how the render goes into the reel: 'overlay' (transparent .webm over the reel's
+    footage) or 'glass' (Vidrio Líquido needs the footage in the page, so an opaque .mp4 like any other slot)"""
+    meta = _json('slot.json', None)
+    if meta and meta.get('layer') in ('overlay', 'glass') and meta['layer'] != layer:
+        meta['layer'] = layer
+        with open('slot.json', 'w', encoding='utf-8') as fh:
+            json.dump(meta, fh, indent=1, ensure_ascii=False)
+            fh.write('\n')
+
+
 def style_css(S):
     """the STYLE block as css: one place where the user's look goes in"""
     shadow = 'text-shadow:0 2px 18px rgba(0,0,0,.38);' if S.get('shadow', True) else ''
@@ -185,6 +198,19 @@ class Page:
         self.css, self.html, self.js, self.hidden, self.sfx = [], [], [], [], []
         self.n = 0
         self.icons = _json(os.path.join('assets', 'icons', 'icons.json'), {})
+        self.glass = None
+
+    def glass_css(self, key, w, h, radius, dark=True, edge=True):
+        """css declarations that turn a w x h card into Vidrio Líquido. dark = tint alpha behind light text (True =
+        the default, a number for a card over a bright wall). edge False = keep the card's own border"""
+        if self.glass is None:
+            sys.path.insert(0, os.getcwd())
+            import glass
+            self.glass = glass.Glass()
+        css = self.glass.card(key, w, h, radius, dark=dark)
+        if not edge:
+            css = re.sub(r'border:[^;]*;', '', css)
+        return css
 
     def nid(self, p='e'):
         self.n += 1
@@ -290,7 +316,9 @@ class Page:
             lanes[lane] = t + d
             audio.append(f'<audio id="sfx{k}" src="assets/sfx/{name}.mp3" data-start="{t:.3f}" data-duration="{d:.3f}" '
                          f'data-track-index="{10 + lane}" data-volume="{vol * gain:.3f}"></audio>')
-        footage = ('' if not PREVIEW else
+        glassy = self.glass is not None
+        _set_layer('glass' if glassy else 'overlay')
+        footage = ('' if not (PREVIEW or glassy) else
                    f'<audio id="bga" src="assets/aroll.mp4" data-start="0" data-media-start="0" data-duration="{dur:.4f}" data-track-index="2" data-volume="1"></audio>\n'
                    f'  <video id="bgv" class="full" src="assets/aroll.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{dur:.4f}" data-track-index="0"></video>')
         hide = f"gsap.set({json.dumps(sorted(set(self.hidden)))}.join(','),{{autoAlpha:0}});" if self.hidden else ''
@@ -303,7 +331,7 @@ class Page:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
-html,body{{width:1080px;height:1920px;overflow:hidden;background:{'#000' if PREVIEW else 'transparent'}}}
+html,body{{width:1080px;height:1920px;overflow:hidden;background:{'#000' if PREVIEW or glassy else 'transparent'}}}
 #root{{position:relative;width:1080px;height:1920px;overflow:hidden}}
 .full{{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover}}
 #fx{{position:absolute;inset:0;z-index:5;pointer-events:none}}
@@ -311,6 +339,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:{'#000' if PREV
 </style>
 </head>
 <body>
+{self.glass.defs() if glassy else ''}
 <div id="root" data-composition-id="main" data-start="0" data-duration="{dur:.4f}" data-width="1080" data-height="1920">
   {footage}
   {chr(10).join(audio)}
@@ -333,5 +362,7 @@ window.__timelines["main"] = tl;
         with open('index.html', 'w', encoding='utf-8', newline='\n') as fh:
             fh.write(page)
         print(f'index.html written: {self.s.frames} frames ({dur:.2f}s), {len(audio)} sound(s), '
-              + ('footage under it, SAFE guide ON (snapshots only)' if SAFE else 'footage under it (PREVIEW=1, snapshots only)' if PREVIEW
+              + ('footage under it, SAFE guide ON (snapshots only)' if SAFE else
+                 'Vidrio Líquido: the slot footage under it, so hf render makes an opaque .mp4 (a normal slot, not an overlay)' if glassy else
+                 'footage under it (PREVIEW=1, snapshots only)' if PREVIEW
                  else 'transparent graphics only (the final build: hf render makes a .webm the reel lays over its own footage)'))

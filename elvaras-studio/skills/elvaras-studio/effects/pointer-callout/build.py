@@ -22,6 +22,8 @@ import numpy as np
 from PIL import Image, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+import glass as _glass  # noqa: E402
+LG = _glass.Glass()
 FPS = 30
 
 # ==== CLIP (edit this) ====
@@ -50,6 +52,8 @@ ACCENT, CREAM, INK = '#C9A15B', '#F2ECDF', '#141615'   # line / dots / icon tile
 GRADE = 'none'    # CSS filter on the picture. Leave 'none': the reel grades, and anything else also changes frame 0
 VARIANT = 1       # look: 1 = Tarjetas (dark cards with an icon), 2 = Etiquetas de museo (numbered cream labels, serif), 3 = Notas a mano (handwriting and drawn arrows)
 ACCENT_WORD = 'Claude'   # versions 2 and 3: this word of a card is drawn in the accent colour. '' = none
+GLASS = None      # Vidrio Líquido (engine/glass.py): the tint alpha behind the cream text, .42 over a dark room, .6 or
+                  # more over a bright wall. None = the solid card
 # ==== END CLIP ====
 
 FP = shutil.which('ffprobe') or 'ffprobe'
@@ -443,7 +447,7 @@ def callout(c):
     icon = c.get('icon', 'check') if VARIANT == 1 else 'none'
     ic = f'<div id="{i}ic" class="ic"><svg viewBox="0 0 48 48">{ICONS[icon]}</svg></div>' if icon != 'none' else f'<div id="{i}ic"></div>'
     sub = f'<div class="sub">{sub_html(c)}</div>' if c.get('sub', 'none') != 'none' else ''
-    card = (f'<div id="{i}" class="card{"" if icon != "none" else " noic"}" style="left:{left}px;top:{top}px;width:{w}px;'
+    card = (f'<div id="{i}" class="card{"" if icon != "none" else " noic"}" style="left:{left}px;top:{top}px;width:{w}px;{LG.card(i, w, CARD_H, 32 * K, dark=GLASS) if GLASS is not None else ''}'
             f'transform-origin:{px - left:.1f}px {py - top:.1f}px">{ic}'
             f'<div class="tx"><div class="num">{CARDS.index(c) + 1:02d}</div><div class="lbm"><div id="{i}lb" class="lb">{label_html(c["text"])}</div></div>{sub}</div></div>')
     d0 = frames[0][0]
@@ -621,6 +625,7 @@ drawFrame(0);
 <style>{CSS}</style>
 </head>
 <body>
+{LG.defs()}
 <div id="root" data-composition-id="main" data-start="0" data-duration="{DUR:.3f}" data-width="1080" data-height="1920">
   <video id="plate" src="assets/aroll.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{DUR:.3f}" data-track-index="0"></video>
   <audio id="voice" src="assets/aroll.mp4" data-start="0" data-media-start="0" data-duration="{DUR:.3f}" data-track-index="2" data-volume="1"></audio>

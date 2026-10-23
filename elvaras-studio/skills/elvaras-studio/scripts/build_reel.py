@@ -2,12 +2,17 @@
 """Turn the buyer's saved picks into the reel's composition: <project>/index.html.
 
 Usage:  PY build_reel.py <project_dir> [--safe] [--picks <file>] [--caption <key>] [--style <key>] [--no-my-style]
+                        [--plan-over <file>] [--out <file>]
 
-  --safe            draw the Reels unsafe area in red (for snapshots only; never render with it)
+  --safe           draw the Reels unsafe area in red (for snapshots only; never render with it)
   --picks <file>    read this picks file instead of the saved one (studio-picks.json in the state folder)
   --caption <key>   one-off: use this caption style for this build without changing the saved picks
   --style <key>     one-off: use this overall style for this build ("none" = no overall style)
   --no-my-style     one-off: ignore the buyer's own style (my-style.json) and build from the saved picks
+  --plan-over <f>   one-off: a json file whose fields replace this reel's plan.json fields for this build only (a
+                    trial reel's own title, css, slots...). plan.json is not touched
+  --out <file>      write the composition to this file (relative to the project) instead of index.html, and leave
+                    work/build.json alone: the approved reel's build stays as it is (scripts/trials.py)
 
 The buyer's own style wins over the saved picks: my-style.json in the state folder (a custom caption spec, always-on
 layers, a grade, css), then this reel's plan.json on top of it ("caption", "layers", "grade", "css", "sounds").
@@ -82,6 +87,13 @@ def main():
         print('WARNING layout.json is missing: run layout.py first. Building with the standard bands, which may cover the face.')
     cap.load(proj)
     del cap.NOTES[:]
+    if opt('--plan-over'):
+        over = read(skillenv.path_arg(opt('--plan-over')))
+        if not isinstance(over, dict):
+            sys.exit(f'--plan-over: {opt("--plan-over")} is not a json object')
+        cap.PLAN.update(over)
+    out = opt('--out') or 'index.html'
+    out_path = out if os.path.isabs(out) else os.path.join(proj, out)
 
     # The buyer's own style beats the saved picks (SKILL.md, "The buyer's style wins"). It lives in my-style.json in
     # the state folder (written once from an example or a description, references/replicate.md); this reel's
@@ -192,8 +204,13 @@ def main():
     if moves_picture:
         notes.append('Reel motion moves the picture (footage, speaker or #root), so the self-check cannot compare '
                      'the render with the footage: look at the frames_check sheet yourself, mid-move too.')
-    with open(os.path.join(proj, 'index.html'), 'w', encoding='utf-8', newline='\n') as fh:
+    with open(out_path, 'w', encoding='utf-8', newline='\n') as fh:
         fh.write(html)
+    if out != 'index.html':
+        print(f'built {out}  {what}  (the reel\'s own index.html and work/build.json were not touched)')
+        for n in notes:
+            print('NOTE   ' + n)
+        return
     # what was built, for frames_check.py: the automatic checks only make sense when the picture was not regraded or moved
     os.makedirs(os.path.join(proj, 'work'), exist_ok=True)
     with open(os.path.join(proj, 'work', 'build.json'), 'w', encoding='utf-8') as fh:

@@ -864,6 +864,31 @@
    "notes": "Any framing, any cut: an overlay. Best on a list reel: the dots fill on each step.",
    "status": "ready",
    "layer": "overlay"
+  },
+  {
+   "n": 35,
+   "key": "led-screen",
+   "name": "Pantalla LED",
+   "does": "The picture cuts to a dark LED screen: the words the speaker says light up one at a time on its red, green and blue dots with a short flicker, while the camera pushes in until the single sub-pixels fill the frame, then it cuts back to the speaker settling in from a closer framing.",
+   "say": "put my words on an LED screen",
+   "shot": [
+    "wide",
+    "medium",
+    "close"
+   ],
+   "camera": [
+    "still",
+    "drifting",
+    "moving"
+   ],
+   "wall": "none",
+   "segments": 1,
+   "cutout": "none",
+   "tracking": "none",
+   "extra": [],
+   "material": "",
+   "notes": "The words are the speaker's own, each on the frame it is said. The reel captions hide while the screen is up.",
+   "status": "ready"
   }
  ]
 }

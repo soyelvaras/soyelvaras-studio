@@ -720,6 +720,16 @@ window.STUDIO_CATALOG = {
    "poster": "previews/posters/effects/dot-counter.jpg",
    "variants": [],
    "category": "effect"
+  },
+  {
+   "n": 35,
+   "key": "led-screen",
+   "name": "Pantalla LED",
+   "line": "Tus palabras se encienden una por una en una pantalla de puntos y la cámara entra hasta ver los subpíxeles.",
+   "preview": "previews/effects/led-screen.mp4",
+   "poster": "previews/posters/effects/led-screen.jpg",
+   "variants": [],
+   "category": "effect"
   }
  ],
  "styles": [

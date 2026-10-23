@@ -25,5 +25,8 @@
   "run build.py GRADE=0      # without SAFE",
   "hf render",
   "run check.py      # frame count, phone copy, work/final/sheet.jpg + ticks.jpg + edge.jpg"
+ ],
+ "libs": [
+  "glass.py"
  ]
 }
