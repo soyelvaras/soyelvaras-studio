@@ -82,6 +82,9 @@ FACE = None          # (x0, y0, x1, y1) box around the head on the 1080x1920 fra
                      # measured from the cutout (assets/subject.webm). Type it when the red box in work/layout.jpg is
                      # wrong, or when the slot was made without a cutout
 SEED = 7             # changes the clip layout, the cracks and the embers. Any whole number
+BURN_STYLE = 'esquina'  # how it burns. 'esquina' (default, approved 2026-10-22): it catches at the bottom-left corner on
+                     # the word and a ragged fire front with a charred edge and an orange glow eats the whole panel,
+                     # embers rising. 'clasico': the front crosses right to left, clips char and drop, the panel cracks
 VOICE = True         # the speaker's audio from the clip. False = silent slot (the reel plays the voice)
 SOUNDS = 'auto'      # 'auto' = a soft whoosh as it assembles, a click on each edit, one bass hit on the burn (stock
                      # template sounds). Or your own list of (stock name, frame, volume). [] = none
@@ -379,6 +382,9 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 #base{position:absolute;left:[[BASE_L]]px;top:[[BASE_T]]px;width:1010px;height:[[BH]]px;transform-origin:0 0;transform:scale([[S]])}
 #rig,#asm,#fx,#smoke{position:absolute;left:0;top:0;width:1010px;height:[[BH]]px}
 #rig{transform-origin:505px [[RIGY]]px}
+#asm{-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+#burnov{position:absolute;left:28px;top:76px;width:954px;height:[[PH]]px;background-size:100% 100%;pointer-events:none}
+.pre{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;overflow:hidden}.pre img{width:1px;height:1px}
 #pshadow{position:absolute;left:28px;top:76px;width:954px;height:[[PH]]px;border-radius:22px;
   box-shadow:0 12px 22px rgba(0,0,0,.50),0 0 18px rgba(150,180,255,.16)}
 #panelbox{position:absolute;left:28px;top:76px;width:954px;height:[[PH]]px}
@@ -496,6 +502,7 @@ BODY = r'''
           <div id="fline"><div id="fstreak"></div><div id="fcore"></div></div>
         </div>
       </div>
+      <div id="burnov"></div>
     </div>
     <div id="firewash"></div>
     <div id="flames"></div>
@@ -929,6 +936,7 @@ tl.set('#rig', { x: 0, y: 0 }, FR(IGF + 3));
 tl.set('#ph', { opacity: 0 }, T_IGN);
 tl.set('#flash', { opacity: 1 }, T_IGN);
 tl.to('#flash', { opacity: 0, duration: 0.11, ease: 'power2.out' }, T_IGN + 0.004);
+if (CFG.burn === 'clasico') {
 tl.set(['#fline', '#ftrail'], { opacity: 1 }, T_IGN);
 tl.to(['#fline', '#ftrail'], { x: -30, duration: 0.19, ease: 'power1.in' }, T_IGN);
 tl.to(['#fline', '#ftrail'], { opacity: 0, duration: 0.05 }, T_IGN + 0.15);
@@ -943,9 +951,11 @@ PART.flames.forEach(f => {
   tl.to(id, { scaleY: 1.3, scaleX: 0.55, y: -f.lift, skewX: f.sk, duration: f.d, ease: 'power1.in' }, f.tb + 0.07);
   tl.to(id, { opacity: 0, duration: f.d * 0.7, ease: 'power1.in' }, f.tb + 0.07 + f.d * 0.3);
 });
+}
 tl.to('#pshadow', { opacity: 0, duration: 0.12 }, T_SWAP);
 
 /* the fire front through every clip, then the pieces fall */
+if (CFG.burn === 'clasico') {
 CLIPS.forEach((c, i) => {
   const W = c.Wf, x0 = c.Xf;
   const tA = tf(x0 + W + 14), tB = tf(x0 - 52);
@@ -990,6 +1000,16 @@ SH.forEach(s => {
   tl.to(w, { x: dxs, rotation: s.r === NR - 1 ? rot * 0.5 : rot, scale: rr(0.55, 0.78), duration: fd, ease: 'power1.in' }, tr);
   tl.to(w, { opacity: 0, duration: fd * 0.66, ease: 'power1.in' }, tr + fd * 0.34);
 });
+} else {
+/* corner burn: it catches at the bottom-left corner on the word, the front eats the panel, the char and glow ride it */
+for (let i = 0; i < CFG.burnN; i++) {
+  const t = FR(IGF + i), k = String(i).padStart(2, '0');
+  tl.set('#asm', { maskImage: `url(burn/m${k}.png)`, webkitMaskImage: `url(burn/m${k}.png)` }, t);
+  tl.set('#burnov', { backgroundImage: `url(burn/g${k}.png)` }, t);
+}
+tl.set(['#asm', '#burnov'], { opacity: 0 }, FR(IGF + CFG.burnN));
+tl.fromTo('#rig', { x: 0 }, { x: 5, duration: 0.05, yoyo: true, repeat: 5, ease: 'none', immediateRender: false }, FR(IGF + 4));
+}
 
 /* embers, ash, streaks */
 PART.embers.forEach(p => {
@@ -1019,6 +1039,49 @@ tl.set({}, {}, CFG.dur);
 window.__timelines = window.__timelines || {};
 window.__timelines["main"] = tl;
 '''
+
+
+BURN_N = 24          # frames the corner burn takes: everything is gone 4 frames before the plain picture is back
+
+
+def burn_frames(ph, bh, seed):
+    """burn/m<i>.png masks the whole timeline (#asm, 1010 x bh design px; only the panel area burns) and burn/g<i>.png
+    is the charred edge + glow over the panel (954 x ph). CSS masks read the ALPHA channel, so the masks are LA PNGs."""
+    import numpy as np
+    from PIL import Image, ImageFilter
+    os.makedirs('burn', exist_ok=True)
+    rng = np.random.default_rng(seed)
+    H_, W_ = ph, DPW
+
+    def noise(octaves=5):
+        out = np.zeros((H_, W_))
+        for o in range(octaves):
+            k = 2 ** (o + 2)
+            r = Image.fromarray((rng.random((k, k)) * 255).astype('uint8')).resize((W_, H_), Image.BICUBIC)
+            out += np.asarray(r, float) / 255 / (2 ** o)
+        return out / out.max()
+
+    yy, xx = np.mgrid[0:H_, 0:W_]
+    field = np.hypot(xx / W_, (H_ - yy) / H_) / np.sqrt(2) + .28 * (noise() - .5)
+    for i in range(BURN_N):
+        t = -.12 + 1.22 * (i / (BURN_N - 1)) ** 1.15          # a slow catch, then it runs
+        keep = Image.fromarray(((field >= t) * 255).astype('uint8')).filter(ImageFilter.GaussianBlur(1.2))
+        a = Image.new('L', (1010, bh), 255)
+        a.paste(keep, (DPX, DPY))
+        m = Image.new('LA', a.size, 255)
+        m.putalpha(a)
+        m.save(f'burn/m{i:02d}.png', optimize=True)
+        char = (field >= t) & (field < t + .03)
+        glow = np.asarray(Image.fromarray((((field >= t - .01) & (field < t + .07)) * 255).astype('uint8'))
+                          .filter(ImageFilter.GaussianBlur(10)), float) / 255
+        core = np.asarray(Image.fromarray((((field >= t + .028) & (field < t + .045)) * 255).astype('uint8'))
+                          .filter(ImageFilter.GaussianBlur(2.5)), float) / 255
+        ca = char * .92
+        rgb = np.array([38, 20, 8]) * ca[..., None] + np.array([255, 120, 30]) * (glow * (1 - ca))[..., None]
+        rgb = np.clip(rgb + np.array([255, 210, 120]) * core[..., None], 0, 255)
+        alpha = np.clip(np.maximum(ca, glow * .95) + core, 0, 1) * 255
+        Image.fromarray(np.dstack([rgb, alpha]).astype('uint8'), 'RGBA').save(f'burn/g{i:02d}.png', optimize=True)
+    return ''.join(f'<img src="burn/{c}{i:02d}.png">' for i in range(BURN_N) for c in 'mg')
 
 
 def fill(tpl, vals):
@@ -1074,6 +1137,8 @@ def sounds(f_in, f_burn, gag, trim, drag):
     if gag and drag >= 0:
         out.append(('click', f_in + 36, .12))
     out.append(('impact-bass-1', f_burn - 1, .30))
+    if not str(BURN_STYLE).lower().startswith('clas'):
+        out.append(('quemado', f_burn, .32))      # the crackle of the corner burn (skipped when it is not in assets/sfx)
     return out
 
 
@@ -1174,7 +1239,9 @@ def main():
     else:
         ruler = [html_mod.escape(cased(x)) for x in (RULER or [])][:8]
     dim = 0.0 if os.environ.get('DIM') == '0' else max(0.0, min(.8, float(DIM)))
-    cfg = dict(seed=int(SEED) * 7919 + 20261, PH=ph, NR=max(2, round(ph / 104)), rigY=DPY + ph / 2,
+    burn = 'clasico' if str(BURN_STYLE).lower().startswith('clas') else 'esquina'
+    pre = burn_frames(ph, ph + 158, int(SEED)) if burn == 'esquina' else ''
+    cfg = dict(burn=burn, burnN=BURN_N, seed=int(SEED) * 7919 + 20261, PH=ph, NR=max(2, round(ph / 104)), rigY=DPY + ph / 2,
                t0=round(f_in / FPS, 4), tIgn=round(F(f_burn), 4), ignFrame=f_burn, hk=round(hk, 4),
                tEnd=round(F(f_out) - .005, 4), fIn=f_in, fOut=f_out, dur=round(dur, 3), dim=dim, accent=ACCENT,
                tracks=tracks, ruler=ruler, clips=clips, trim=trim, drag=drag, gag=gag,
@@ -1205,6 +1272,7 @@ def main():
 {nl.join(audio(sfx, dur))}
   <video id="aroll" class="full" src="assets/aroll.mp4" muted playsinline data-start="0" data-media-start="0" data-duration="{dur:.3f}" data-track-index="0"></video>
 {BODY}
+  <div class="pre">{pre}</div>
 {SAFE_GUIDE if os.environ.get('SAFE') == '1' else ''}
 </div>
 <script>{JS.replace('/*CFG*/', json.dumps(cfg))}</script>

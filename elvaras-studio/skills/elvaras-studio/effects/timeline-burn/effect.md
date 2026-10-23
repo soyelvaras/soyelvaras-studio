@@ -1,8 +1,9 @@
 # timeline-burn (Línea en Llamas)
 
 **Qué hace:** una línea de tiempo de edición de video se arma delante de la persona (tercio inferior, bajo la barbilla),
-un cursor hace dos ediciones lentas, la línea de tiempo se recalienta, se prende fuego en una palabra dicha, se quema de
-derecha a izquierda y se deshace en brasas. Luego vuelve la imagen simple.
+un cursor hace dos ediciones lentas, la línea de tiempo se recalienta, se prende fuego en una palabra dicha y se quema. Por defecto (`BURN_STYLE = 'esquina'`, aprobado el 23-10-2026) prende
+en la esquina de abajo a la izquierda y un frente irregular, con borde de carbón y brillo naranja, se come todo el panel
+mientras suben brasas. `'clasico'` es el de antes: se quema de derecha a izquierda y se deshace en brasas. Luego vuelve la imagen simple.
 **Función:** gancho (también un remate a mitad de video: "ya no necesitas X", "X se acabó").
 **Frases que lo activan:** "pon una línea de tiempo de edición y quémala cuando digo X", "quema la línea de tiempo en
 X", "línea en llamas".
@@ -52,6 +53,7 @@ X", "línea en llamas".
 | `PANEL_W`, `PANEL_X`, `PANEL_Y` | ancho, x central, y superior de la línea de tiempo | 848 / 540 / `None` (medido: lo más abajo que permite la zona segura) |
 | `CAPTION_ROOM` | px que se dejan entre la barbilla y la línea de tiempo para la línea de subtítulos del reel | 130; 0 = no se deja |
 | `FACE` | `(x0, y0, x1, y1)` caja de la cabeza durante todo el efecto | `None` = medida; léela en `work/layout.jpg` cuando la caja roja está mal (con lentes, revisa la barbilla) |
+| `BURN_STYLE` | cómo se quema | `'esquina'` (por defecto) o `'clasico'`. La esquina hace sus cuadros de máscara en `burn/` con numpy en cada armado |
 | `SEED`, `VOICE`, `SOUNDS` | composición / grietas / brasas; el audio de la persona; lista de sonidos | por defecto |
 
 **Interruptores:** `SAFE=1` guía de zona segura (solo instantáneas), `SFX=0` sin sonidos, `DIM=0` sin oscurecer.
@@ -93,7 +95,8 @@ Un espacio de 5 s toma unos 5 minutos después del recorte.
   cabe en su clip se omite y se informa.
 - Genérico a propósito: sin nombre de app, logo ni interfaz real. Las palabras en pantalla son de la persona: sin
   números, nombres ni usuarios inventados, sin guiones largos.
-- Sonidos: solo `whoosh-short`, `click`, `impact-bass-1` de stock, a 0,75x del volumen de la plantilla. `SOUNDS = []`
+- Sonidos: `whoosh-short`, `click` e `impact-bass-1` de stock, más `quemado` en el fuego de esquina (se omite si no está
+  en `assets/sfx`), a 0,75x del volumen de la plantilla. `SOUNDS = []`
   cuando el reel tiene su propio golpe en esa palabra.
 - Después de cambiar `BURN_AT`, `F_IN`, `TRACKS` o `FACE`, ejecuta `build.py` de nuevo y lee el `--caption-y` impreso:
   se mueve con la composición.

@@ -16,6 +16,8 @@ que dibujas: la regla de oro, entradas, salidas, cámara viva, entradas de movim
 elecciones tengan un estilo completo, `effects/INDEX.md` cuando tengan efectos y `references/gotchas.md` cuando un
 armado o render falle. Lee `references/replicate.md` apenas el usuario muestre un ejemplo o describa un look propio.
 Lee `references/gifs.md` cuando pida GIFs (puedes buscarlos tú y ponerlos en las frases correctas).
+Lee `references/sounds.md` antes de poner efectos de sonido. Ahí está cada sonido, dónde pega, su volumen bajo la voz y
+cuál elegir entre las variantes parecidas.
 Cuando nombra una app y un gráfico la muestra, usa su logo real: `engine/icons` trae 46, y
 `PY "SK/scripts/get_icon.py" "<app>"` baja otra con licencia libre (si no hay, va su inicial y lo dices).
 

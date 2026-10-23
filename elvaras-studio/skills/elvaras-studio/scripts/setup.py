@@ -459,6 +459,11 @@ def check_sfx(sfx):
     for n in SFX_NAMES:
         if not have(n):
             fetch(f'{SFX_URL}/{n}.mp3', os.path.join(sfx, n + '.mp3'))
+    # Soy Elvaras' own sounds ship inside the skill (sfx/, see references/sounds.md): copied in, never overwritten
+    own = os.path.join(skillenv.SKILL_DIR, 'sfx')
+    for f in sorted(os.listdir(own)) if os.path.isdir(own) else []:
+        if f.endswith('.mp3') and not have(f[:-4]):
+            shutil.copyfile(os.path.join(own, f), os.path.join(sfx, f))
     missing = [n for n in SFX_NAMES if not have(n)]
     if not missing:
         say('STATUS sound effects OK')
